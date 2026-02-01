@@ -1,13 +1,358 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>lekha</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <title>FinManager</title>
+  <style>
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: row;
+      border-bottom: 1px solid gray;
+      height: 80px;
+      position: fixed;
+      width: 100%;
+      background-color: white;
+      /* margin-left : 90px ; */
+      /* adding-left: 90px; */
+      top: 0;
+      left: 0;
+    }
+
+    .title {
+      color: #0033cc;
+      font-family: Roboto, arial;
+      font-size: 27px;
+      font-weight: bold;
+
+    }
+
+    .right {
+      color: white;
+      font-family: Roboto, arial;
+      display: flex;
+      justify-content: flex-end;
+      flex-direction: row;
+      flex: 1;
+      padding-right: 60px;
+      align-items: center;
+    }
+
+    .left {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      margin-left: 27px;
+      width: 90px;
+      /* background-color: pink; */
+
+    }
+
+    .log,
+    .in {
+      margin-right: 10px;
+      width: 90px;
+      height: 40px;
+      border-radius: 25px;
+      border-style: solid;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* .log:focus {
+      color:blue;
+     }
+     .in:focus{
+      color:blue;
+     } */
+    .log:focus,
+    .in:focus,
+    .log:active,
+    .in:active {
+      color: blue;
+      background-color: white;
+      border-color: blue;
+      /* cursor : pointer ; */
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* background-color: lightpink; */
+      position: fixed;
+      background: white;
+      top: 80px;
+      left: 0px;
+      bottom: 0px;
+      width: 90px;
+      border-right: 1px solid gray;
+      gap: 30px;
+      /* for the side bar to slide in  */
+      transform: translateX(-100%);
+      transition: transform 0.2s ease-in-out;
+      z-index: 100;
+    }
+
+    .sidebar.active {
+      transform: translateX(0);
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 15);
+    }
+
+    .hamburger-icon {
+      border: none;
+      filter: invert(78%) sepia(0%) saturate(0%) hue-rotate(177deg) brightness(50%) contrast(91%);
+    }
+
+    .hamburger-button {
+      border: none 0;
+      background: transparent;
+      padding: 0;
+      outline: none;
+      cursor: pointer;
+      margin-left: 6px;
+
+    }
+
+    .hamburger-button:hover {
+      background-color: lightgray;
+    }
+
+    /* home */
+    .home-button {
+      border: none 0;
+      background: transparent;
+      padding: 0;
+      outline: none;
+      cursor: pointer;
+      left: 0px;
+      margin-right: 50%;
+      margin-top: 12px;
+
+
+    }
+
+    .home-icon {
+      height: 35px;
+      width: 35px;
+    }
+
+    .home-icon:hover {
+      background-color: lightgray;
+      /* background: linear-gradient(to bottom, #4a7dff 0%, #0040ff 50%, #0033cc 100% ); */
+    }
+
+    /* Profile */
+    .profile-button {
+      border: none 0;
+      background: transparent;
+      padding: 0;
+      outline: none;
+      cursor: pointer;
+      left: 0px;
+      margin-right: 25px;
+      margin-top: 2px;
+      border-radius: 50%;
+    }
+
+    .profile-icon {
+      height: 40px;
+      width: 40px;
+      /* border-radius : 50% ; */
+      /* filter: sepia(100%) hue-rotate(190deg) saturate(500%); */
+    }
+
+    .profile-icon:hover {
+      background-color: lightgray;
+      /* border :#0040ff 2px solid ; */
+      /* filter: invert(44%) sepia(91%) saturate(1352%) hue-rotate(185deg) brightness(100%) contrast(101%); */
+      /* filter: sepia(100%) hue-rotate(190deg) saturate(500%); */
+    }
+
+    .card-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex: 1;
+      margin-top: 120px;
+      margin-left: 18px;
+      column-gap: 20px;
+      row-gap: 40px;
+      flex-wrap: wrap;
+      transition: transform 0.5s ease-in-out;
+      /* overflow: auto; */
+    }
+
+    .card-grid.sidebar-open {
+      filter: blur(3px);
+    }
+
+
+    .Total-expenses {
+      display: inline-block;
+      /* flex : 1 ; */
+      width: 400px;
+      height: 200px;
+      border: 2px solid;
+      border-radius: 18px;
+      color: white;
+      background: linear-gradient(to bottom, #4a7dff 0%, #0040ff 50%, #0033cc 100%);
+      /*for glossy effect*/
+      font-weight: 500;
+    }
+
+    .heading {
+      font-size: 20px;
+      font-size: arial;
+      margin-left: 20px;
+      margin-top: 20px;
+    }
+
+    .Total-expense-amount {
+      font-size: 35px;
+      margin-left: 20px;
+      margin-top: 80px;
+    }
+
+    .dark-mode-button {
+      border: none 0;
+      background: transparent;
+      padding: 0;
+      outline: none;
+      cursor: pointer;
+      left: 0px;
+      margin-right: 50%;
+      margin-top: 40px;
+    }
+
+    .dark-icon {
+      height: 35px;
+      width: 35px;
+    }
+
+    .dark-theme {
+      background-color: #181818;
+      color: white;
+    }
+
+    .dark-theme .header {
+      background-color: black;
+      color: white;
+    }
+
+    .dark-theme .sidebar {
+      background-color: black;
+      color: white;
+    }
+
+    .dark-theme .dark-icon,
+    .dark-theme .home-icon,
+    .dark-theme .hamburger-icon,
+    .dark-theme .profile-button {
+      filter: grayscale(100%) invert(100%) brightness(300%);
+    }
+
+    .goals-button {
+      border: none 0;
+      background: transparent;
+      padding: 0;
+      outline: none;
+      cursor: pointer;
+      left: 0px;
+      margin-right: 50%;
+      margin-top: 40px;
+    }
+
+    .goals-icon {
+      height: 35px;
+      width: 35px;
+      border-radius: 50%;
+    }
+
+    /* footer */
+    .footer {
+      display: flex;
+      flex: 1;
+      height: 180px;
+      width: 100%;
+      bottom: 0px;
+      left: 0;
+      /* background-color: pink ; */
+      position: absolute;
+      background-color: #0033cc;
+      border-top: 1px solid gray;
+    }
+    .footer.sidebar-open{
+      filter : blur(3px) ;
+    }
+  </style>
+</head>
+
+<body class="body">
+  <script>
+    function toggledark() {
+      document.body.classList.toggle("dark-theme");
+    }
+  </script>
+  <script>
+    function toggleSidebar() {
+      document.querySelector(".sidebar").classList.toggle("active");
+      document.querySelector(".card-grid").classList.toggle("sidebar-open");
+      document.querySelector(".footer").classList.toggle("sidebar-open");
+    }
+  </script>
+
+  <div class="header">
+    <div class="left">
+      <button class="hamburger-button" onclick="toggleSidebar()">
+        <img class="hamburger-icon" src="images/dehaze_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
+      </button>
+    </div>
+    <div class="middle">
+      <p class="title">FinManager</p>
+    </div>
+    <div class="right">
+      <button class="profile-button">
+        <img class="profile-icon" src="images/Fa-Team-Fontawesome-FontAwesome-Circle-User.svg">
+        <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M399 384.2C376.9 345.8 335.4 320 288 320H224c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM512 256c0 141.4-114.6 256-256 256S0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM256 272c39.8 0 72-32.2 72-72s-32.2-72-72-72s-72 32.2-72 72s32.2 72 72 72z"/></svg> -->
+      </button>
+      <button class="in">Sign In</button>
+      <button class="log">Log In</button>
+
+
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="home">
+      <button class="home-button">
+        <img class="home-icon" src="images/home.svg">
+      </button>
+      <div class="goals">
+        <button class="goals-button">
+          <img class="goals-icon" src="images/GoalsIcon - Copy.jpeg">
+        </button>
+      </div>
+      <div class="dark-mode">
+        <button class="dark-mode-button" onclick="toggledark()">
+          <img class="dark-icon" src="images/dark-mode-6682.svg">
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="card-grid">
+    <div class="Total-expenses">
+      <div class="heading">
+        Total Expenses
+      </div>
+      <p id="total-expense-value" class="Total-expense-amount">
+        &#x20B9; 50000
+      </p>
+    </div>
+  </div>
+
+  <div class="footer">
+
+  </div>
+</body>
 </html>
