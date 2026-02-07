@@ -6,7 +6,7 @@ import Navbar from './components/layout/navbar/NavBar'
 import Hamburger from './components/layout/hamburgerMenu/HamburgerMenu'
 import Footer from './components/layout/footer/Footer'
 import HomePage from './pages/Homepage'
-import SignupForm from './pages/SignUp';
+import SignupForm from './pages/SignUpPage';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
