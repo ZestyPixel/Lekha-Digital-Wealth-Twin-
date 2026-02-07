@@ -1,42 +1,64 @@
-#root {
-  max-width: 1280px;
+/* ========================================
+   App-Level Layout Structure
+   ======================================== */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-bg-primary);
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: var(--spacing-lg);
+  transition: margin-left var(--transition-base);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app-main.sidebar-open {
+  margin-left: 250px; /* Adjust to your sidebar width */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.app-footer {
+  margin-top: auto;
+  transition: margin-left var(--transition-base);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.app-footer.sidebar-open {
+  margin-left: 250px; /* Match sidebar width */
 }
 
-.card {
-  padding: 2em;
+/* ========================================
+   Optional: Page Transitions
+   ======================================== */
+/* Uncomment if you're using page transitions
+
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
 }
 
-.read-the-docs {
-  color: #888;
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--transition-base), transform var(--transition-base);
 }
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+*/
