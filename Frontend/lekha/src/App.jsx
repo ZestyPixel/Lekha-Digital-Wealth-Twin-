@@ -1,12 +1,12 @@
 import './App.css'
-import LoginForm from './pages/login'
+import LoginForm from './pages/LoginForm';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useState } from 'react'
 import Navbar from './components/layout/navbar/NavBar'
 import Hamburger from './components/layout/hamburgerMenu/HamburgerMenu'
 import Footer from './components/layout/footer/Footer'
 import HomePage from './pages/Homepage'
-import SignupForm from './pages/signUp'
+import SignupForm from './pages/SignUp';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
