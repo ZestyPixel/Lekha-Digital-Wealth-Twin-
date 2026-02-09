@@ -12,7 +12,7 @@ const bcrypt = require('bcrypt'); //bcrypt is used to hash stuff like passwords 
 const authMiddleware = require('./middlewares/authMiddleware.js');
 
 app.use(cors({
-    origin: 'https://lekha-digital-wealth-twin.vercel.app/', // Replace with your actual Frontend URL/Port
+    origin: 'https://lekha-digital-wealth-twin.vercel.app', // Replace with your actual Frontend URL/Port
     credentials: true
 })); 
 app.use(express.json()); //This is to parse the JSON body sent by the client. Otherwise, req.body will be undefined.
