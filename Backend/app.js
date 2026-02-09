@@ -1,18 +1,24 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
-const {verify} = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose'); 
+const cors = require('cors'); //cors is needed to allow requests from the frontend which will be running on a different port.
+require('dotenv').config(); //This is to load environment variables from a .env file.
+const {verify} = require('jsonwebtoken'); //This is to verify the JWT token sent by the client in the Authorization header.
+const cookieParser = require('cookie-parser'); //This is to parse the cookies sent by the client. 
 const app = express();
 const{createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken,} = require('./utils/tokens.js');
 const User = require('./models/user.js');
+const {isAuth} = require('./utils/isAuth.js');
+const bcrypt = require('bcrypt'); //bcrypt is used to hash stuff like passwords and refresh tokens before saving them to the database for security reasons.
+const authMiddleware = require('./middlewares/authMiddleware.js');
 
-app.use(cors({origin: "*"}));
-app.use(express.json());
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(cors({
+    origin: 'https://lekha-digital-wealth-twin.vercel.app/', // Replace with your actual Frontend URL/Port
+    credentials: true
+})); 
+app.use(express.json()); //This is to parse the JSON body sent by the client. Otherwise, req.body will be undefined.
+app.use(cookieParser()); 
+app.use(express.urlencoded({extended: true})); //This is to parse URL-encoded data sent by the client. extended: true allows for rich objects and arrays to be encoded into the URL-encoded format. 
+// If extended were false, you would only be able to parse simple key-value pairs in the URL-encoded data.
 
 app.get('/', (req, res) => {
     res.send('Backend is running!');
@@ -21,72 +27,114 @@ app.get('/', (req, res) => {
 app.post('/register', async (req, res)=>{
     const {name, email, password} = req.body;
     try{
+        const checkIfExists = await User.findOne({email});
+        if(checkIfExists) throw new Error("User Already Exists, Pleae Log In.");
+
         const newUser = new User({
             name: name,
             email: email,
-            password: password,
+            password: password, //Hashing will be done by schema middleware.
         });
-
-        data = await newUser.save();
-        console.log(data);
+        const data = await newUser.save();
     }catch(err){
-        console.log(err);
+        return res.status(400).json({ error: err.message });
     }
-
-    res.send("User created");
+    return res.status(201).json({ message: "User created successfully" });
 });
-
-app.get('/test', async (req, res)=>{
-    try {
-    const dummyUser = new User({
-      name: "Umar Mahmood",
-      email: "umar@test.com",
-      password: "password123",   // will be hashed automatically
-      duressPin: "9999",         // will be hashed automatically
-    });
-
-    await dummyUser.save();
-
-    res.status(201).json({
-      message: "Dummy user created successfully",
-      user: dummyUser
-    });
-
-    const data = await User.find({});
-    console.log(data);
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating dummy user" });
-  }
-});
-
 
 app.post('/login', async (req, res)=>{
     const {email, password} = req.body;
-    console.log("Received");
-    console.log(req.body);
-
+    console.log(email, password);
     try{
-        //Find in database using email and check pass
-        //check and handle conditions for user does not exist or wrong password.
-        const refreshToken = createAccessToken(user.id);
-        const accessToken = createRefreshToken(user.id);
-        //hash and store refresh token in database
-        //send refresh token as a cookie and accesstoken as a regular response.
+        const user = await User.findOne({email});
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        const compare = await user.comparePassword(password);
+        if (!compare) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        const refreshToken = createRefreshToken(user.id);
+        const accessToken = createAccessToken(user.id);
+        const hashedToken = await bcrypt.hash(refreshToken, 10);
+        user.refreshToken = hashedToken;
+        await user.save();
         sendRefreshToken(res, refreshToken);
-        sendAccessToken(req, res, accessToken);
+        res.send({
+            accessToken,
+            email: user.email,
+            name: user.name,
+            userId: user._id
+        });
     }catch(err){
         res.send(err);
     }
-    res.send("done");
 });
 
 app.post('/logout', (req, res)=>{
-    res.clearCookie('refreshToken');
+    res.clearCookie('refreshToken', { path: '/refresh_token'}); //path helps the browser to know which cookie to clear. 
+    // Since we set the refresh token cookie with the path '/refresh_token', we need to specify the same path here to clear it.
     return res.send({
         message: "Logged Out",
     })
+});
+
+app.post('/refresh_token', async (req, res)=>{
+    const token = req.cookies.refreshToken;
+
+    if(!token) return res.send({accessToken: ''});
+
+    let payload = null;
+    try{
+        payload = verify(token, process.env.REFRESH_TOKEN_SECRET);
+    }catch(err){
+        res.clearCookie('refreshToken', { path: '/refresh_token'});
+        return res.send({accessToken: ''});
+    }
+
+    const user = await User.findById(payload.userId);
+    if(!user) {
+        res.clearCookie('refreshToken', { path: '/refresh_token'});
+        return res.send({accessToken: ''});
+    }
+
+    const isValid = await bcrypt.compare(token, user.refreshToken);
+    if(!isValid){
+        user.refreshToken = null;
+        await user.save();
+        res.clearCookie('refreshToken', { path: '/refresh_token'});
+        return res.send({ accessToken: ''});
+    }
+
+    const accessToken = createAccessToken(user.id);
+    const refreshToken = createRefreshToken(user.id);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    user.refreshToken = hashedRefreshToken;
+    await user.save();
+
+    req.body = { email: user.email };
+    sendRefreshToken(res, refreshToken);
+    sendAccessToken(req, res, accessToken);
+    
+});
+
+app.get('/getUserData', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.userId;
+        console.log('Fetching user data for userId:', userId);
+
+        const userData = await User.findById(userId);
+        if (!userData) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const { password, ...safeUserData } = userData.toObject();
+
+        res.json(safeUserData);
+    } catch (error) {
+        console.error('Error in /getUserData:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 mongoose.connect(process.env.MONGO_URI)

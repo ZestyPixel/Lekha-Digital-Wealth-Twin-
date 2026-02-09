@@ -1,6 +1,13 @@
-import './NavBar.css'
+import { useAuth } from '../../../context/useAuth';
+import './NavBar.css';
 
-function Navbar({ onToggleSidebar }) {
+export default function Navbar({ onToggleSidebar }) {
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <div className="header">
       <div className="left">
@@ -15,10 +22,8 @@ function Navbar({ onToggleSidebar }) {
         <button className="profile-button">
           <img className="profile-icon" src="/images/Fa-Team-Fontawesome-FontAwesome-Circle-User.svg" alt="profile" />
         </button>
-        <button className="log">Log Out</button>
+        <button className="log" onClick={handleLogout}>Log Out</button>
       </div>
     </div>
-  )
+  );
 }
-
-export default Navbar

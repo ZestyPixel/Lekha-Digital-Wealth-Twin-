@@ -7,6 +7,9 @@ import Hamburger from './components/layout/hamburgerMenu/HamburgerMenu'
 import Footer from './components/layout/footer/Footer'
 import HomePage from './pages/Homepage'
 import SignupForm from './pages/SignUpPage';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthProvider';
+
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -17,31 +20,55 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<SignupForm />} />
-        <Route path='/login' element={<LoginForm />} />
-        
-        <Route path='/*' element={
-          <div className="app">
-            <header className="app-header">
-              <Navbar onToggleSidebar={toggleSidebar} />
-            </header>
-            
-            <Hamburger isOpen={sidebarOpen} />
-            
-            <main className={`app-main ${sidebarOpen ? 'sidebar-open' : ''}`}>
-              <Routes>
-                <Route path="/homepage" element={<HomePage />} />
-                {/* Add more routes here */}
-              </Routes>
-            </main>
-            
-            <footer className={`app-footer ${sidebarOpen ? 'sidebar-open' : ''}`}>
-              <Footer />
-            </footer>
-          </div>
-        } />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          {/* Public routes without layout */}
+          <Route path="/" element={<SignupForm />} />
+          <Route path="/login" element={<LoginForm />} />
+          
+          {/* Layout wrapper for all authenticated routes */}
+          <Route path="/*" element={
+            <div className="app">
+              <header className="app-header">
+                <Navbar onToggleSidebar={toggleSidebar} />
+              </header>
+              
+              <Hamburger isOpen={sidebarOpen} />
+              
+              <main className={`app-main ${sidebarOpen ? 'sidebar-open' : ''}`}>
+                <Routes>
+                  <Route path="/homepage" element={
+                    <ProtectedRoute>
+                      <HomePage />
+                    </ProtectedRoute>
+                  } />
+                  {/* Add more protected routes here */}
+                  <Route path="/newpage" element={
+                    <ProtectedRoute>
+                      <div>New Page Content</div>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile" element={
+                    <ProtectedRoute>
+                      <div>Profile Page</div>
+                    </ProtectedRoute>
+                  } />
+                  {/* Catch-all for authenticated routes */}
+                  <Route path="*" element={
+                    <ProtectedRoute>
+                      <div>Page not found</div>
+                    </ProtectedRoute>
+                  } />
+                </Routes>
+              </main>
+              
+              <footer className={`app-footer ${sidebarOpen ? 'sidebar-open' : ''}`}>
+                <Footer />
+              </footer>
+            </div>
+          } />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

@@ -1,58 +1,70 @@
 import "./SignUp.css";
 import { useFormik } from 'formik';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-    const validate = values => {
-        const errors = {};
+import { useAuth } from "../context/useAuth";
 
-        if (!values.name) {
-            errors.name = 'Required';
-        } else if (values.name.length > 50) {
-            errors.name = 'Must be 50 characters or less';
-        }
+const validate = values => {
+    const errors = {};
 
-        if (!values.email) {
-            errors.email = 'Required';
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-            errors.email = 'Invalid email address';
-        }
+    if (!values.name) {
+        errors.name = 'Required';
+    } else if (values.name.length > 50) {
+        errors.name = 'Must be 50 characters or less';
+    }
 
-        if (!values.password) {
-            errors.password = 'Required';
-        } else if (values.password.length > 20) {
-            errors.password = 'Must be 20 characters or less';
-        }
+    if (!values.email) {
+        errors.email = 'Required';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+        errors.email = 'Invalid email address';
+    }
 
-        if (!values.confirmPassword) {
-            errors.confirmPassword = 'Required';
-        } else if (values.confirmPassword !== values.password) {
-            errors.confirmPassword = 'Passwords must match';
-        }
- 
-        return errors;
-    };
+    if (!values.password) {
+        errors.password = 'Required';
+    } else if (values.password.length > 20) {
+        errors.password = 'Must be 20 characters or less';
+    }
 
-    export default function SignupForm(){
-        
-        const navigate = useNavigate()
-        const formik = useFormik({
-            initialValues: {
+    if (!values.confirmPassword) {
+        errors.confirmPassword = 'Required';
+    } else if (values.confirmPassword !== values.password) {
+        errors.confirmPassword = 'Passwords must match';
+    }
+
+    return errors;
+};
+
+export default function SignupForm(){
+    const navigate = useNavigate();
+    const { register } = useAuth();
+
+    const formik = useFormik({
+        initialValues: {
             name: '',
             email: '',
             password: '',
             confirmPassword: '',
-            },
-            validate,
-            onSubmit: async (values) => {
-                console.log(values);
-                await axios.post(`${import.meta.env.VITE_API_URL}/register`, values);
-                navigate("/homepage");
-            },
-        });
-        return (
+        },
+        validate,
+        onSubmit: async (values) => {
+            try {
+                const result = await register(values.name, values.email, values.password);
+                
+                if (result.success) {
+                    navigate("/login");
+                } else {
+                    alert(result.error);
+                }
+            } catch(error) {
+                console.error("Registration failed:", error);
+                alert("Registration failed");
+            }
+        },
+    });
+
+    return (
         <div className="">
             <div>
-                <Link to="/login">Already have an account ? <i><b>Log In!</b></i></Link>
+                <Link to="/login">Already have an account? <i><b>Log In!</b></i></Link>
             </div>
             <form onSubmit={formik.handleSubmit}>
                 <label htmlFor="name">Name: </label> <br />
@@ -98,9 +110,9 @@ import { useNavigate, Link } from 'react-router-dom';
                     value={formik.values.confirmPassword}
                 />
                 {formik.errors.confirmPassword ? <div>{formik.errors.confirmPassword}</div> : null}
-            <br /> <br />
+                <br /> <br />
                 <button type="submit">Submit</button>
             </form>
         </div>
-        );
-    };
+    );
+}

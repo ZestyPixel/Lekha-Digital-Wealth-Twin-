@@ -1,7 +1,8 @@
 import "./LoginPage.css";
 import { useFormik } from 'formik';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
+
     const validate = values => {
         const errors = {};
 
@@ -21,8 +22,9 @@ import { useNavigate } from 'react-router-dom';
     };
 
     export default function LoginForm(){
-        
-        const navigate = useNavigate()
+        const navigate = useNavigate();
+        const { login } = useAuth();
+
         const formik = useFormik({
             initialValues: {
             email: '',
@@ -30,13 +32,26 @@ import { useNavigate } from 'react-router-dom';
             },
             validate,
             onSubmit: async (values) => {
-                console.log(values);
-                await axios.post(`${import.meta.env.VITE_API_URL}/login`, values);
-                navigate("/homepage");
+                try {
+                    const result = await login(values.email, values.password);
+                
+                    if (result.success) {
+                        console.log("Login successful");
+                        navigate('/homepage');
+                    } else {
+                        alert(result.error);
+                    }
+                } catch(err) {
+                    console.log(err);
+                    alert("Login failed");
+                }
             },
-        });
+    });
         return (
         <div className="">
+            <div>
+                <Link to="/">Have not made an account ? <i><b>Sign Up!</b></i></Link>
+            </div>
             <form onSubmit={formik.handleSubmit}>
                 <label htmlFor="email">Email: </label> <br />
                 <input
