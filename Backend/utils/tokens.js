@@ -16,15 +16,21 @@ function sendAccessToken(req, res, accessToken){
     res.send({
         accessToken,
         email: req.body.email,
+        name: req.body.name,
+        userId: req.body.userId
     })
 }
 
 function sendRefreshToken(res, refreshToken){
+    const isProduction = process.env.NODE_ENV === 'production';
+    
     res.cookie('refreshToken', refreshToken, {
-        httpOnly: true, //To ensure that the cookie is not accessible via JavaScript.
-        path: '/refresh_token', //To ensure that the cookie is only sent to the backend when the user is trying to refresh the access token.
-        //This means that while any request can set the refresh token cookie, only requests to the '/refresh_token' 
-        // endpoint will include the cookie in the request headers. This adds an extra layer of security by limiting the exposure of the refresh token.
+        httpOnly: true,
+        secure: isProduction, // true in production (HTTPS), false in localhost
+        sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
+        path: '/refresh_token',
+        // REMOVED domain option - let the browser use the current domain
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 }
 
