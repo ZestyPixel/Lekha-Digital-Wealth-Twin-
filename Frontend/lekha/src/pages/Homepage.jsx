@@ -2,7 +2,7 @@ import Card from "../components/card/Card";
 import "./Homepage.css";
 import { Link } from 'react-router-dom';
 import { useAuth } from "../context/useAuth";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function HomePage(){
   const { user, requestWithAuth } = useAuth();
@@ -25,12 +25,19 @@ export default function HomePage(){
     } 
   };
 
-  useEffect(() => {
-    if (user) {
+const hasFetched = useRef(false);
+
+useEffect(() => {
+    if (user && !hasFetched.current) {
+      hasFetched.current = true;
       fetchProtectedData();
     }
-  }, [user]);
-
+    
+    if (!user) {
+      hasFetched.current = false;
+      setProtectedData(null);
+    }
+  }, [user?.userId]); // Only care about userId changes (actual login/logout)
     return(
         <div className="homepage-container">
             <h1>Welcome to Homepage!</h1>
@@ -50,7 +57,7 @@ export default function HomePage(){
               </div>
 )}
             
-            <h1><b>Full DATA: {JSON.stringify(protectedData, null, 2)}</b></h1>
+            {/* <h1><b>Full DATA: {JSON.stringify(protectedData, null, 2)}</b></h1> */}
             
             <div className="card-container">
                 <Card Title={"Total Expenses This Month"}/>
