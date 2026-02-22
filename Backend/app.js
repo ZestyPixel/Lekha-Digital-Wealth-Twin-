@@ -7,6 +7,10 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const{createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken,} = require('./utils/tokens.js');
 const User = require('./models/user.js');
+const Asset = require('./models/assets.js');
+const Transaction = require('./models/transactions.js');
+const Log = require('./models/logs.js');
+
 const {isAuth} = require('./utils/isAuth.js');
 const bcrypt = require('bcrypt');
 const authMiddleware = require('./middlewares/authMiddleware.js');
@@ -151,22 +155,40 @@ app.post('/refresh_token', async (req, res)=>{
 });
 
 app.get('/getUserData', authMiddleware, async (req, res) => {
+    console.log('received request');
     try {
         const userId = req.userId;
-        console.log('Fetching user data for userId:', userId);
 
         const userData = await User.findById(userId);
-        if (!userData) {
+        const transaction = await Transaction.findOne({userId: userId}).sort({createdAt:-1});
+        const asset = await Asset.find({ userId: userId });
+
+        if (!userData || !transaction || !asset) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const { password, ...safeUserData } = userData.toObject();
+        const { password, ...data } = userData.toObject(); //This removes the password field from the user data before sending it to the frontend.
 
-        res.json(safeUserData);
+        res.json({data, transaction, asset});
     } catch (error) {
         console.error('Error in /getUserData:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+});
+
+app.post('/addasset', authMiddleware, async(req, res)=>{
+  console.log(req.body);
+  const { type, currentValue, institution } = req.body;
+  const userId = req.userId;
+  const newAsset = await new Asset({
+    userId,
+    type,
+    currentValue,
+    institution,
+  });
+  await newAsset.save();
+  console.log(newAsset);
+  res.json({success: true});
 });
 
 mongoose.connect(process.env.MONGO_URI)

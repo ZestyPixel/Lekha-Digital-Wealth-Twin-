@@ -1,10 +1,156 @@
+.main-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  margin-bottom: 0;
+  padding: 20px 0;
+  border-top: 1px solid gray;
+  background-color: #F5F5F5;
+}
+
 .footer {
   display: flex;
-  flex: 1;
-  height: 180px;
   width: 100%;
-  bottom: 0px;
   left: 0;
-  background-color: #0033cc;
-  border-top: 1px solid gray;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  /* background-color:#F5F5F5; */
+}
+
+.main-footer.sidebar-open {
+  filter: blur(3px);
+}
+
+body {
+  /* height: auto; */
+  margin: 0;
+  padding: 0;
+  display : flex ;
+  flex-direction : column ;
+  position: relative;
+  min-height : 100vh ;
+  
+}
+
+.Useful-links {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: start;
+  /* text-align: center; */
+  font-family: Arial;
+  margin-left: 100px;
+  margin-top: 17px;
+  color: #0033cc;
+}
+
+.usfl-links {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.links {
+  font-size: 22px;
+  color: black;
+}
+
+.links:hover {
+  color: #0033cc;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  /* text-align: center; */
+  font-family: Arial;
+  color: #0033cc;
+  margin-top: 17px;
+  margin-left: 10px;
+
+}
+
+.contacts {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.address {
+  font-size: 22px;
+  color: black;
+}
+
+.policy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: start;
+  font-family: Arial;
+  color: #0033cc;
+  margin-top: 17px;
+  margin-right: 100px;
+}
+
+.Policy {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.policies {
+  font-size: 22px;
+  color: black;
+}
+
+.divider {
+  width: 70%;
+  border: 0;
+  border-top: 1px solid #333;
+  margin: 10px 0;
+}
+
+.social-media {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.facebook,
+.x,
+.youtube {
+  border: none 0;
+  background: transparent;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+  left: 0;
+  margin-top: 10px;
+  margin-left: 8px;
+  margin-right: 8px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border: 2px solid #181818;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.facebook-icon,
+.x-icon,
+.youtube-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.copyright {
+  font-size: 20px;
 }

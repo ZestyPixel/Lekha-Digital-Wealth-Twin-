@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { AuthContext } from './AuthContext';
 
 export const AuthProvider = ({ children }) => {
@@ -6,17 +6,26 @@ export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState('');
   const [loading, setLoading] = useState(true);
 
+  const accessTokenRef = useRef('');
+
+  const setTokens = useCallback((token) => {
+    accessTokenRef.current = token;
+    setAccessToken(token);
+  }, []);
+
   useEffect(() => {
     checkAuth();
-    
+  }, []);
+
+  useEffect(() => {
     const intervalId = setInterval(() => {
-      if (accessToken) {
+      if (accessTokenRef.current) {
         refreshAccessToken();
       }
     }, 14 * 60 * 1000);
-    
+
     return () => clearInterval(intervalId);
-  }, [accessToken]);
+  }, []); 
 
   const checkAuth = useCallback(async () => {
     try {
@@ -24,32 +33,66 @@ export const AuthProvider = ({ children }) => {
         method: 'POST',
         credentials: 'include',
       });
-      
+
       if (!response.ok) {
         throw new Error('Auth check failed');
       }
-      
+
       const data = await response.json();
-      
+
       if (data.accessToken && data.email) {
-        setAccessToken(data.accessToken);
-        setUser({ 
-          email: data.email, 
+        setTokens(data.accessToken);
+        setUser({
+          email: data.email,
           name: data.name || '',
-          userId: data.userId 
+          userId: data.userId,
         });
       } else {
         setUser(null);
-        setAccessToken('');
+        setTokens('');
       }
     } catch (error) {
       console.error('Auth check failed:', error);
       setUser(null);
-      setAccessToken('');
+      setTokens('');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [setTokens]);
+
+  const refreshAccessToken = useCallback(async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/refresh_token`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Token refresh failed');
+      }
+
+      const data = await response.json();
+
+      if (data.accessToken && data.email) {
+        setTokens(data.accessToken);
+        setUser({
+          email: data.email,
+          name: data.name || '',
+          userId: data.userId,
+        });
+        return data.accessToken;
+      } else {
+        setUser(null);
+        setTokens('');
+        return null;
+      }
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      setUser(null);
+      setTokens('');
+      return null;
+    }
+  }, [setTokens]);
 
   const login = useCallback(async (email, password) => {
     try {
@@ -66,19 +109,19 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      setAccessToken(data.accessToken);
-      setUser({ 
-        email: data.email, 
+      setTokens(data.accessToken);
+      setUser({
+        email: data.email,
         name: data.name || '',
-        userId: data.userId 
+        userId: data.userId,
       });
-      
+
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
       return { success: false, error: error.message };
     }
-  }, []);
+  }, [setTokens]);
 
   const register = useCallback(async (name, email, password) => {
     try {
@@ -109,85 +152,50 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      setAccessToken('');
+      setTokens('');
       setUser(null);
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
     }
-  }, []);
-
-  const refreshAccessToken = useCallback(async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/refresh_token`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Token refresh failed');
-      }
-      
-      const data = await response.json();
-      
-      if (data.accessToken && data.email) {
-        setAccessToken(data.accessToken);
-        setUser({ 
-          email: data.email, 
-          name: data.name || '',
-          userId: data.userId 
-        });
-        return data.accessToken;
-      } else {
-        setUser(null);
-        setAccessToken('');
-        return null;
-      }
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-      setUser(null);
-      setAccessToken('');
-      return null;
-    }
-  }, []);
+  }, [setTokens]);
 
   const requestWithAuth = useCallback(async (url, options = {}) => {
-    let currentToken = accessToken;
-    
+    let currentToken = accessTokenRef.current;
+
     if (!currentToken) {
       currentToken = await refreshAccessToken();
     }
-    
+
+    const fullUrl = url.startsWith('http')
+      ? url
+      : `${import.meta.env.VITE_API_URL}${url}`;
+
     const headers = {
       'Content-Type': 'application/json',
       ...options.headers,
+      ...(currentToken && { Authorization: `Bearer ${currentToken}` }),
     };
-    
-    if (currentToken) {
-      headers['Authorization'] = `Bearer ${currentToken}`;
-    }
-    const fullUrl = url.startsWith('http') ? url : `${import.meta.env.VITE_API_URL}${url}`;
 
     const response = await fetch(fullUrl, {
       ...options,
       headers,
       credentials: 'include',
     });
-    
+
     if (response.status === 401 && currentToken) {
       const newToken = await refreshAccessToken();
       if (newToken) {
-        headers['Authorization'] = `Bearer ${newToken}`;
-        return fetch(url, {
+        return fetch(fullUrl, {
           ...options,
-          headers,
+          headers: { ...headers, Authorization: `Bearer ${newToken}` },
           credentials: 'include',
         });
       }
     }
-    
+
     return response;
-  }, [accessToken, refreshAccessToken]);
+  }, [refreshAccessToken]);
 
   const value = useMemo(() => ({
     user,

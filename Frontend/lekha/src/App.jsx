@@ -1,18 +1,20 @@
 import './App.css'
-import LoginForm from './pages/LoginForm';
+import LoginForm from './pages/login/LoginForm';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useState } from 'react'
 import Navbar from './components/layout/navbar/NavBar'
 import Hamburger from './components/layout/hamburgerMenu/HamburgerMenu'
 import Footer from './components/layout/footer/Footer'
-import HomePage from './pages/Homepage'
-import SignupForm from './pages/SignUpPage';
+import HomePage from './pages/homepage/Homepage'
+import SignupForm from './pages/signup/SignUpPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthProvider';
-
+import NewPage from './pages/NewPage';
+import RecentTransactions from './pages/recenttransaction/RecentTransactions';
+import NetWorth from './pages/networth/NetWorth';
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
@@ -42,15 +44,26 @@ function App() {
                       <HomePage />
                     </ProtectedRoute>
                   } />
-                  {/* Add more protected routes here */}
+                  
+                  <Route path='/recenttransactions' element={
+                    <ProtectedRoute>
+                      <RecentTransactions/>
+                    </ProtectedRoute>
+                  }/>
+
                   <Route path="/newpage" element={
                     <ProtectedRoute>
-                      <div>New Page Content</div>
+                      <NewPage/>
                     </ProtectedRoute>
                   } />
                   <Route path="/profile" element={
                     <ProtectedRoute>
                       <div>Profile Page</div>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/networth" element={
+                    <ProtectedRoute>
+                      <NetWorth/>
                     </ProtectedRoute>
                   } />
                   {/* Catch-all for authenticated routes */}

@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+ .box {
+   border-radius: 25px;
+   border: 2px solid;
+   background-color: white;
+   height: auto;
+   width: 600px;
+   margin: 100px auto;
+   border: 1px solid;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 15);
+   padding: 65px 75px;
+ }
+
+ .login-box {
+   display: flex;
+   flex-direction: column;
+   align-items: start;
+   /* background-color : lightpink ; */
+
+ }
+
+ .login-title {
+   font-size: 50px;
+   text-align: center;
+   font-family: Arial;
+   color: #555555;
+   font-weight: 400;
+   /* background-color : lightblue ; */
+ }
+
+ .form-group {
+   margin-bottom: 18px;
+
+   display: flex;
+
+   flex-direction: column;
+
+   align-items: flex-start;
+
+   width: 100%;
+
+ }
+
+ .email-and-password {
+   /* margin-left : 15px ; */
+   color: black;
+   font-size: 25px;
+   margin-bottom: 3px;
+ }
+
+ .email-bar {
+   height: 90px;
+   width: 100%;
+   font-size: 20px;
+   font-family: Arial;
+   outline: none;
+   border-radius : 15px  ;
+   border : 1px solid ;
+ }
+
+ .email-bar:active,
+ .email-bar:focus {
+   border: 2px solid #0033cc;
+   box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+ }
+
+ .show-password {
+   font-size: 20px;
+   margin-bottom: 20px;
+ }
+
+ #show-pass {
+   height: 20px;
+   width: 20px;
+ }
+
+ .sign-in {
+   width: 100%;
+   height: 90px;
+   margin-top: 10px;
+   font-size: 25px;
+   background-color: #0033cc;
+   color: white;
+   border : none ;
+   border-radius : 15px ;
+ }
+
+ .forgot {
+   font-size: 20px;
+   font-family: arial;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   width: 100%;
+   margin-top: 50px;
+   line-height: 1.5;
+ }
+
+ .forgot p {
+   margin: 0;
+ }
+
+ .user-pass {
+   color: #0033cc;
+ }
+
+ .sign-up {
+   color: #0033cc;
+ }
+
+ .error{
+    color: red;
+ }

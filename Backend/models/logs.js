@@ -1,16 +1,14 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const logsSchema = new mongoose.Schema(
   {
     transactionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Transaction",
-      required: true,
     },
 
     action: {
       type: String,
-      required: true,
       trim: true,
     },
 
@@ -22,7 +20,6 @@ const logsSchema = new mongoose.Schema(
     outcome: {
       type: String,
       enum: ["Allowed", "Blocked", "Flagged"],
-      required: true,
     },
 
     userNotified: {
@@ -33,4 +30,4 @@ const logsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("SecurityEvent", securityEventSchema);
+module.exports = mongoose.model("Log", logsSchema);
