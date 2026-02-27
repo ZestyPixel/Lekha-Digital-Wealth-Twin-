@@ -33,3 +33,82 @@
 .app-footer.sidebar-open {
   filter: blur(3px);  
 }
+
+.tooltip {
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  background-color: black;
+  color: white;
+  font-size: 20px;
+  border-radius: 4px;
+  padding : 3px 5px ;
+  /* margin-left: 10px; */
+  margin-top : 2px ;
+  left : 100% ;
+  top : 100% ;
+  transform: translateY(-50%);
+  position: absolute;
+  white-space: nowrap; /* tooltip text in one line */
+  
+} 
+
+.dark-mode-button:hover {
+  background-color: lightgray;
+}
+
+.dark-mode-button:hover .tooltip {
+  opacity: 1;
+}
+
+.dark-icon {
+  height: 32px;
+  width: 32px;
+}
+
+.dark-theme {
+  background-color: #181818;
+  color: white;
+}
+
+.dark-theme .header {
+  background-color: black;
+  color: white;
+}
+
+.dark-theme .sidebar {
+  background-color: black;
+  color: white;
+}
+
+.dark-theme .main-footer,
+.dark-theme .footer,
+.dark-theme .social-media,
+.dark-theme .divider {
+  background-color: black !important;
+  color: white;
+}
+
+.dark-theme .dark-mode-button,
+.dark-theme .home-button,
+.dark-theme .hamburger-button,
+.dark-theme .profile-button,
+.dark-theme .facebook-icon,
+.dark-theme .youtube-icon{
+  filter: grayscale(100%) invert(100%) brightness(300%);
+}
+.dark-theme .goals-button:hover .tooltip{
+   background-color: white;
+   color : black ;
+}
+.dark-theme .youtube,
+.dark-theme .facebook,
+.dark-theme .x {
+  border-color: white;
+}
+
+.dark-theme .policies,
+.dark-theme .address,
+.dark-theme .links {
+  color: white;
+}

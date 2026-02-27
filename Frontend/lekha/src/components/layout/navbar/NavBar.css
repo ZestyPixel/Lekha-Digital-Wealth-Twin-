@@ -7,9 +7,12 @@
   height: 80px;
   position: fixed;
   width: 100%;
-  background-color: white;
+  background-color: #F5F5F5;
+  /* margin-left : 90px ; */
+  /* adding-left: 90px; */
   top: 0;
   left: 0;
+  z-index: 1000;
 }
 
 .title {
@@ -17,6 +20,7 @@
   font-family: Roboto, arial;
   font-size: 27px;
   font-weight: bold;
+
 }
 
 .right {
@@ -26,7 +30,7 @@
   justify-content: flex-end;
   flex-direction: row;
   flex: 1;
-  padding-right: 60px;
+  margin-right: 60px;
   align-items: center;
 }
 
@@ -36,27 +40,36 @@
   flex: 1;
   margin-left: 27px;
   width: 90px;
+  /* background-color: pink; */
 }
 
 .log,
 .in {
   margin-right: 10px;
-  width: 120px;
+  width: 90px;
   height: 40px;
   border-radius: 25px;
-  border: 3px solid red;
+  border: #0033cc 1px solid;
   font-size: 18px;
   font-weight: bold;
-  color: red;
+  background-color: white;
+  color: #0033cc;
+}
+
+.in:focus,
+.in:active {
+  color: white;
+  background-color: #0033cc;
+  border-color: white;
+  /* cursor : pointer ; */
 }
 
 .log:focus,
-.in:focus,
-.log:active,
-.in:active {
-  color: blue;
+.log:active {
+  color: #0033cc;
   background-color: white;
-  border-color: blue;
+  border-color: #0033cc;
+  /* cursor : pointer ; */
 }
 
 .hamburger-icon {
@@ -70,32 +83,55 @@
   padding: 0;
   outline: none;
   cursor: pointer;
-  margin-left: 6px;
+  width : 50% ;
+  position: relative ;
+  height : 30px ;
+  width : 25px ;
+  border-radius : 50% ;
 }
 
 .hamburger-button:hover {
   background-color: lightgray;
 }
 
+.hamburger-button:hover .tooltip {
+  opacity: 1;
+}
+
+/* Profile */
 .profile-button {
   border: none 0;
   background: transparent;
   padding: 0;
   outline: none;
   cursor: pointer;
-  left: 0px;
+  /* left: 0px; */
   margin-right: 25px;
   margin-top: 2px;
+  position: relative ;
+  width : 50px ;
+  height : 50px ;
+  display : flex ;
+  justify-content : center;
+  align-items : center ;
   border-radius: 50%;
 }
 
 .profile-icon {
   height: 40px;
   width: 40px;
+  border-radius: 50%;
+  /* filter: sepia(100%) hue-rotate(190deg) saturate(500%); */
 }
 
-.profile-icon:hover {
+.profile-button:hover {
   background-color: lightgray;
+  /* border :#0040ff 2px solid ; */
+  /* filter: invert(44%) sepia(91%) saturate(1352%) hue-rotate(185deg) brightness(100%) contrast(101%); */
+  /* filter: sepia(100%) hue-rotate(190deg) saturate(500%); */
+}
+.profile-button:hover .tooltip {
+  opacity: 1;
 }
 
 .dark-theme .header {

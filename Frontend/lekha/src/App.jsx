@@ -9,9 +9,9 @@ import HomePage from './pages/homepage/Homepage'
 import SignupForm from './pages/signup/SignUpPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthProvider';
-import NewPage from './pages/NewPage';
-import RecentTransactions from './pages/recenttransaction/RecentTransactions';
+import RecentTransactions from './pages/recenttransaction/LastTransaction';
 import NetWorth from './pages/networth/NetWorth';
+import MonthlyExpenses from './pages/monthlyexpenses/MonthlyExpenses';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -51,9 +51,9 @@ function App() {
                     </ProtectedRoute>
                   }/>
 
-                  <Route path="/newpage" element={
+                  <Route path="/abc" element={
                     <ProtectedRoute>
-                      <NewPage/>
+                      
                     </ProtectedRoute>
                   } />
                   <Route path="/profile" element={
@@ -64,6 +64,11 @@ function App() {
                   <Route path="/networth" element={
                     <ProtectedRoute>
                       <NetWorth/>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/monthlyexpenses" element={
+                    <ProtectedRoute>
+                      <MonthlyExpenses/>
                     </ProtectedRoute>
                   } />
                   {/* Catch-all for authenticated routes */}

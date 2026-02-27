@@ -1,0 +1,43 @@
+.pie-total {
+  font-size: 14px;
+  color: white;
+  margin-left: 20px;
+  margin-top: 4px;
+  z-index: 100000;
+}
+
+.pie-tooltip {
+  background: #1e1e2e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.pie-tooltip-label {
+  font-size: 13px;
+  color: white;
+  margin: 0 0 4px;
+}
+
+.pie-tooltip-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.legend-label {
+  font-size: 13px;
+  color: white;
+}
+
+.pie{
+  display: inline-block;
+  width: 365px;
+  height: 210px;
+  border: 2px solid;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(to bottom, #4a7dff 0%, #0040ff 50%, #0033cc 100%);
+  font-weight: 500;
+}

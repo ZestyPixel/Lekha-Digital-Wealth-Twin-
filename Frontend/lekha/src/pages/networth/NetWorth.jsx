@@ -62,7 +62,7 @@ export default function AddAssetForm() {
     <div>
         
         {asset.map((el)=>(
-            <p className="text-xl"> Type: {el.type} <br/> Value: {el.currentValue} <br/> Held By: {el.institution} <br/><br/></p>
+            <p className="text-xl" key={el.id}> Type: {el.type} <br/> Value: {el.currentValue} <br/> Held By: {el.institution} <br/><br/></p>
         ))}
         <div className="box">
             <div className="login-title">Add Asset</div>

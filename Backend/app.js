@@ -160,9 +160,8 @@ app.get('/getUserData', authMiddleware, async (req, res) => {
         const userId = req.userId;
 
         const userData = await User.findById(userId);
-        const transaction = await Transaction.findOne({userId: userId}).sort({createdAt:-1});
+        const transaction = await Transaction.find({ userId: userId }).limit(10);
         const asset = await Asset.find({ userId: userId });
-
         if (!userData || !transaction || !asset) {
             return res.status(404).json({ error: 'User not found' });
         }

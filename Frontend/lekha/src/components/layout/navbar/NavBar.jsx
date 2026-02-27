@@ -13,6 +13,7 @@ export default function Navbar({ onToggleSidebar }) {
       <div className="left">
         <button className="hamburger-button" onClick={onToggleSidebar}>
           <img className="hamburger-icon" src="/images/dehaze_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="menu" />
+          <div className="tooltip">Menu</div>
         </button>
       </div>
       <div className="middle">
@@ -21,6 +22,7 @@ export default function Navbar({ onToggleSidebar }) {
       <div className="right">
         <button className="profile-button">
           <img className="profile-icon" src="/images/Fa-Team-Fontawesome-FontAwesome-Circle-User.svg" alt="profile" />
+          <div className="tooltip">Profile</div>
         </button>
         <button className="log" onClick={handleLogout}>Log Out</button>
       </div>

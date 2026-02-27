@@ -1,17 +1,16 @@
-import "./RecentTransactions.css"
+import "./LastTransaction.css"
+import { formatCurrency } from "../../../utils/functions";
 
-export default function RecentTransactions({Title, data}){
+export default function LastTransaction({Title, data}){
     return(
-    <div className="card-grid">
         <div className="Total-expenses card">
             <div className="heading">
                 {Title}
             </div>
             <p id="total-expense-value" className="Total-expense-amount">
             Type: {data?.category} <br></br>
-            Amount: &#x20B9; {data?.amount}
+            Amount: {formatCurrency(data?.amount)}
             </p>
-        </div>
     </div>
     );
 }
