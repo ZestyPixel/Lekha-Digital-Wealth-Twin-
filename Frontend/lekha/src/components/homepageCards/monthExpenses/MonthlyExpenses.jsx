@@ -34,14 +34,14 @@ export default function MonthlyExpenses({Data = []}){
 
         (Data ?? []).forEach((point) => {
             switch (point.category) {
-                case "housing": result.houUtil += point.amount; break;
-                case "food": result.foodDin += point.amount; break;
-                case "transportation": result.trans += point.amount; break;
-                case "lifestyle": result.lifeLeis += point.amount; break;
-                case "health": result.healthWell += point.amount; break;
-                case "financial": result.finObl += point.amount; break;
-                case "savings": result.savInv += point.amount; break;
-                case "misc": result.misc += point.amount; break;
+                case "Housing": result.houUtil += point.amount; break;
+                case "Food": result.foodDin += point.amount; break;
+                case "Transportation": result.trans += point.amount; break;
+                case "Lifestyle": result.lifeLeis += point.amount; break;
+                case "Health": result.healthWell += point.amount; break;
+                case "Financial": result.finObl += point.amount; break;
+                case "Savings": result.savInv += point.amount; break;
+                case "Misc": result.misc += point.amount; break;
                 default: break;
             }
         });

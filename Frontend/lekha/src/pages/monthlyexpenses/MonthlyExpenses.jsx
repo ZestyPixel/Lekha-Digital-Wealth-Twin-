@@ -98,14 +98,14 @@ export default function MonthlyExpenses() {
                         value={formik.values.category}
                     >
                         <option value="" disabled>Select a category</option>
-                        <option value="housing">Housing & Utilities</option>
-                        <option value="food">Food & Dining</option>
-                        <option value="transportation">Transportation</option>
-                        <option value="lifestyle">Lifestyle & Leisure</option>
-                        <option value="health">Health & Wellness</option>
-                        <option value="financial">Financial Obligations</option>
-                        <option value="savings">Savings & Investments</option>
-                        <option value="miscellaneous">Miscellaneous</option>
+                        <option value="Housing">Housing & Utilities</option>
+                        <option value="Food">Food & Dining</option>
+                        <option value="Transportation">Transportation</option>
+                        <option value="Lifestyle">Lifestyle & Leisure</option>
+                        <option value="Health">Health & Wellness</option>
+                        <option value="Financial">Financial Obligations</option>
+                        <option value="Savings">Savings & Investments</option>
+                        <option value="Miscellaneous">Miscellaneous</option>
                     </select>
                     {formik.errors.category && <div className="error">{formik.errors.category}</div>}
                 </div>
