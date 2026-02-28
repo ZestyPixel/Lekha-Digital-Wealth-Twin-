@@ -155,7 +155,6 @@ app.post('/refresh_token', async (req, res)=>{
 });
 
 app.get('/getUserData', authMiddleware, async (req, res) => {
-    console.log('received request');
     try {
         const userId = req.userId;
 
@@ -176,7 +175,6 @@ app.get('/getUserData', authMiddleware, async (req, res) => {
 });
 
 app.post('/addasset', authMiddleware, async(req, res)=>{
-  console.log(req.body);
   const { type, currentValue, institution } = req.body;
   const userId = req.userId;
   const newAsset = await new Asset({
@@ -188,6 +186,19 @@ app.post('/addasset', authMiddleware, async(req, res)=>{
   await newAsset.save();
   console.log(newAsset);
   res.json({success: true});
+});
+
+app.post('/addtransaction', authMiddleware, async(req, res)=>{
+    const { type, amount, category, description} = req.body;
+    const userId = req.userId;
+    const newTransaction = await new Transaction({
+        userId,
+        amount,
+        category,
+        status: "Completed",
+    });
+    await newTransaction.save();
+    res.json({success: true});
 });
 
 mongoose.connect(process.env.MONGO_URI)

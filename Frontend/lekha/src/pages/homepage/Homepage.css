@@ -4,5 +4,6 @@
     flex-direction:row;
     column-gap: 0.3cm;
     row-gap: 0.3cm;
+    overflow: visible;
 }
 

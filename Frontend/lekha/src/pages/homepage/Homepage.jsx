@@ -47,14 +47,14 @@ export default function HomePage(){
             )}
             
             <div className="card-container">
-              <Link to={'/monthlyexpenses'} state={protectedData?.asset ?? []}><MonthlyExpensesCard Data={protectedData?.transaction}/></Link>
-              <Link to={'/networth'} state={protectedData?.asset ?? []}><NetWorthCard Title={"Net Worth"} Data={protectedData?.asset} /></Link> 
-              <PieChartCard Data={protectedData?.asset} />
-              <Link to={'/lastttransaction'}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[0]} /> </Link>
+              <Card Title={"Health Score"}/>
+              <Link to={'/networth'} state={protectedData?.asset ?? []}><PieChartCard Data={protectedData?.asset} /></Link>
+              <Card/> 
+              <Link to={'/lastttransaction'}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[protectedData.transaction.length-1]} /> </Link>
               {/* Question mark is optional chaining, it checks if protectedData is not null before trying to access the transaction property. 
               If protectedData is null, it will return undefined instead of throwing an error. */}
-              <Card Title={"Health Score"}/>
-              <Card Title={"Goals"}/>
+              <Link to={'/monthlyexpenses'} state={protectedData?.asset ?? []}><MonthlyExpensesCard Data={protectedData?.transaction}/></Link>
+              <Card Title={"Expense Allocation"}/>
             </div>
             
             <div className="navigation-links">

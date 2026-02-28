@@ -28,7 +28,7 @@ export default function PieChartCard({ Data }) {
   return (
       <div className="pie">
         <div className="heading">
-            Asset Allocation
+            Net Worth
         </div>
         <p className="pie-total">Total: {formatCurrency(total)}</p>
 

@@ -60,10 +60,11 @@ export default function AddAssetForm() {
 
     return (
     <div>
-        
-        {asset.map((el)=>(
+        <div className="assets">
+            {asset.map((el)=>(
             <p className="text-xl" key={el.id}> Type: {el.type} <br/> Value: {el.currentValue} <br/> Held By: {el.institution} <br/><br/></p>
-        ))}
+            ))}
+        </div>
         <div className="box">
             <div className="login-title">Add Asset</div>
             <form className="login-box" onSubmit={formik.handleSubmit}>
