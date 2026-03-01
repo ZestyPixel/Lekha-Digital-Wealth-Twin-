@@ -1,0 +1,5 @@
+.goals{
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}

@@ -1,4 +1,5 @@
 import './HamburgerMenu.css'
+import { Link } from 'react-router-dom';
 
 function Hamburger({ isOpen }) {
   const toggleDark = () => {
@@ -8,15 +9,19 @@ function Hamburger({ isOpen }) {
   return (
     <div className={`sidebar ${isOpen ? 'active' : ''}`}>
       <div className="home">
+        <Link to={'/homepage'}>
         <button className="home-button">
           <img className="home-icon" src="/images/home.svg" alt="home" />
           <div className="tooltip">Home</div>
         </button>
+        </Link>
         <div className="goals">
+          <Link to={'/goals'}>
           <button className="goals-button">
             <img className="goals-icon" src="/images/GoalsIcon - Copy.jpeg" alt="goals" />
             <div className="tooltip">Goals</div>
           </button>
+          </Link>
         </div>
         <div className="dark-mode">
           <button className="dark-mode-button" onClick={toggleDark}>

@@ -9,6 +9,8 @@ const{createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken,}
 const User = require('./models/user.js');
 const Asset = require('./models/assets.js');
 const Transaction = require('./models/transactions.js');
+const Goal = require('./models/goals.js');
+const Profile = require('./models/profile.js');
 const Log = require('./models/logs.js');
 
 const {isAuth} = require('./utils/isAuth.js');
@@ -161,13 +163,15 @@ app.get('/getUserData', authMiddleware, async (req, res) => {
         const userData = await User.findById(userId);
         const transaction = await Transaction.find({ userId: userId }).limit(10);
         const asset = await Asset.find({ userId: userId });
+        const goal = await Goal.find({userId: userId});
+        const profile = await Profile.findOne({userId: userId});
         if (!userData || !transaction || !asset) {
             return res.status(404).json({ error: 'User not found' });
         }
 
         const { password, ...data } = userData.toObject(); //This removes the password field from the user data before sending it to the frontend.
 
-        res.json({data, transaction, asset});
+        res.json({data, transaction, asset, goal, profile});
     } catch (error) {
         console.error('Error in /getUserData:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -198,6 +202,35 @@ app.post('/addtransaction', authMiddleware, async(req, res)=>{
         status: "Completed",
     });
     await newTransaction.save();
+    res.json({success: true});
+});
+
+app.post('/addgoal', authMiddleware, async(req, res)=>{
+    console.log(req.body);
+    const userId = req.userId;
+    const {goalName, targetAmount, currentProgress, targetDate, priority} = req.body;
+    const newGoal = await new Goal ({
+        userId,
+        goalName,
+        targetAmount,
+        currentProgress,
+        targetDate,
+        priority,
+    });
+    await newGoal.save();
+    res.json({success: true});
+})
+
+app.post('/setprofile', authMiddleware, async(req, res)=>{
+    const userId = req.userId;
+    const {monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport} = req.body;
+
+    await Profile.findOneAndUpdate(
+        { userId },
+        { monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport },
+        { upsert: true, new: true } //If a profile doesn't exist for the user, it will create a new one. 
+        // If it does exist, it will update the existing profile with the new data.
+    );
     res.json({success: true});
 });
 

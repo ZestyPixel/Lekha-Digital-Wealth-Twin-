@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
 import { useLocation } from "react-router-dom";
+import { formatCurrency } from "../../utils/functions";
 
 const validate = values => {
     const errors = {};
@@ -62,7 +63,7 @@ export default function AddAssetForm() {
     <div>
         <div className="assets">
             {asset.map((el)=>(
-            <p className="text-xl" key={el.id}> Type: {el.type} <br/> Value: {el.currentValue} <br/> Held By: {el.institution} <br/><br/></p>
+            <p className="text-xl" key={el.id}> Type: {el.type} <br/> Value: {formatCurrency(el.currentValue)} <br/> Held By: {el.institution} <br/><br/></p>
             ))}
         </div>
         <div className="box">

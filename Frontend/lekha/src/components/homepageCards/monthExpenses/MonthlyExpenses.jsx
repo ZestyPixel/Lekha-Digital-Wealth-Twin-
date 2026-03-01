@@ -61,7 +61,7 @@ export default function MonthlyExpenses({Data = []}){
         { name: "Savings/Investments", value: expenses.savInv },
         { name: "Misc", value: expenses.misc },
     ];
-
+    
     return(
         <div className="expen-pie">
             <ResponsiveContainer width="100%" height={190}>

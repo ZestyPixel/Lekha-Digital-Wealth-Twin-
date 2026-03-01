@@ -12,6 +12,8 @@ import { AuthProvider } from './context/AuthProvider';
 import RecentTransactions from './pages/recenttransaction/LastTransaction';
 import NetWorth from './pages/networth/NetWorth';
 import MonthlyExpenses from './pages/monthlyexpenses/MonthlyExpenses';
+import Goals from './pages/goals/Goals';
+import Profile from './pages/profile/profile';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -51,16 +53,6 @@ function App() {
                     </ProtectedRoute>
                   }/>
 
-                  <Route path="/abc" element={
-                    <ProtectedRoute>
-                      
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/profile" element={
-                    <ProtectedRoute>
-                      <div>Profile Page</div>
-                    </ProtectedRoute>
-                  } />
                   <Route path="/networth" element={
                     <ProtectedRoute>
                       <NetWorth/>
@@ -69,6 +61,16 @@ function App() {
                   <Route path="/monthlyexpenses" element={
                     <ProtectedRoute>
                       <MonthlyExpenses/>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/goals" element={
+                    <ProtectedRoute>
+                      <Goals/>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile" element={
+                    <ProtectedRoute>
+                      <Profile/>
                     </ProtectedRoute>
                   } />
                   {/* Catch-all for authenticated routes */}
