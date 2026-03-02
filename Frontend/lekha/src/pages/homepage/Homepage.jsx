@@ -34,7 +34,6 @@ export default function HomePage(){
  
     return(
         <div className="homepage-container">
-            
             {user && (
               <div className="user-info-section">
                 {protectedData ? (

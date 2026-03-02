@@ -41,7 +41,7 @@ export default function MonthlyExpenses({Data = []}){
                 case "Health": result.healthWell += point.amount; break;
                 case "Financial": result.finObl += point.amount; break;
                 case "Savings": result.savInv += point.amount; break;
-                case "Misc": result.misc += point.amount; break;
+                case "Miscellaneous": result.misc += point.amount; break;
                 default: break;
             }
         });

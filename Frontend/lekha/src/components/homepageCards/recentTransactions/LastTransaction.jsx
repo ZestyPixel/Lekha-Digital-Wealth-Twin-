@@ -3,11 +3,11 @@ import { formatCurrency } from "../../../utils/functions";
 
 export default function LastTransaction({Title, data}){
     return(
-        <div className="Total-expenses card">
-            <div className="heading">
+        <div className="Total-expenses-trans card-trans">
+            <div className="heading-trans">
                 {Title}
             </div>
-            <p id="total-expense-value" className="Total-expense-amount">
+            <p className="Total-expense-amount-trans">
             Type: {data?.category} <br></br>
             Amount: {formatCurrency(data?.amount)}
             </p>

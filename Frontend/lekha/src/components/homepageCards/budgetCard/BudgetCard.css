@@ -1,0 +1,126 @@
+.card-grid.sidebar-open {
+  filter: blur(3px);
+}
+
+.card-budget {
+  width: 80%;
+  height: 200px;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(to bottom, #4a7dff 0%, #0040ff 50%, #0033cc 100%);
+  font-weight: 500;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.Total-expenses-budget {
+  display: inline-block;
+  width: 365px;
+  height: 210px;
+  border: 2px solid;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(to bottom, #4a7dff 0%, #0040ff 50%, #0033cc 100%);
+  font-weight: 500;
+}
+
+.heading {
+  font-size: 20px;
+  font-family: arial;
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+.Total-expense-amount {
+  font-size: 35px;
+  margin-left: 20px;
+  margin-top: 50px;
+}
+
+.Total-expenses-budget {
+    padding: 14px 16px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.budget-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 16px;
+}
+
+.budget-item {
+    width: 100%;
+}
+
+.budget-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.budget-title {
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+.budget-percent {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.budget-percent.good { color: #69db7c; }
+.budget-percent.caution { color: #ffe066; }
+.budget-percent.warning { color: #ffa94d; }
+.budget-percent.danger { color: #ff6b6b; }
+
+.progress-bar {
+    position: relative;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.8s ease;
+}
+
+.progress-fill.good {
+    background: linear-gradient(90deg, #69db7c, #69db7c);
+}
+
+.progress-fill.caution {
+    background: linear-gradient(90deg, #69db7c, #ffe066);
+}
+
+.progress-fill.warning {
+    background: linear-gradient(90deg, #69db7c, #ffa94d);
+}
+
+.progress-fill.danger {
+    background: linear-gradient(90deg, #69db7c, #ff6b6b);
+}
+
+.progress-overflow {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: #ff6b6b;
+    animation: budgetPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes budgetPulse {
+    from { opacity: 1; }
+    to { opacity: 0.3; }
+}

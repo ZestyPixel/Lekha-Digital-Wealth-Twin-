@@ -8,8 +8,6 @@
   position: fixed;
   width: 100%;
   background-color: #F5F5F5;
-  /* margin-left : 90px ; */
-  /* adding-left: 90px; */
   top: 0;
   left: 0;
   z-index: 1000;
@@ -40,7 +38,6 @@
   flex: 1;
   margin-left: 27px;
   width: 90px;
-  /* background-color: pink; */
 }
 
 .log,
@@ -61,7 +58,6 @@
   color: white;
   background-color: #0033cc;
   border-color: white;
-  /* cursor : pointer ; */
 }
 
 .log:focus,
@@ -69,7 +65,6 @@
   color: #0033cc;
   background-color: white;
   border-color: #0033cc;
-  /* cursor : pointer ; */
 }
 
 .hamburger-icon {
@@ -98,14 +93,12 @@
   opacity: 1;
 }
 
-/* Profile */
 .profile-button {
   border: none 0;
   background: transparent;
   padding: 0;
   outline: none;
   cursor: pointer;
-  /* left: 0px; */
   margin-right: 25px;
   margin-top: 2px;
   position: relative ;
@@ -121,14 +114,10 @@
   height: 40px;
   width: 40px;
   border-radius: 50%;
-  /* filter: sepia(100%) hue-rotate(190deg) saturate(500%); */
 }
 
 .profile-button:hover {
   background-color: lightgray;
-  /* border :#0040ff 2px solid ; */
-  /* filter: invert(44%) sepia(91%) saturate(1352%) hue-rotate(185deg) brightness(100%) contrast(101%); */
-  /* filter: sepia(100%) hue-rotate(190deg) saturate(500%); */
 }
 .profile-button:hover .tooltip {
   opacity: 1;

@@ -43,13 +43,12 @@
   font-size: 20px;
   border-radius: 4px;
   padding : 3px 5px ;
-  /* margin-left: 10px; */
   margin-top : 2px ;
   left : 100% ;
   top : 100% ;
   transform: translateY(-50%);
   position: absolute;
-  white-space: nowrap; /* tooltip text in one line */
+  white-space: nowrap; 
   
 } 
 

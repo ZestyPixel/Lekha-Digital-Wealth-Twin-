@@ -161,7 +161,7 @@ app.get('/getUserData', authMiddleware, async (req, res) => {
         const userId = req.userId;
 
         const userData = await User.findById(userId);
-        const transaction = await Transaction.find({ userId: userId }).limit(10);
+        const transaction = await Transaction.find({ userId: userId });
         const asset = await Asset.find({ userId: userId });
         const goal = await Goal.find({userId: userId});
         const profile = await Profile.findOne({userId: userId});
