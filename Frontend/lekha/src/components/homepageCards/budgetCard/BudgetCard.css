@@ -50,7 +50,7 @@
 .budget-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px 16px;
+    gap: 15px 10px;
 }
 
 .budget-item {
@@ -96,19 +96,19 @@
 }
 
 .progress-fill.good {
-    background: linear-gradient(90deg, #69db7c, #69db7c);
+    background: linear-gradient(90deg, #16a34a, #22c55e);
 }
 
 .progress-fill.caution {
-    background: linear-gradient(90deg, #69db7c, #ffe066);
+    background: linear-gradient(90deg, #ca8a04, #facc15);
 }
 
 .progress-fill.warning {
-    background: linear-gradient(90deg, #69db7c, #ffa94d);
+    background: linear-gradient(90deg, #ea580c, #fb923c);
 }
 
 .progress-fill.danger {
-    background: linear-gradient(90deg, #69db7c, #ff6b6b);
+    background: linear-gradient(90deg, #dc2626, #f87171);
 }
 
 .progress-overflow {

@@ -14,6 +14,7 @@ import NetWorth from './pages/networth/NetWorth';
 import MonthlyExpenses from './pages/monthlyexpenses/MonthlyExpenses';
 import Goals from './pages/goals/Goals';
 import Profile from './pages/profile/Profile';
+import ManageWealth from './pages/wealth/ManageWealth';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -71,6 +72,11 @@ function App() {
                   <Route path="/profile" element={
                     <ProtectedRoute>
                       <Profile/>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/wealth" element={
+                    <ProtectedRoute>
+                      <ManageWealth/>
                     </ProtectedRoute>
                   } />
                   {/* Catch-all for authenticated routes */}

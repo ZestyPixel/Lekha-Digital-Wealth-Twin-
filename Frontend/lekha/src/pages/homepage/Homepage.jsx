@@ -7,6 +7,7 @@ import LastTransaction from "../../components/homepageCards/recentTransactions/L
 import PieChartCard from "../../components/homepageCards/piechart/PieChartCard";
 import MonthlyExpensesCard from "../../components/homepageCards/monthExpenses/MonthlyExpenses";
 import BudgetCard from "../../components/homepageCards/budgetCard/BudgetCard";
+import WealthCard from "../../components/homepageCards/wealth/WealthCard";
 
 export default function HomePage(){
   const { user, requestWithAuth } = useAuth();
@@ -49,7 +50,7 @@ export default function HomePage(){
             <div className="card-container">
               <Card Title={"Health Score"}/>
               <Link to={'/networth'} state={protectedData?.asset ?? []}><PieChartCard Data={protectedData?.asset} /></Link>
-              <Card/> 
+              <Link to={'/wealth'} ><WealthCard Title={"Manage Wealth"}/></Link>
               <Link to={'/lastttransaction'}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[protectedData.transaction.length-1]} /> </Link>
               {/* Question mark is optional chaining, it checks if protectedData is not null before trying to access the transaction property. 
               If protectedData is null, it will return undefined instead of throwing an error. */}

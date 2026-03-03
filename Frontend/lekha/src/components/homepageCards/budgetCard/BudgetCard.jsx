@@ -26,14 +26,14 @@ export default function BudgetCard({ DataP, DataT }) {
     }, [DataT]);
 
     const chartData = [
-        { name: "Bills", icon: "🏠", spent: expenses.houUtil, budget: DataP?.bills ?? 0 },
-        { name: "Food", icon: "🍔", spent: expenses.foodDin, budget: DataP?.food ?? 0 },
-        { name: "Transport", icon: "🚗", spent: expenses.trans, budget: DataP?.transport ?? 0 },
-        { name: "Lifestyle", icon: "✨", spent: expenses.lifeLeis, budget: DataP?.lifestyle ?? 0 },
-        { name: "Health", icon: "💊", spent: expenses.healthWell, budget: DataP?.health ?? 0 },
-        { name: "Obligations", icon: "📋", spent: expenses.finObl, budget: DataP?.obligations ?? 0 },
-        { name: "Savings", icon: "💰", spent: expenses.savInv, budget: DataP?.savings ?? 0 },
-        { name: "Misc", icon: "📦", spent: expenses.misc, budget: DataP?.misc ?? 0 },
+        { name: "Bills", icon: "", spent: expenses.houUtil, budget: DataP?.bills ?? 0 },
+        { name: "Food", icon: "", spent: expenses.foodDin, budget: DataP?.food ?? 0 },
+        { name: "Transport", icon: "", spent: expenses.trans, budget: DataP?.transport ?? 0 },
+        { name: "Lifestyle", icon: "", spent: expenses.lifeLeis, budget: DataP?.lifestyle ?? 0 },
+        { name: "Health", icon: "", spent: expenses.healthWell, budget: DataP?.health ?? 0 },
+        { name: "Obligations", icon: "", spent: expenses.finObl, budget: DataP?.obligations ?? 0 },
+        { name: "Savings", icon: "", spent: expenses.savInv, budget: DataP?.savings ?? 0 },
+        { name: "Misc", icon: "", spent: expenses.misc, budget: DataP?.misc ?? 0 },
     ].map(d => ({
         ...d,
         pct: d.budget > 0 ? Math.round((d.spent / d.budget) * 100) : 0,
