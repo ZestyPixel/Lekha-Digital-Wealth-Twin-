@@ -15,6 +15,9 @@ import MonthlyExpenses from './pages/monthlyexpenses/MonthlyExpenses';
 import Goals from './pages/goals/Goals';
 import Profile from './pages/profile/Profile';
 import ManageWealth from './pages/wealth/ManageWealth';
+import LumpsumInvestment from './pages/wealth/LumpForm';
+import SIPInvestment from './pages/wealth/SipForm';
+import TransferWithdraw from './pages/wealth/TransferWithdrawForm';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -77,6 +80,21 @@ function App() {
                   <Route path="/wealth" element={
                     <ProtectedRoute>
                       <ManageWealth/>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/sip" element={
+                    <ProtectedRoute>
+                      <SIPInvestment/>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/lump" element={
+                    <ProtectedRoute>
+                      <LumpsumInvestment/>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/transfer" element={
+                    <ProtectedRoute>
+                      <TransferWithdraw/>
                     </ProtectedRoute>
                   } />
                   {/* Catch-all for authenticated routes */}

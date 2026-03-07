@@ -12,6 +12,7 @@ import WealthCard from "../../components/homepageCards/wealth/WealthCard";
 export default function HomePage(){
   const { user, requestWithAuth } = useAuth();
   const [protectedData, setProtectedData] = useState({data: {name: ''}, asset: [], transaction: null});
+  const [advice, setAdvice] = useState('');
   
   useEffect(() => {
   const fetchProtectedData = async () => {
@@ -23,14 +24,33 @@ export default function HomePage(){
       localStorage.setItem('protectedData', JSON.stringify(data));
     } catch (err) {
       console.error('Error fetching protected data:', err);
-    }
-  };
-
+    }};
   if (user) {
     fetchProtectedData();
   } else {
     setProtectedData(null);
   }
+}, [user]);
+
+useEffect(() => {
+    const storedAdvice = localStorage.getItem("advice");
+
+    if (storedAdvice && storedAdvice !== "undefined") {
+        setAdvice(storedAdvice);
+        return;
+    }
+
+    const fetchAdvice = async () => {
+        const res = await requestWithAuth('/advice');
+        const data = await res.json();
+
+        if (data) {
+            setAdvice(data);
+            localStorage.setItem("advice", data);
+        }
+    };
+
+    fetchAdvice();
 }, [user]);
  
     return(
@@ -50,7 +70,7 @@ export default function HomePage(){
             <div className="card-container">
               <Card Title={"Health Score"}/>
               <Link to={'/networth'} state={protectedData?.asset ?? []}><PieChartCard Data={protectedData?.asset} /></Link>
-              <Link to={'/wealth'} ><WealthCard Title={"Manage Wealth"}/></Link>
+              <Link to={'/wealth'} ><WealthCard Title={"Manage Wealth"} Advice={advice}/></Link>
               <Link to={'/lastttransaction'}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[protectedData.transaction.length-1]} /> </Link>
               {/* Question mark is optional chaining, it checks if protectedData is not null before trying to access the transaction property. 
               If protectedData is null, it will return undefined instead of throwing an error. */}

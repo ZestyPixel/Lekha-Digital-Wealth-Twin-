@@ -13,15 +13,12 @@ const Goal = require('./models/goals.js');
 const Profile = require('./models/profile.js');
 const Log = require('./models/logs.js');
 
+const { GoogleGenAI } = require("@google/genai"); //To use gemini flash.
+const ai = new GoogleGenAI({});
+
 const {isAuth} = require('./utils/isAuth.js');
 const bcrypt = require('bcrypt');
 const authMiddleware = require('./middlewares/authMiddleware.js');
-
-const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:5173', 
-    'https://lekha-digital-wealth-twin.vercel.app'
-];
 
 app.use(cors({
     origin: ['http://localhost:5173', 'https://lekha-digital-wealth-twin.vercel.app'],
@@ -232,6 +229,16 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
         // If it does exist, it will update the existing profile with the new data.
     );
     res.json({success: true});
+});
+
+app.get('/advice', authMiddleware, async(req, res)=>{
+    const response = await ai.models.generateContent({
+            model: "gemini-3-flash-preview",
+            contents: "give one line of general good financial advice"
+    });
+    const resp = response.text.trim();
+    console.log(resp);
+    res.json(resp);
 });
 
 mongoose.connect(process.env.MONGO_URI)

@@ -2,19 +2,22 @@ import LumpSum from "../../components/wealthCards/LumpSum";
 import StartSIP from "../../components/wealthCards/StartSIP";
 import WithdrawTransfer from "../../components/wealthCards/WithdrawTransfer";
 import "./ManageWealth.css";
-import LumpsumInvestment from "./temp";
+import { Link } from "react-router-dom";
+import LumpsumInvestment from "./LumpForm";
+import SIPInvestment from "./SipForm";
+import TransferWithdraw from "./TransferWithdrawForm";
 
 export default function ManageWealth(){
     return(
         <div className="container">
             <div className="lumpsum-form">
-                <LumpsumInvestment/>
+                <Link to={'/lump'}><LumpSum Title={'Lumpsum Investment'}/></Link>
             </div>
             <div className="sip">
-                SIP
+                <Link to={'/sip'}><StartSIP Title={'Systematic Investment Plan (SIP)'}/></Link>
             </div>
             <div className="transfer-withdraw">
-                Transfer
+                <Link to={'/transfer'}><WithdrawTransfer Title={'Transfer/Withdraw'}/></Link>
             </div>
         </div>
     );

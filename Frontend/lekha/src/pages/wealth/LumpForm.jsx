@@ -23,10 +23,6 @@ const validate = values => {
         errors.purchaseDate = 'Required';
     }
 
-    if (!values.notes && values.notes?.length > 200) {
-        errors.notes = 'Must be 200 characters or less';
-    }
-
     return errors;
 };
 
@@ -40,7 +36,6 @@ export default function LumpsumInvestment() {
             assetType: '',
             fundName: '',
             purchaseDate: '',
-            notes: '',
         },
         validate,
         onSubmit: async (values) => {
@@ -99,13 +94,7 @@ export default function LumpsumInvestment() {
                         >
                             <option value="" disabled>Select asset type</option>
                             <option value="MutualFund">Mutual Fund</option>
-                            <option value="Stocks">Stocks / Equity</option>
-                            <option value="Gold">Gold (Physical / Digital)</option>
-                            <option value="Bonds">Bonds / Debentures</option>
-                            <option value="RealEstate">Real Estate</option>
-                            <option value="FD">Fixed Deposit (FD)</option>
-                            <option value="Crypto">Cryptocurrency</option>
-                            <option value="Other">Other</option>
+                            <option value="Gold">Gold (Digital)</option>
                         </select>
                         {formik.touched.assetType && formik.errors.assetType && (
                             <div className="error">{formik.errors.assetType}</div>
@@ -142,23 +131,6 @@ export default function LumpsumInvestment() {
                         />
                         {formik.touched.purchaseDate && formik.errors.purchaseDate && (
                             <div className="error">{formik.errors.purchaseDate}</div>
-                        )}
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="notes" className="email-and-password">Notes (Optional):</label>
-                        <input
-                            id="notes"
-                            name="notes"
-                            className="email-bar"
-                            type="text"
-                            placeholder="Ex: Long-term goal, emergency fund"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.notes}
-                        />
-                        {formik.touched.notes && formik.errors.notes && (
-                            <div className="error">{formik.errors.notes}</div>
                         )}
                     </div>
 
