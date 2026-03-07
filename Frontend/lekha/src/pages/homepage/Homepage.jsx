@@ -8,13 +8,15 @@ import PieChartCard from "../../components/homepageCards/piechart/PieChartCard";
 import MonthlyExpensesCard from "../../components/homepageCards/monthExpenses/MonthlyExpenses";
 import BudgetCard from "../../components/homepageCards/budgetCard/BudgetCard";
 import WealthCard from "../../components/homepageCards/wealth/WealthCard";
+import HealthScore from "../../components/homepageCards/healthScore/HealthScore";
 
 export default function HomePage(){
   const { user, requestWithAuth } = useAuth();
   const [protectedData, setProtectedData] = useState({data: {name: ''}, asset: [], transaction: null});
   const [advice, setAdvice] = useState('');
+  const [score, setScore] = useState('');
   
-  useEffect(() => {
+  useEffect(() => { //To get all the required data for the homepage.
   const fetchProtectedData = async () => {
     try {
       const response = await requestWithAuth('/getUserData');
@@ -32,7 +34,7 @@ export default function HomePage(){
   }
 }, [user]);
 
-useEffect(() => {
+useEffect(() => { //Wealth card advice
     const storedAdvice = localStorage.getItem("advice");
 
     if (storedAdvice && storedAdvice !== "undefined") {
@@ -53,6 +55,27 @@ useEffect(() => {
     fetchAdvice();
 }, [user]);
  
+useEffect(() => { //Health Score
+    const storedScore = localStorage.getItem("score");
+
+    if (storedScore && storedScore !== "undefined") {
+        setScore(storedScore);
+        return;
+    }
+
+    const fetchScore = async () => {
+        const res = await requestWithAuth('/score');
+        const data = await res.json();
+
+        if (data) {
+            setScore(data);
+            localStorage.setItem("score", data);
+        }
+    };
+
+    // fetchAdvice();
+}, [user]);
+
     return(
         <div className="homepage-container">
             {user && (
@@ -68,7 +91,7 @@ useEffect(() => {
             )}
             
             <div className="card-container">
-              <Card Title={"Health Score"}/>
+              <HealthScore Title={"Health Score"}/>
               <Link to={'/networth'} state={protectedData?.asset ?? []}><PieChartCard Data={protectedData?.asset} /></Link>
               <Link to={'/wealth'} ><WealthCard Title={"Manage Wealth"} Advice={advice}/></Link>
               <Link to={'/lastttransaction'}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[protectedData.transaction.length-1]} /> </Link>

@@ -27,10 +27,6 @@ const validate = values => {
         errors.startDate = 'Required';
     }
 
-    if (values.tenure && (values.tenure < 1 || values.tenure > 360)) {
-        errors.tenure = 'Tenure must be between 1 and 360 months';
-    }
-
     return errors;
 };
 
@@ -45,8 +41,6 @@ export default function SIPInvestment() {
             fundName: '',
             sipDate: '',
             startDate: '',
-            tenure: '',
-            notes: '',
         },
         validate,
         onSubmit: async (values) => {
@@ -105,10 +99,7 @@ export default function SIPInvestment() {
                         >
                             <option value="" disabled>Select asset type</option>
                             <option value="MutualFund">Mutual Fund</option>
-                            <option value="Stocks">Stocks</option>
-                            <option value="Gold">Digital Gold</option>
-                            <option value="ETF">ETF</option>
-                            <option value="Other">Other</option>
+                            <option value="Gold">Gold</option>
                         </select>
                         {formik.touched.assetType && formik.errors.assetType && (
                             <div className="error">{formik.errors.assetType}</div>

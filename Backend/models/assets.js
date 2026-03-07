@@ -9,7 +9,7 @@ const assetSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ["Bank Account", "Gold", "Stocks", "Real Estate"],
+      enum: ["Bank Account", "Gold", "Stocks", "Real Estate", "Mutual Fund"],
     },
 
     currentValue: {

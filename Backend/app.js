@@ -241,6 +241,73 @@ app.get('/advice', authMiddleware, async(req, res)=>{
     res.json(resp);
 });
 
+app.post('/addlumpsum', authMiddleware, async(req, res)=>{
+    const userId = req.userId;
+    const { amount, assetType, fundName, purchaseDate } = req.body;
+    console.log(req.body);
+    if(assetType === "MutualFund"){
+        
+        await Asset.findOneAndUpdate(
+            { userId, type: "Mutual Funds" },
+            { $inc: {currentValue: amount}} //$inc does an increment operation, it will add the amount to the existing price field of the asset document. 
+            // If the price field doesn't exist, it will create it and set it to the value of amount.
+        )
+    }else{
+        await Asset.findOneAndUpdate(
+            { userId, type: "Gold" },
+            { $inc: {currentValue: amount}} 
+        )
+    }
+    res.json({success: true});
+});
+
+app.post('/addsip', authMiddleware, async(req, res)=>{
+    const userId = req.userId;
+    const { monthlyAmount, assetType, fundName, sipDate, startDate} = req.body;
+    if(assetType === "MutualFund"){
+        await Asset.findOneAndUpdate(
+            { userId, type: "Mutual Funds" },
+            { $inc: {currentValue: monthlyAmount}}
+        )
+    }else{
+        await Asset.findOneAndUpdate(
+            { userId, type: "Gold" },
+            { $inc: {currentValue: monthlyAmount}} 
+        )
+    }
+    res.json({success: true});
+});
+
+app.post('/transferwithdraw', authMiddleware, async(req, res)=>{
+    const userId = req.userId;
+    console.log(req.body);
+    const { transactionType, amount, sourceType, destinationType, destAccountNumber, destIfsc, destBankName, destFundName, destGoldGrams, destGoldPurity, 
+        destStockShares, transactionDate } = req.body;
+    
+    if(transactionType === "Transfer"){
+        await Asset.findOneAndUpdate(
+            { userId, type: "Account" },
+            { $inc: {currentValue: -amount}}
+        )
+    }else if(sourceType === "MutualFund"){
+        await Asset.findOneAndUpdate(
+            { userId, type: "Mutual Funds" },
+            { $inc: {currentValue: -amount}}
+        )
+    }else{
+        await Asset.findOneAndUpdate(
+            { userId, type: "Gold" },
+            { $inc: {currentValue: -amount}}
+        )
+    }
+    
+    res.json({success: true});
+});
+
+app.get('/score', authMiddleware, async(req, res)=>{
+
+});
+
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))
     .catch(err => console.error("Could not connect to MongoDB", err));

@@ -13,7 +13,7 @@ const validate = values => {
         errors.amount = 'Enter a valid amount';
     }
 
-    if (!values.sourceType) {
+    if (values.transactionType === 'Redeem' && !values.sourceType) {
         errors.sourceType = 'Required';
     }
 
@@ -28,10 +28,15 @@ const validate = values => {
             if (!values.destBankName) errors.destBankName = 'Required';
         }
 
+        if (values.destinationType === 'MutualFund') {
+            if (!values.destFundName) errors.destFundName = 'Required';
+        }
+
         if (values.destinationType === 'Gold') {
             if (!values.destGoldGrams || values.destGoldGrams <= 0) errors.destGoldGrams = 'Enter valid grams';
             if (!values.destGoldPurity) errors.destGoldPurity = 'Required';
         }
+
     }
 
     if (!values.transactionDate) {
@@ -98,25 +103,22 @@ function BankAccountFields({ formik }) {
 
 function MutualFundFields({ formik }) {
     return (
-        <>
-            <div className="form-group">
-                <label htmlFor="destFundName" className="email-and-password">Fund Name:</label>
-                <input
-                    id="destFundName"
-                    name="destFundName"
-                    className="email-bar"
-                    type="text"
-                    placeholder="e.g. Axis Bluechip Fund"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.destFundName}
-                />
-                {formik.touched.destFundName && formik.errors.destFundName && (
-                    <div className="error">{formik.errors.destFundName}</div>
-                )}
-            </div>
-
-        </>
+        <div className="form-group">
+            <label htmlFor="destFundName" className="email-and-password">Fund Name:</label>
+            <input
+                id="destFundName"
+                name="destFundName"
+                className="email-bar"
+                type="text"
+                placeholder="e.g. Axis Bluechip Fund"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.destFundName}
+            />
+            {formik.touched.destFundName && formik.errors.destFundName && (
+                <div className="error">{formik.errors.destFundName}</div>
+            )}
+        </div>
     );
 }
 
@@ -163,35 +165,11 @@ function GoldFields({ formik }) {
     );
 }
 
-function StockFields({ formik }) {
-    return (
-        <>
-            <div className="form-group">
-                <label htmlFor="destStockShares" className="email-and-password">Number of Shares:</label>
-                <input
-                    id="destStockShares"
-                    name="destStockShares"
-                    className="email-bar"
-                    type="number"
-                    placeholder="e.g. 10"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.destStockShares}
-                />
-                {formik.touched.destStockShares && formik.errors.destStockShares && (
-                    <div className="error">{formik.errors.destStockShares}</div>
-                )}
-            </div>
-        </>
-    );
-}
-
 function DestinationDetailFields({ destinationType, formik }) {
     switch (destinationType) {
         case 'BankAccount': return <BankAccountFields formik={formik} />;
         case 'MutualFund':  return <MutualFundFields formik={formik} />;
         case 'Gold':        return <GoldFields formik={formik} />;
-        case 'Stocks':      return <StockFields formik={formik} />;
         default:            return null;
     }
 }
@@ -212,7 +190,6 @@ export default function TransferWithdraw() {
             destFundName: '',
             destGoldGrams: '',
             destGoldPurity: '',
-            destStockShares: '',
             transactionDate: '',
         },
         validate,
@@ -238,6 +215,7 @@ export default function TransferWithdraw() {
     });
 
     const isTransfer = formik.values.transactionType === 'Transfer';
+    const isRedeem = formik.values.transactionType === 'Redeem';
 
     return (
         <div>
@@ -281,26 +259,26 @@ export default function TransferWithdraw() {
                         )}
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="sourceType" className="email-and-password">Source Type:</label>
-                        <select
-                            id="sourceType"
-                            name="sourceType"
-                            className="email-bar"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.sourceType}
-                        >
-                            <option value="" disabled>Where is the money coming from?</option>
-                            <option value="BankAccount">Bank Account</option>
-                            <option value="MutualFund">Mutual Fund</option>
-                            <option value="Gold">Gold</option>
-                            <option value="Stocks">Stocks</option>
-                        </select>
-                        {formik.touched.sourceType && formik.errors.sourceType && (
-                            <div className="error">{formik.errors.sourceType}</div>
-                        )}
-                    </div>
+                    {isRedeem && (
+                        <div className="form-group">
+                            <label htmlFor="sourceType" className="email-and-password">Redeem From:</label>
+                            <select
+                                id="sourceType"
+                                name="sourceType"
+                                className="email-bar"
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={formik.values.sourceType}
+                            >
+                                <option value="" disabled>What are you redeeming?</option>
+                                <option value="MutualFund">Mutual Fund</option>
+                                <option value="Gold">Gold</option>
+                            </select>
+                            {formik.touched.sourceType && formik.errors.sourceType && (
+                                <div className="error">{formik.errors.sourceType}</div>
+                            )}
+                        </div>
+                    )}
 
                     {isTransfer && (
                         <>
@@ -316,9 +294,6 @@ export default function TransferWithdraw() {
                                 >
                                     <option value="" disabled>Where is the money going to?</option>
                                     <option value="BankAccount">Bank Account</option>
-                                    <option value="MutualFund">Mutual Fund</option>
-                                    <option value="Gold">Gold (Digital)</option>
-                                    <option value="Stocks">Stocks</option>
                                 </select>
                                 {formik.touched.destinationType && formik.errors.destinationType && (
                                     <div className="error">{formik.errors.destinationType}</div>
@@ -349,9 +324,9 @@ export default function TransferWithdraw() {
                     </div>
 
                     <button type="submit" className="sign-up">
-                        {formik.values.transactionType === 'Transfer' ? 'Transfer Funds'
-                            : formik.values.transactionType === 'Redeem' ? 'Redeem Asset'
-                            : 'Withdraw Funds'}
+                        {isTransfer ? 'Transfer Funds'
+                            : isRedeem ? 'Redeem Asset'
+                            : 'Submit'}
                     </button>
 
                 </form>
