@@ -91,7 +91,7 @@ useEffect(() => { //Health Score
             )}
             
             <div className="card-container">
-              <HealthScore Title={"Health Score"}/>
+              <HealthScore Title={"Financial Health Score"}/>
               <Link to={'/networth'} state={protectedData?.asset ?? []}><PieChartCard Data={protectedData?.asset} /></Link>
               <Link to={'/wealth'} ><WealthCard Title={"Manage Wealth"} Advice={advice}/></Link>
               <Link to={'/lastttransaction'}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[protectedData.transaction.length-1]} /> </Link>

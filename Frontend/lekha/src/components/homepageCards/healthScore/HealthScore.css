@@ -1,0 +1,66 @@
+.health-card{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  box-sizing:border-box;
+  padding-bottom:20px;
+}
+
+.score-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-left:20px;
+}
+
+.score-number{
+  font-size:64px;
+  font-weight:800;
+  line-height:1;
+}
+
+.score-info{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.score-max{
+  font-size:14px;
+  color:rgba(255,255,255,0.55);
+}
+
+.score-label{
+  font-size:13px;
+  font-weight:700;
+  background:rgba(255,255,255,0.15);
+  padding:3px 12px;
+  border-radius:999px;
+}
+
+.progress-section{
+  margin:0 20px;
+}
+
+.progress-labels{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+}
+
+.progress-labels span{
+  font-size:12px;
+  color:rgba(255,255,255,0.45);
+}
+
+.progress-bar{
+  height:8px;
+  background:rgba(255,255,255,0.2);
+  border-radius:4px;
+}
+
+.progress-fill{
+  height:100%;
+  border-radius:4px;
+  transition:width 1s ease;
+}

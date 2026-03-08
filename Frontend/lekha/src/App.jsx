@@ -18,6 +18,7 @@ import ManageWealth from './pages/wealth/ManageWealth';
 import LumpsumInvestment from './pages/wealth/LumpForm';
 import SIPInvestment from './pages/wealth/SipForm';
 import TransferWithdraw from './pages/wealth/TransferWithdrawForm';
+import ChatBot from './components/chatbot/ChatBot';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -42,7 +43,7 @@ function App() {
               </header>
               
               <Hamburger isOpen={sidebarOpen} />
-              
+              <ChatBot/>
               <main className={`app-main ${sidebarOpen ? 'sidebar-open' : ''}`}>
                 <Routes>
                   <Route path="/homepage" element={

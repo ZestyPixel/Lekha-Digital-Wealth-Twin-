@@ -7,7 +7,7 @@ export default function WealthCard({Title, Advice}){
             <div className="heading">
                 {Title}
             </div>
-            <p className="Total-expense-amount-trans">
+            <p className="Total-expense-amount-trans ">
                 {Advice}
             </p>
         </div>

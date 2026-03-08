@@ -234,7 +234,7 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
 app.get('/advice', authMiddleware, async(req, res)=>{
     const response = await ai.models.generateContent({
             model: "gemini-3-flash-preview",
-            contents: "give one line of general good financial advice"
+            contents: "give one line of general good financial advice and change it everytime"
     });
     const resp = response.text.trim();
     console.log(resp);
