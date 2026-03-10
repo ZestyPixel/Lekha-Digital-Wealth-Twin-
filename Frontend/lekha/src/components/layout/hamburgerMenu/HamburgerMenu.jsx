@@ -24,7 +24,7 @@ function Hamburger({ isOpen }) {
           </Link>
         </div>
         <div className="dark-mode">
-          <button className="dark-mode-button" onClick={toggleDark}>
+          <button className="dark-mode-button " onClick={toggleDark}>
             <img className="dark-icon" src="/images/dark-mode-6682.svg" alt="dark mode" />
             <div className="tooltip">Dark Mode</div>
           </button>

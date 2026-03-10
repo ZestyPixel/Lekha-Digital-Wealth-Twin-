@@ -1,0 +1,29 @@
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.Total-expenses-wealth {
+  display: inline-block;
+  width: 365px;
+  height: 210px;
+  border: 2px solid;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(to bottom, #4a7dff 0%, #0040ff 50%, #0033cc 100%);
+  font-weight: 500;
+}
+
+.Total-expense-amount-wealth {
+  font-size: 17px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
+}
+
+.heading-wealth {
+  font-size: 22px;
+  font-family: arial;
+  margin-left: 20px;
+  margin-top: 20px;
+}

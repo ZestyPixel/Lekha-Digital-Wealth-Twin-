@@ -2,8 +2,15 @@
     display: flex;
     flex-wrap: wrap;
     flex-direction:row;
-    column-gap: 0.3cm;
-    row-gap: 0.3cm;
+    column-gap: 0.5cm;
+    row-gap: 0.5cm;
     overflow: visible;
 }
 
+.welcome {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0px;
+  text-align: center;
+}

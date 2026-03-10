@@ -186,7 +186,9 @@ app.post('/addasset', authMiddleware, async(req, res)=>{
   });
   await newAsset.save();
   console.log(newAsset);
-  res.json({success: true});
+  setTimeout(()=>{
+    res.json({success: true});
+  }, 1000);
 });
 
 app.post('/addtransaction', authMiddleware, async(req, res)=>{
@@ -234,7 +236,7 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
 app.get('/advice', authMiddleware, async(req, res)=>{
     const response = await ai.models.generateContent({
             model: "gemini-3-flash-preview",
-            contents: "give one line of general good financial advice and change it everytime"
+            contents: "give one line of financial advice based on latest conditions of the world and india"
     });
     const resp = response.text.trim();
     console.log(resp);

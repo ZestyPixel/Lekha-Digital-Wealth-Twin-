@@ -8,7 +8,7 @@ const getScoreConfig = (score) => {
   return { label: "Critical", color: "#f87171" };
 };
 
-const DUMMY_SCORE = 73;
+const DUMMY_SCORE = 63;
 
 export default function HealthScore({ Title }) {
   const score = DUMMY_SCORE;

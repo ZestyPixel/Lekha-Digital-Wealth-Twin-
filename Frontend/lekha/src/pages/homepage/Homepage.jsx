@@ -77,12 +77,12 @@ useEffect(() => { //Health Score
 }, [user]);
 
     return(
-        <div className="homepage-container">
+        <div >
             {user && (
               <div className="user-info-section">
                 {protectedData ? (
                   <>
-                  <h1 className="text-6xl">Welcome, {protectedData.data.name}</h1> <br /><br />
+                  <h1 className="welcome">Welcome, {protectedData.data.name}</h1> <br /><br />
                   </>
                 ) : (
                 <p>Loading user data...</p>
