@@ -3,6 +3,7 @@ import LoginForm from './pages/login/LoginForm';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion';
+import PageWrapper from './utils/pageWrapper';
 import Navbar from './components/layout/navbar/NavBar'
 import Hamburger from './components/layout/hamburgerMenu/HamburgerMenu'
 import Footer from './components/layout/footer/Footer'
@@ -21,24 +22,6 @@ import SIPInvestment from './pages/wealth/SipForm';
 import TransferWithdraw from './pages/wealth/TransferWithdrawForm';
 import ChatBot from './components/chatbot/ChatBot';
 
-// Wraps each page with fade + slide animation
-function PageWrapper({ children }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.98, filter: "blur(2px)" }}
-      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-      exit={{ opacity: 0, scale: 0.98, filter: "blur(2px)" }}
-      transition={{
-        duration: 0.2,
-        ease: "easeOut"
-      }}
-      style={{ height: "100%" }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
 //We wrote the routes in a separate component so that we can use the useLocation hook which can only be used inside a component that is rendered by a Route. 
 // This allows us to animate the route transitions using AnimatePresence from framer-motion. 
 // The key prop on Routes ensures that the animation runs whenever the route changes.
@@ -52,7 +35,7 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/homepage" element={
           <ProtectedRoute>
-            <PageWrapper><HomePage /></PageWrapper>
+            <PageWrapper><HomePage /></PageWrapper> {/* Wraps each page with fade + slide animation */}
           </ProtectedRoute>
         } />
 

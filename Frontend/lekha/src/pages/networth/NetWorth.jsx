@@ -38,7 +38,7 @@ export default function AddAssetForm() {
             institution: '',
         },
         validate,
-        onSubmit: async (values, {setSubmitting}) => { //What setSubmitting does is it sets the form to a "submitting" state, 
+        onSubmit: async (values, ) => { //What setSubmitting does is it sets the form to a "submitting" state, 
         // which can be used to disable the submit button or show a loading indicator while the form is being submitted. 
         // Once the submission process is complete, you can call setSubmitting(false) to reset the submitting state.
         // setStatus can be used to set a status message that can be displayed to the user.
@@ -59,13 +59,8 @@ export default function AddAssetForm() {
                 console.error("Add Asset failed:", error);
             }
 
-            setSubmitting(false);
         },
     });
-
-    if(formik.isSubmitting) {
-        return <div>Submitting...</div>;
-    }   
 
     return (
     <div>

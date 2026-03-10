@@ -43,7 +43,7 @@ export default function SIPInvestment() {
             startDate: '',
         },
         validate,
-        onSubmit: async (values) => {
+        onSubmit: async (values, {setSubmitting}) => {
             try {
                 const response = await requestWithAuth('/addsip', {
                     method: 'POST',
@@ -61,8 +61,14 @@ export default function SIPInvestment() {
                 console.error("SIP setup failed:", error);
                 alert("SIP setup failed");
             }
+
+            setSubmitting(false);
         },
     });
+
+    if(formik.isSubmitting) {
+        return <div>Submitting...</div>;
+    }   
 
     return (
         <div>

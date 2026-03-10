@@ -193,7 +193,7 @@ export default function TransferWithdraw() {
             transactionDate: '',
         },
         validate,
-        onSubmit: async (values) => {
+        onSubmit: async (values, {setSubmitting}) => {
             try {
                 const response = await requestWithAuth('/transferwithdraw', {
                     method: 'POST',
@@ -211,11 +211,17 @@ export default function TransferWithdraw() {
                 console.error("Transaction failed:", error);
                 alert("Transaction failed");
             }
+
+            setSubmitting(false);
         },
     });
 
     const isTransfer = formik.values.transactionType === 'Transfer';
     const isRedeem = formik.values.transactionType === 'Redeem';
+
+    if(formik.isSubmitting) {
+        return <div>Submitting...</div>;
+    }   
 
     return (
         <div>

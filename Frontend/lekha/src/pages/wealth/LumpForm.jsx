@@ -1,6 +1,7 @@
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
+import Loading from '../../components/loading/Loading';
 
 const validate = values => {
     const errors = {};
@@ -38,7 +39,7 @@ export default function LumpsumInvestment() {
             purchaseDate: '',
         },
         validate,
-        onSubmit: async (values) => {
+        onSubmit: async (values, {setSubmitting}) => {
             try {
                 const response = await requestWithAuth('/addlumpsum', {
                     method: 'POST',
@@ -56,8 +57,14 @@ export default function LumpsumInvestment() {
                 console.error("Lumpsum Investment failed:", error);
                 alert("Lumpsum Investment failed");
             }
+
+            setSubmitting(false);
         },
     });
+
+    if(formik.isSubmitting) {
+        return <Loading/>
+    }   
 
     return (
         <div>

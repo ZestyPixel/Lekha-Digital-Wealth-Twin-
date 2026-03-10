@@ -55,6 +55,7 @@ app.post('/login', async (req, res)=>{
     console.log(email, password);
     try{
         const user = await User.findOne({email});
+
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -66,6 +67,7 @@ app.post('/login', async (req, res)=>{
         const accessToken = createAccessToken(user.id);
         const hashedToken = await bcrypt.hash(refreshToken, 10);
         user.refreshToken = hashedToken;
+        user.behavioralBaseline.lastLoginTime = new Date();
         await user.save();
         sendRefreshToken(res, refreshToken);
         res.send({
@@ -236,7 +238,7 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
 app.get('/advice', authMiddleware, async(req, res)=>{
     const response = await ai.models.generateContent({
             model: "gemini-3-flash-preview",
-            contents: "give one line of financial advice based on latest conditions of the world and india"
+            contents: "give one short line of financial advice based on latest conditions of the world and india"
     });
     const resp = response.text.trim();
     console.log(resp);
@@ -260,7 +262,9 @@ app.post('/addlumpsum', authMiddleware, async(req, res)=>{
             { $inc: {currentValue: amount}} 
         )
     }
+    setTimeout(()=>{
     res.json({success: true});
+  }, 1000);
 });
 
 app.post('/addsip', authMiddleware, async(req, res)=>{
