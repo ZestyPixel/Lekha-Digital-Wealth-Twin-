@@ -68,10 +68,10 @@ export default function MonthlyExpenses({Data = []}){
               <PieChart>
                 <Pie
                   data={chartData}
-                  cx="50%"
-                  cy="52%"
-                  innerRadius="70%"
-                  outerRadius="100%"
+                  cx="28%"
+                  cy="55%"          
+                  innerRadius="70%"  
+                  outerRadius="89%"
                   paddingAngle={1}
                   dataKey="value"
                 >
@@ -81,10 +81,10 @@ export default function MonthlyExpenses({Data = []}){
                     const { cx, cy } = viewBox;
                     return (
                     <>
-                        <text x={cx+75} y={cy - 8} textAnchor="middle" fill="white" fontSize={16} fontWeight={600}>
-                        Total Expenses
+                        <text x={cx+31} y={cy + 3} textAnchor="middle" fill="white" fontSize={15} fontWeight={600}>
+                        Total Expenses:
                         </text>
-                        <text x={cx+75} y={cy + 10} textAnchor="middle" fill="white" fontSize={18} fontWeight={700}>
+                        <text x={cx+29} y={cy + 27} textAnchor="middle" fill="white" fontSize={18} fontWeight={700}>
                         {formatCurrency(totalWorth)}
                         </text>
                     </>
@@ -101,6 +101,7 @@ export default function MonthlyExpenses({Data = []}){
                 align="left"
                 verticalAlign="left"
                 iconType="circle"
+                wrapperStyle={{ marginLeft: '5px', paddingLeft: '0px' }}
                 formatter={(value) => <span className="expen-legend-label">{value}</span>}
                 />
               </PieChart>

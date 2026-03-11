@@ -3,7 +3,7 @@ import LoginForm from './pages/login/LoginForm';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion';
-import PageWrapper from './utils/pageWrapper';
+import PageWrapper from './utils/PageWrapper';
 import Navbar from './components/layout/navbar/NavBar'
 import Hamburger from './components/layout/hamburgerMenu/HamburgerMenu'
 import Footer from './components/layout/footer/Footer'
