@@ -1,24 +1,24 @@
-const User = require('./models/user.js');
+const User = require('../models/user');
 const mongoose = require('mongoose'); 
 
 async function securityMiddleware(req, res, next) {
     try {
-        let device = 'exampleDevice';
-        let amount = 9999;
         const id = req.userId;
+        let { amount } = req.body;
+        let device = false;
         let riskScore = 0;
 
         const user = await User.findById( id );
 
-        const loginGap = Date.now() - user.behaviouralBaseline.lastLoginTime;
-
-        if (loginGap/1000 < 10) {
+        const loginGap = Date.now() - user.behavioralBaseline.lastLoginTime;
+        console.log(loginGap);
+        if (loginGap/1000 < 20) {
             riskScore += 30;
         }
-        if(user.behaviouralBaseline.trustedDevices.includes(device)){
+        if(!device){ //user.behaviouralBaseline.trustedDevices.includes(device)
             riskScore += 20;
         }
-        if( amount > (2 * user.behaviouralBaseline.averageTransactionAmount) ){
+        if( amount > (2 * user.behavioralBaseline.averageTransactionAmount) ){
             riskScore +=20;
         }
         req.riskScore = riskScore;

@@ -1,7 +1,9 @@
 import { useFormik } from 'formik';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
 import Loading from '../../components/loading/Loading';
+import Success from '../../components/success/Success';
 
 const validate = values => {
     const errors = {};
@@ -30,7 +32,13 @@ const validate = values => {
 export default function LumpsumInvestment() {
     const navigate = useNavigate();
     const { requestWithAuth } = useAuth();
-
+    const [success, setSuccess] = useState(false);
+    useEffect(()=>{
+        window.scrollTo({
+            top: 200,
+            behavior: 'smooth',
+        });
+    },[]);
     const formik = useFormik({
         initialValues: {
             amount: '',
@@ -48,8 +56,11 @@ export default function LumpsumInvestment() {
 
                 const result = await response.json();
 
-                if (result.success) {
-                    navigate("/homepage");
+                if (result.decision) {
+                    setSuccess(true);
+                    setTimeout(() => {
+                        navigate("/homepage");
+                    }, 4000);
                 } else {
                     alert(result.error);
                 }
@@ -66,7 +77,14 @@ export default function LumpsumInvestment() {
         return <Loading/>
     }   
 
+    if (success) {
+        return(
+            <Success message={'Investment Successfull'}/>
+        );
+    }
+
     return (
+        
         <div>
             <div className="box">
                 <div className="login-title">Lumpsum Investment</div>

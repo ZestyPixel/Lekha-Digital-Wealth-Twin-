@@ -19,6 +19,7 @@ const ai = new GoogleGenAI({});
 const {isAuth} = require('./utils/isAuth.js');
 const bcrypt = require('bcrypt');
 const authMiddleware = require('./middlewares/authMiddleware.js');
+const securityMiddleware = require('./utils/securityMiddleware.js');
 
 app.use(cors({
     origin: ['http://localhost:5173', 'https://lekha-digital-wealth-twin.vercel.app'],
@@ -238,17 +239,23 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
 app.get('/advice', authMiddleware, async(req, res)=>{
     const response = await ai.models.generateContent({
             model: "gemini-3-flash-preview",
-            contents: "give one short line of financial advice based on latest conditions of the world and india"
+            contents: "give one short line of financial advice based on latest conditions of the world and India"
     });
     const resp = response.text.trim();
     console.log(resp);
     res.json(resp);
 });
 
-app.post('/addlumpsum', authMiddleware, async(req, res)=>{
+app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
     const userId = req.userId;
     const { amount, assetType, fundName, purchaseDate } = req.body;
-    console.log(req.body);
+    const riskScore = req.riskScore;
+    let decision;
+    if(riskScore < 50){
+        decision = true;
+    }else{
+        decision = false;
+    }
     if(assetType === "MutualFund"){
         
         await Asset.findOneAndUpdate(
@@ -263,28 +270,32 @@ app.post('/addlumpsum', authMiddleware, async(req, res)=>{
         )
     }
     setTimeout(()=>{
-    res.json({success: true});
+    res.json({
+        success: true,
+        riskScore: riskScore,
+        decision: decision,
+    });
   }, 1000);
 });
 
-app.post('/addsip', authMiddleware, async(req, res)=>{
+app.post('/addsip', authMiddleware, securityMiddleware, async(req, res)=>{
     const userId = req.userId;
-    const { monthlyAmount, assetType, fundName, sipDate, startDate} = req.body;
+    const { amount, assetType, fundName, sipDate, startDate} = req.body;
     if(assetType === "MutualFund"){
         await Asset.findOneAndUpdate(
             { userId, type: "Mutual Funds" },
-            { $inc: {currentValue: monthlyAmount}}
+            { $inc: {currentValue: amount}}
         )
     }else{
         await Asset.findOneAndUpdate(
             { userId, type: "Gold" },
-            { $inc: {currentValue: monthlyAmount}} 
+            { $inc: {currentValue: amount}} 
         )
     }
     res.json({success: true});
 });
 
-app.post('/transferwithdraw', authMiddleware, async(req, res)=>{
+app.post('/transferwithdraw', authMiddleware, securityMiddleware, async(req, res)=>{
     const userId = req.userId;
     console.log(req.body);
     const { transactionType, amount, sourceType, destinationType, destAccountNumber, destIfsc, destBankName, destFundName, destGoldGrams, destGoldPurity, 

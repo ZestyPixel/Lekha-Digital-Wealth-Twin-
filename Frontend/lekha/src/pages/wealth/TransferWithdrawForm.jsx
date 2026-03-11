@@ -1,10 +1,11 @@
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
+import { useEffect } from 'react';
 
 const validate = values => {
     const errors = {};
-
+    
     if (!values.transactionType) {
         errors.transactionType = 'Required';
     }
@@ -177,6 +178,12 @@ function DestinationDetailFields({ destinationType, formik }) {
 export default function TransferWithdraw() {
     const navigate = useNavigate();
     const { requestWithAuth } = useAuth();
+    useEffect(()=>{
+        window.scrollTo({
+            top: 100,
+            behavior: 'smooth',
+        });
+    },[]);
 
     const formik = useFormik({
         initialValues: {

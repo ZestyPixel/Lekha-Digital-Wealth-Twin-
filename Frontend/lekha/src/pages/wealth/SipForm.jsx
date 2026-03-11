@@ -1,12 +1,13 @@
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
+import { useEffect } from 'react';
 
 const validate = values => {
     const errors = {};
 
-    if (!values.monthlyAmount || values.monthlyAmount <= 0) {
-        errors.monthlyAmount = 'Enter a valid monthly amount';
+    if (!values.amount || values.amount <= 0) {
+        errors.amount = 'Enter a valid monthly amount';
     }
 
     if (!values.assetType) {
@@ -33,10 +34,15 @@ const validate = values => {
 export default function SIPInvestment() {
     const navigate = useNavigate();
     const { requestWithAuth } = useAuth();
-
+    useEffect(()=>{
+        window.scrollTo({
+            top: 200,
+            behavior: 'smooth',
+        });
+    },[]);
     const formik = useFormik({
         initialValues: {
-            monthlyAmount: '',
+            amount: '',
             assetType: '',
             fundName: '',
             sipDate: '',
@@ -77,19 +83,19 @@ export default function SIPInvestment() {
                 <form className="login-box" onSubmit={formik.handleSubmit}>
 
                     <div className="form-group">
-                        <label htmlFor="monthlyAmount" className="email-and-password">Monthly SIP Amount (₹):</label>
+                        <label htmlFor="amount" className="email-and-password">Monthly SIP Amount (₹):</label>
                         <input
-                            id="monthlyAmount"
-                            name="monthlyAmount"
+                            id="amount"
+                            name="amount"
                             className="email-bar"
                             type="number"
                             placeholder="Enter monthly amount (Ex: 5000)"
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            value={formik.values.monthlyAmount}
+                            value={formik.values.amount}
                         />
-                        {formik.touched.monthlyAmount && formik.errors.monthlyAmount && (
-                            <div className="error">{formik.errors.monthlyAmount}</div>
+                        {formik.touched.amount && formik.errors.amount && (
+                            <div className="error">{formik.errors.amount}</div>
                         )}
                     </div>
 
