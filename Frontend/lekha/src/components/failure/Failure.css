@@ -1,0 +1,65 @@
+.failure-screen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.failure-check {
+  width: 180px;
+  height: 180px;
+  margin-bottom: 20px;
+  transform: scale(0.8);
+  animation: pop 0.4s ease-out forwards;
+}
+
+.failure-circle {
+  stroke: #ef4444;
+  stroke-width: 8;
+  stroke-dasharray: 339;
+  stroke-dashoffset: 339;
+  animation: drawCircle 0.6s ease forwards;
+}
+
+.failure-cross {
+  stroke: #ef4444;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: drawCross 0.5s ease forwards;
+  animation-delay: 0.6s;
+}
+
+.message {
+  font-size: 36px;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 140px;
+}
+
+@keyframes drawCircle {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes drawCross {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

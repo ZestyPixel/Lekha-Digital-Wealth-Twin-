@@ -2,7 +2,8 @@ import "./Goals.css";
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
-import { formatCurrency } from "../../utils/functions";
+import { useEffect } from "react";
+import GoalCard from "../../components/goalCard/GoalCard";
 
 const validate = values => {
     const errors = {};
@@ -37,6 +38,12 @@ const validate = values => {
 };
 
 export default function SetGoal() {
+    useEffect(()=>{
+        window.scroll({
+            top: '0',
+            behavior: 'smooth'
+        })
+    },[])
     const navigate = useNavigate();
     const { requestWithAuth } = useAuth();
     const protectedData = JSON.parse(localStorage.getItem('protectedData'));
@@ -73,15 +80,16 @@ export default function SetGoal() {
 
     return (
         <div>
-            <div className="goals">
+            <div className="card-container">
                 {protectedData.goal.map((point)=>(
-                <p>
-                    Goal: {point.goalName} <br />
-                    Target Amount: {formatCurrency(point.targetAmount)} <br />
-                    Target Date: {point.targetDate.split("T")[0]} <br />
-                    Current Progress: {formatCurrency(point.currentProgress)} ({Math.round((point.currentProgress/point.targetAmount*100))}%)<br />
-                    Priority: {point.priority}
-                </p>
+                    <GoalCard
+                        key={point._id}
+                        Goal={point.goalName}
+                        Target={point.targetAmount}
+                        Date={new Date(point.targetDate).toLocaleDateString()}
+                        Progress={Math.round((point.currentProgress / point.targetAmount) * 100)}
+                        Priority={point.priority}
+                    />
             ))}
             </div>
             <div className="box">

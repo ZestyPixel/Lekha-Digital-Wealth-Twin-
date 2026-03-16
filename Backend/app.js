@@ -43,6 +43,7 @@ app.post('/register', async (req, res)=>{
             name: name,
             email: email,
             password: password,
+            behavioralBaseline:{averageTransactionAmount: 100},
         });
         const data = await newUser.save();
     }catch(err){
@@ -239,7 +240,7 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
 app.get('/advice', authMiddleware, async(req, res)=>{
     const response = await ai.models.generateContent({
             model: "gemini-3-flash-preview",
-            contents: "give one short line of financial advice based on latest conditions of the world and India"
+            contents: "Give one short general financial tip relevant to people in India. Do not assume real-time market data. Return only one sentence."
     });
     const resp = response.text.trim();
     console.log(resp);
@@ -248,6 +249,12 @@ app.get('/advice', authMiddleware, async(req, res)=>{
 
 app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
     const userId = req.userId;
+    const user = await User.findById(userId);
+    const {pin} = req.body;
+    const compare = await user.comparePassword(pin);
+    if (!compare) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+    }
     const { amount, assetType, fundName, purchaseDate } = req.body;
     const riskScore = req.riskScore;
     let decision;
@@ -269,13 +276,11 @@ app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
             { $inc: {currentValue: amount}} 
         )
     }
-    setTimeout(()=>{
     res.json({
         success: true,
         riskScore: riskScore,
         decision: decision,
     });
-  }, 1000);
 });
 
 app.post('/addsip', authMiddleware, securityMiddleware, async(req, res)=>{

@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const mongoose = require('mongoose'); 
-
+// Add location check, transaction frequency, device fingerprint, failed login attempts
 async function securityMiddleware(req, res, next) {
     try {
         const id = req.userId;

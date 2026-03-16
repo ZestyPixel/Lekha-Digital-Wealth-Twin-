@@ -2,6 +2,8 @@ import "./LoginPage.css";
 import { useFormik } from 'formik';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
+import { useEffect } from "react";
+
     const validate = values => {
         const errors = {};
 
@@ -21,6 +23,12 @@ import { useAuth } from "../../context/useAuth";
     };
 
     export default function LoginForm(){
+        useEffect(()=>{
+            window.scroll({
+                top: '40',
+                behavior: 'smooth'
+        })
+        },[])
         const navigate = useNavigate();
         const { login } = useAuth();
 

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
 import Loading from '../../components/loading/Loading';
 import Success from '../../components/success/Success';
+import Failure from '../../components/failure/Failure';
 
 const validate = values => {
     const errors = {};
@@ -26,25 +27,44 @@ const validate = values => {
         errors.purchaseDate = 'Required';
     }
 
+    if (!values.pin) {
+        errors.pin = 'Required';
+    }
+
     return errors;
 };
+
+function resultResponse(success){ //This function returns the component to be rendered based on the result of the investment decision. 
+    if (success) {
+        return(
+            <Success message={'Investment Successfull'}/>
+        );
+    }else{
+        return(
+            <Failure message={'Investment Failed'}/>
+        );
+    }
+}
 
 export default function LumpsumInvestment() {
     const navigate = useNavigate();
     const { requestWithAuth } = useAuth();
-    const [success, setSuccess] = useState(false);
+    const [resultComponent, setResultComponent] = useState(null);
+
     useEffect(()=>{
         window.scrollTo({
             top: 200,
             behavior: 'smooth',
         });
     },[]);
+
     const formik = useFormik({
         initialValues: {
             amount: '',
             assetType: '',
             fundName: '',
             purchaseDate: '',
+            pin: '',
         },
         validate,
         onSubmit: async (values, {setSubmitting}) => {
@@ -57,16 +77,19 @@ export default function LumpsumInvestment() {
                 const result = await response.json();
 
                 if (result.decision) {
-                    setSuccess(true);
                     setTimeout(() => {
                         navigate("/homepage");
-                    }, 4000);
+                    }, 5000);
                 } else {
-                    alert(result.error);
+                    setTimeout(() => {
+                        navigate("/homepage");
+                    }, 5000);
                 }
+
+                setResultComponent(resultResponse(result.decision)); //We store the returned component in state variable.
             } catch (error) {
                 console.error("Lumpsum Investment failed:", error);
-                alert("Lumpsum Investment failed");
+                alert(error);
             }
 
             setSubmitting(false);
@@ -75,16 +98,11 @@ export default function LumpsumInvestment() {
 
     if(formik.isSubmitting) {
         return <Loading/>
-    }   
-
-    if (success) {
-        return(
-            <Success message={'Investment Successfull'}/>
-        );
     }
 
+    if (resultComponent) return resultComponent; //We render it.
+
     return (
-        
         <div>
             <div className="box">
                 <div className="login-title">Lumpsum Investment</div>
@@ -156,6 +174,22 @@ export default function LumpsumInvestment() {
                         />
                         {formik.touched.purchaseDate && formik.errors.purchaseDate && (
                             <div className="error">{formik.errors.purchaseDate}</div>
+                        )}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="pin" className="email-and-password">Pin:</label>
+                        <input
+                            id="pin"
+                            name="pin"
+                            className="email-bar"
+                            type="password"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.pin}
+                        />
+                        {formik.touched.pin && formik.errors.pin && (
+                            <div className="error">{formik.errors.pin}</div>
                         )}
                     </div>
 

@@ -76,6 +76,13 @@ useEffect(() => { //Health Score
     // fetchAdvice();
 }, [user]);
 
+useEffect(()=>{
+  window.scroll({
+    top: '0',
+    behavior: 'smooth'
+  })
+},[])
+
     return(
         <div >
             {user && (
@@ -94,7 +101,7 @@ useEffect(() => { //Health Score
               <HealthScore Title={"Financial Health Score"}/>
               <Link to={'/networth'} state={protectedData?.asset ?? []}><PieChartCard Data={protectedData?.asset} /></Link>
               <Link to={'/wealth'} ><WealthCard Title={"Manage Wealth"} Advice={advice}/></Link>
-              <Link to={'/lastttransaction'}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[protectedData.transaction.length-1]} /> </Link>
+              <Link to={'/recenttransactions'} state={protectedData?.transaction ?? []}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[protectedData.transaction.length-1]} /> </Link> {/* To access the last element */}
               {/* Question mark is optional chaining, it checks if protectedData is not null before trying to access the transaction property. 
               If protectedData is null, it will return undefined instead of throwing an error. */}
               <Link to={'/monthlyexpenses'} ><MonthlyExpensesCard Data={protectedData?.transaction}/></Link>

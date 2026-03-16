@@ -2,6 +2,7 @@ import "./MonthlyExpenses.css";
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
+import { useEffect } from "react";
 
 const validate = values => {
     const errors = {};
@@ -50,6 +51,13 @@ export default function MonthlyExpenses() {
             }
         },
     });
+
+    useEffect(()=>{
+        window.scroll({
+            top: '100',
+            behavior: 'smooth'
+        })
+    },[])
 
     return (
     <div>

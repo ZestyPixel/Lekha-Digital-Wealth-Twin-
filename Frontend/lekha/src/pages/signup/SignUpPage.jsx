@@ -2,6 +2,7 @@ import "./SignUp.css";
 import { useFormik } from 'formik';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
+import { useEffect } from "react";
 
 const validate = values => {
     const errors = {};
@@ -34,6 +35,12 @@ const validate = values => {
 };
 
 export default function SignupForm(){
+    useEffect(()=>{
+        window.scroll({
+            top: '130',
+            behavior: 'smooth'
+        })
+    },[])
     const navigate = useNavigate();
     const { register } = useAuth();
 
