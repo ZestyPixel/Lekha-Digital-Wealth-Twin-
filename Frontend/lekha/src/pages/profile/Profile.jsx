@@ -2,6 +2,7 @@ import "./Profile.css";
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
+import { useEffect } from "react";
 
 const validate = values => {
     const errors = {};
@@ -22,6 +23,12 @@ const validate = values => {
 };
 
 export default function Profile() {
+    useEffect(()=>{
+            window.scroll({
+                top: '110',
+                behavior: 'smooth'
+            })
+    },[])
     const navigate = useNavigate();
     const { requestWithAuth } = useAuth();
 

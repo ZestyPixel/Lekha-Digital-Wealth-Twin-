@@ -1,7 +1,7 @@
-import './Success.css';
+import './Warning.css';
 import { useEffect } from 'react';
 
-export default function Success({ message }) {
+export default function Warning({ message, reasons }) {
 
     useEffect(()=>{
         window.scrollTo({
@@ -17,8 +17,15 @@ export default function Success({ message }) {
                 <path className="success-tick" fill="none" d="M35 65 L55 85 L90 40"/>
             </svg>
 
-            <h1 className='message-success'>{message}</h1>
-            
+            <h1 className='message'>{message}</h1>
+            <div className="reasons">
+                <h2>Reasons:</h2>
+                <ul>
+                    {reasons.map((reason, index) => (
+                        <li key={index}>{reason}</li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }

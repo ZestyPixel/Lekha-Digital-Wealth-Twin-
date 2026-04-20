@@ -34,11 +34,12 @@
   animation-delay: 0.6s;
 }
 
-.message {
+.message-failure {
   font-size: 36px;
+  color: red;
   font-weight: 700;
   margin-top: 10px;
-  margin-bottom: 140px;
+  margin-bottom: 14px;
 }
 
 @keyframes drawCircle {

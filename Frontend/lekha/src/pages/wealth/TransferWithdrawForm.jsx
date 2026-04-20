@@ -1,7 +1,10 @@
 import { useFormik } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useAuth } from "../../context/useAuth";
-import { useEffect } from 'react';
+import Loading from '../../components/loading/Loading';
+import Success from '../../components/success/Success';
+import Failure from '../../components/failure/Failure';
+import Warning from '../../components/warning/Warning';
 
 const validate = values => {
     const errors = {};
@@ -46,6 +49,31 @@ const validate = values => {
 
     return errors;
 };
+
+function Result({ decision, reasons }) {
+
+    if (decision === "ALLOW") {
+        return <Success message={`Transaction Successful`} />;
+    }
+
+    if (decision === "WARN") {
+        return (
+            <Warning 
+                message={`Proceed with caution`}
+                reasons={reasons}
+            />
+        );
+    }
+
+    if (decision === "BLOCK") {
+        return (
+            <Failure 
+                message={`Transaction blocked`}
+                reasons={reasons}
+            />
+        );
+    }
+}
 
 function BankAccountFields({ formik }) {
     return (
@@ -176,7 +204,7 @@ function DestinationDetailFields({ destinationType, formik }) {
 }
 
 export default function TransferWithdraw() {
-    const navigate = useNavigate();
+    const [resultComponent, setResultComponent] = useState(null);
     const { requestWithAuth } = useAuth();
     useEffect(()=>{
         window.scrollTo({
@@ -208,12 +236,20 @@ export default function TransferWithdraw() {
                 });
 
                 const result = await response.json();
+                if (response.ok) {
+                    setResultComponent(
+                        <Result 
+                            decision={result.security.decision} 
+                            reasons={result.security.reasons} 
+                            riskScore={result.security.riskScore}
+                        />
+                    );
+                } 
 
-                if (result.success) {
-                    navigate("/homepage");
-                } else {
-                    alert(result.error);
-                }
+                setTimeout(() => {
+                    setResultComponent(null); // Reset to show form again
+                }, 5000); // Show result for 5 seconds
+
             } catch (error) {
                 console.error("Transaction failed:", error);
                 alert("Transaction failed");
@@ -226,9 +262,12 @@ export default function TransferWithdraw() {
     const isTransfer = formik.values.transactionType === 'Transfer';
     const isRedeem = formik.values.transactionType === 'Redeem';
 
-    if(formik.isSubmitting) {
-        return <div>Submitting...</div>;
-    }   
+    if(formik.isSubmitting) { // Show loading while waiting for response
+        return <Loading/>
+    }
+
+    if (resultComponent) return resultComponent; //We render it. This will get rendered and the form will not cause a react component can only return one thing
+    // at a time so when this is truthy, the code will never reach the form's return below.  
 
     return (
         <div>

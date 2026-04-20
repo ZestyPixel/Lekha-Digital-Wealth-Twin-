@@ -37,7 +37,7 @@ const validate = values => {
 export default function SignupForm(){
     useEffect(()=>{
         window.scroll({
-            top: '130',
+            top: '90',
             behavior: 'smooth'
         })
     },[])

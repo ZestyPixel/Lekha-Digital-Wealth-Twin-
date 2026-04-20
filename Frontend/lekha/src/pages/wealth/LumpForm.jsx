@@ -1,10 +1,10 @@
 import { useFormik } from 'formik';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
 import Loading from '../../components/loading/Loading';
 import Success from '../../components/success/Success';
 import Failure from '../../components/failure/Failure';
+import Warning from '../../components/warning/Warning';
 
 const validate = values => {
     const errors = {};
@@ -34,26 +34,38 @@ const validate = values => {
     return errors;
 };
 
-function resultResponse(success){ //This function returns the component to be rendered based on the result of the investment decision. 
-    if (success) {
-        return(
-            <Success message={'Investment Successfull'}/>
+function Result({ decision, reasons }) {
+
+    if (decision === "ALLOW") {
+        return <Success message={`Transaction Successful`} />;
+    }
+
+    if (decision === "WARN") {
+        return (
+            <Warning 
+                message={`Proceed with caution`}
+                reasons={reasons}
+            />
         );
-    }else{
-        return(
-            <Failure message={'Investment Failed'}/>
+    }
+
+    if (decision === "BLOCK") {
+        return (
+            <Failure 
+                message={`Transaction blocked`}
+                reasons={reasons}
+            />
         );
     }
 }
 
 export default function LumpsumInvestment() {
-    const navigate = useNavigate();
     const { requestWithAuth } = useAuth();
     const [resultComponent, setResultComponent] = useState(null);
 
     useEffect(()=>{
         window.scrollTo({
-            top: 200,
+            top: 100,
             behavior: 'smooth',
         });
     },[]);
@@ -67,7 +79,9 @@ export default function LumpsumInvestment() {
             pin: '',
         },
         validate,
-        onSubmit: async (values, {setSubmitting}) => {
+        onSubmit: async (values, {setSubmitting}) => { //what setSubmitting does is it sets formik.isSubmitting to true, 
+        // which we can use to conditionally render the loading component. 
+        // We set it back to false when our operation is done.
             try {
                 const response = await requestWithAuth('/addlumpsum', {
                     method: 'POST',
@@ -75,18 +89,20 @@ export default function LumpsumInvestment() {
                 });
 
                 const result = await response.json();
+                if (response.ok) {
+                    setResultComponent(
+                        <Result 
+                            decision={result.security.decision} 
+                            reasons={result.security.reasons} 
+                            riskScore={result.security.riskScore}
+                        />
+                    );
+                } 
 
-                if (result.decision) {
-                    setTimeout(() => {
-                        navigate("/homepage");
-                    }, 5000);
-                } else {
-                    setTimeout(() => {
-                        navigate("/homepage");
-                    }, 5000);
-                }
-
-                setResultComponent(resultResponse(result.decision)); //We store the returned component in state variable.
+                setTimeout(() => {
+                    setResultComponent(null); // Reset to show form again
+                }, 5000); // Show result for 5 seconds
+                
             } catch (error) {
                 console.error("Lumpsum Investment failed:", error);
                 alert(error);
@@ -96,11 +112,12 @@ export default function LumpsumInvestment() {
         },
     });
 
-    if(formik.isSubmitting) {
+    if(formik.isSubmitting) { // Show loading while waiting for response
         return <Loading/>
     }
 
-    if (resultComponent) return resultComponent; //We render it.
+    if (resultComponent) return resultComponent; //We render it. This will get rendered and the form will not cause a react component can only return one thing
+    // at a time so when this is truthy, the code will never reach the form's return below.
 
     return (
         <div>

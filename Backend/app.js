@@ -18,8 +18,8 @@ const ai = new GoogleGenAI({});
 
 const {isAuth} = require('./utils/isAuth.js');
 const bcrypt = require('bcrypt');
-const authMiddleware = require('./middlewares/authMiddleware.js');
-const securityMiddleware = require('./utils/securityMiddleware.js');
+const authMiddleware = require('./middlewares/authMiddleware.js')
+const securityMiddleware = require('./middlewares/securityMiddleware.js');
 
 app.use(cors({
     origin: ['http://localhost:5173', 'https://lekha-digital-wealth-twin.vercel.app'],
@@ -256,13 +256,7 @@ app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
         return res.status(401).json({ error: 'Invalid credentials' });
     }
     const { amount, assetType, fundName, purchaseDate } = req.body;
-    const riskScore = req.riskScore;
-    let decision;
-    if(riskScore < 50){
-        decision = true;
-    }else{
-        decision = false;
-    }
+
     if(assetType === "MutualFund"){
         
         await Asset.findOneAndUpdate(
@@ -278,8 +272,7 @@ app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
     }
     res.json({
         success: true,
-        riskScore: riskScore,
-        decision: decision,
+        security: req.security
     });
 });
 
@@ -297,7 +290,10 @@ app.post('/addsip', authMiddleware, securityMiddleware, async(req, res)=>{
             { $inc: {currentValue: amount}} 
         )
     }
-    res.json({success: true});
+    res.json({
+        success: true,
+        security: req.security
+    });
 });
 
 app.post('/transferwithdraw', authMiddleware, securityMiddleware, async(req, res)=>{
@@ -323,10 +319,13 @@ app.post('/transferwithdraw', authMiddleware, securityMiddleware, async(req, res
         )
     }
     
-    res.json({success: true});
+    res.json({
+        success: true,
+        security: req.security
+    });
 });
 
-app.get('/score', authMiddleware, async(req, res)=>{
+app.get('/score', async(req, res)=>{
 
 });
 
