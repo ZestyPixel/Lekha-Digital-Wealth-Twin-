@@ -29,6 +29,16 @@ function Hamburger({ isOpen }) {
             <div className="tooltip">Dark Mode</div>
           </button>
         </div>
+        <div className="debt-mode">
+          <Link to={'/debt'}>
+          <button className="debt-mode-button ">
+            <i className="fa-solid fa-money-check-dollar"></i>
+            <div className="tooltip">
+              Debt
+              </div>
+          </button>
+          </Link>
+        </div>
       </div>
     </div>
   )

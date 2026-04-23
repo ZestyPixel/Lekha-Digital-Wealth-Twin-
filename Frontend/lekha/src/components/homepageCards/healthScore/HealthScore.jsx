@@ -8,10 +8,12 @@ const getScoreConfig = (score) => {
   return { label: "Critical", color: "#f87171" };
 };
 
-const DUMMY_SCORE = 63;
-
 export default function HealthScore({ Title }) {
-  const score = DUMMY_SCORE;
+  const raw = localStorage.getItem('score');
+  if (!raw) return null; // or a loading/empty state
+
+  const scoreFinal = JSON.parse(raw);
+  const score = scoreFinal?.score ?? 0;
   const { label, color } = getScoreConfig(score);
 
   return (

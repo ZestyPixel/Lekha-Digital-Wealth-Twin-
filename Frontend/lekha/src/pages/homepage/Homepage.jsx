@@ -56,24 +56,16 @@ useEffect(() => { //Wealth card advice
 }, [user]);
  
 useEffect(() => { //Health Score
-    const storedScore = localStorage.getItem("score");
-
-    if (storedScore && storedScore !== "undefined") {
-        setScore(storedScore);
-        return;
-    }
 
     const fetchScore = async () => {
-        const res = await requestWithAuth('/score');
+        const res = await requestWithAuth('/getFinancialScore');
         const data = await res.json();
 
-        if (data) {
-            setScore(data);
-            localStorage.setItem("score", data);
-        }
+        setScore(data); // already an object
+        localStorage.setItem("score", JSON.stringify(data)); // store properly
     };
 
-    // fetchAdvice();
+    fetchScore();
 }, [user]);
 
 useEffect(()=>{
@@ -98,7 +90,7 @@ useEffect(()=>{
             )}
             
             <div className="card-container">
-              <HealthScore Title={"Financial Health Score"}/>
+              <Link to={'/score'} ><HealthScore Title={"Financial Health Score"}/></Link>
               <Link to={'/networth'} state={protectedData?.asset ?? []}><PieChartCard Data={protectedData?.asset} /></Link>
               <Link to={'/wealth'} ><WealthCard Title={"Manage Wealth"} Advice={advice}/></Link>
               <Link to={'/recenttransactions'} state={protectedData?.transaction ?? []}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[protectedData.transaction.length-1]} /> </Link> {/* To access the last element */}

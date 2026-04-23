@@ -5,13 +5,13 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 20px;
 }
 
 .failure-check {
   width: 180px;
   height: 180px;
   margin-bottom: 20px;
-  transform: scale(0.8);
   animation: pop 0.4s ease-out forwards;
 }
 
@@ -30,37 +30,54 @@
   stroke-linejoin: round;
   stroke-dasharray: 120;
   stroke-dashoffset: 120;
-  animation: drawCross 0.5s ease forwards;
+  animation: drawMark 0.5s ease forwards;
   animation-delay: 0.6s;
 }
 
 .message-failure {
   font-size: 36px;
-  color: red;
   font-weight: 700;
+  color: #ef4444;
   margin-top: 10px;
   margin-bottom: 14px;
 }
 
+.failure-reasons {
+  font-size: 20px;
+  color: #555;
+}
+
+.failure-reasons h2 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.failure-reasons ul {
+  list-style: none;
+  padding: 0;
+}
+
+.failure-reasons li {
+  margin: 6px 0;
+}
+
 @keyframes drawCircle {
-  to {
-    stroke-dashoffset: 0;
+  to { 
+    stroke-dashoffset: 0; 
   }
 }
 
-@keyframes drawCross {
-  to {
-    stroke-dashoffset: 0;
+@keyframes drawMark {
+  to { 
+    stroke-dashoffset: 0; 
   }
 }
 
 @keyframes pop {
-  from {
-    transform: scale(0.7);
-    opacity: 0;
+  from { 
+    transform: scale(0.7); opacity: 0; 
   }
-  to {
-    transform: scale(1);
-    opacity: 1;
+  to   { 
+    transform: scale(1);   opacity: 1; 
   }
 }

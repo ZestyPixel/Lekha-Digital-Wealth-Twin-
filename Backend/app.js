@@ -8,6 +8,7 @@ const app = express();
 const{createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken,} = require('./utils/tokens.js');
 const User = require('./models/user.js');
 const Asset = require('./models/assets.js');
+const Debt = require('./models/debt.js');
 const Transaction = require('./models/transactions.js');
 const Goal = require('./models/goals.js');
 const Profile = require('./models/profile.js');
@@ -166,13 +167,14 @@ app.get('/getUserData', authMiddleware, async (req, res) => {
         const asset = await Asset.find({ userId: userId });
         const goal = await Goal.find({userId: userId});
         const profile = await Profile.findOne({userId: userId});
+        const debt = await Debt.find({userId: userId});
         if (!userData || !transaction || !asset) {
             return res.status(404).json({ error: 'User not found' });
         }
 
         const { password, ...data } = userData.toObject(); //This removes the password field from the user data before sending it to the frontend.
 
-        res.json({data, transaction, asset, goal, profile});
+        res.json({data, transaction, asset, goal, profile, debt});
     } catch (error) {
         console.error('Error in /getUserData:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -325,8 +327,146 @@ app.post('/transferwithdraw', authMiddleware, securityMiddleware, async(req, res
     });
 });
 
-app.get('/score', async(req, res)=>{
+app.post('/adddebt', authMiddleware, async (req, res) => {
+    const userId = req.userId;
+    const { debtName, totalAmount, remainingBalance, monthlyEMI } = req.body;
 
+    try {
+        const newDebt = await Debt.create({
+            userId,
+            debtName,
+            totalAmount,
+            remainingBalance,
+            monthlyEMI,
+        });
+
+        res.json({ success: true, debt: newDebt });
+    } catch (error) {
+        console.error("Add debt error:", error);
+        res.json({ success: false, error: "Failed to add debt" });
+    }
+});
+
+app.get('/getFinancialScore', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.userId;
+
+        const profile = await Profile.findOne({ userId });
+        const assets  = await Asset.find({ userId });
+        const debts   = await Debt.find({ userId });
+
+        const {
+            monthlyIncome: salary,
+            bills, food, health,
+            obligations, lifestyle,
+            misc, transport, savings,
+        } = profile;
+
+        const bankBalance = assets
+            .filter(a => a.type === 'Bank Account')
+            .reduce((sum, a) => sum + a.currentValue, 0);
+
+        const investedAssets = assets
+            .filter(a => ['Stocks', 'Mutual Fund', 'Gold'].includes(a.type))
+            .reduce((sum, a) => sum + a.currentValue, 0);
+
+        const totalAssets = assets
+            .reduce((sum, a) => sum + a.currentValue, 0);
+
+        const totalMonthlyEMI       = debts.reduce((sum, d) => sum + d.monthlyEMI, 0);
+        const totalRemainingBalance = debts.reduce((sum, d) => sum + d.remainingBalance, 0);
+
+        const breakdown = [];
+        let score = 0;
+
+        const savingsRate = savings / salary;
+        const p1 = Math.min(20, Math.round((savingsRate / 0.20) * 20));
+        score += p1;
+
+        if (savingsRate >= 0.20) {
+            breakdown.push("+ Excellent savings rate");
+        } else if (savingsRate >= 0.10) {
+            breakdown.push(`~ Savings rate is decent but below the 20% tafdfrget ${p1}`);
+        } else {
+            breakdown.push("- Savings rate is low; aim to save at least 20% of income");
+        }
+
+        const essentialExpenses = bills + food + health + obligations + transport;
+        const emergencyMonths   = bankBalance / essentialExpenses;
+        const p2 = Math.min(20, Math.round((emergencyMonths / 6) * 20));
+        score += p2;
+
+        if (emergencyMonths >= 6) {
+            breakdown.push("+ Strong emergency fund covering 6+ months of expenses");
+        } else if (emergencyMonths >= 3) {
+            breakdown.push("~ Emergency fund covers 3-6 months, keep building");
+        } else {
+            breakdown.push("- Emergency fund is critically low (under 3 months)");
+        }
+
+        const discretionaryRate = (lifestyle + misc) / salary;
+        let p3 = 20;
+        if (discretionaryRate > 0.30) {
+            const overshoot = discretionaryRate - 0.30;
+            p3 = Math.max(0, Math.round(20 - (overshoot / 0.30) * 20));
+        }
+        score += p3;
+
+        if (discretionaryRate <= 0.30) {
+            breakdown.push("+ Lifestyle spending is well under control");
+        } else if (discretionaryRate <= 0.50) {
+            breakdown.push("~ Discretionary spending is above 30%, try to cut back");
+        } else {
+            breakdown.push("- Lifestyle spending is excessive, review misc and lifestyle costs");
+        }
+
+        const investmentRatio = investedAssets / totalAssets;
+        const p4 = Math.min(20, Math.round((investmentRatio / 0.50) * 20));
+        score += p4;
+
+        if (investmentRatio >= 0.50) {
+            breakdown.push("+ Great investment allocation, wealth is actively growing");
+        } else if (investmentRatio >= 0.25) {
+            breakdown.push("~ Some investments present but below the 50% target");
+        } else {
+            breakdown.push("- Most wealth is sitting idle, consider investing more");
+        }
+
+        const dtiRatio = totalMonthlyEMI / salary;
+        const p5 = Math.max(0, Math.round(20 - (dtiRatio / 0.40) * 20));
+        score += p5;
+
+        if (dtiRatio === 0) {
+            breakdown.push("+ Debt-free, no EMI burden on income");
+        } else if (dtiRatio <= 0.20) {
+            breakdown.push("~ EMI obligations are manageable");
+        } else {
+            breakdown.push("- High EMI-to-income ratio, debt is straining your finances.");
+        }
+
+        const badDebtKeywords = ['credit card', 'personal loan'];
+        const hasBadDebt = debts.some(d =>
+            badDebtKeywords.some(keyword => d.debtName.toLowerCase().includes(keyword))
+        );
+        if (hasBadDebt) {
+            score -= 10;
+            breakdown.push("- Active high-interest consumer debt");
+        }
+
+        const netWorth = totalAssets - totalRemainingBalance;
+        if (netWorth < 0) {
+            score -= 15;
+            breakdown.push("- Negative net worth, liabilities exceed assets");
+        }
+
+        score = Math.max(0, Math.min(100, score));
+
+        res.json({ score, breakdown });
+
+    } catch (error) {
+        console.error('Error in /getFinancialScore:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 mongoose.connect(process.env.MONGO_URI)

@@ -21,6 +21,8 @@ import LumpsumInvestment from './pages/wealth/LumpForm';
 import SIPInvestment from './pages/wealth/SipForm';
 import TransferWithdraw from './pages/wealth/TransferWithdrawForm';
 import ChatBot from './components/chatbot/ChatBot';
+import Debt from './pages/debt/Debt';
+import HealthScore from './pages/healthScore/HealthScore';
 
 //We wrote the routes in a separate component so that we can use the useLocation hook which can only be used inside a component that is rendered by a Route. 
 // This allows us to animate the route transitions using AnimatePresence from framer-motion. 
@@ -90,6 +92,18 @@ function AnimatedRoutes() {
         <Route path="/transfer" element={
           <ProtectedRoute>
             <PageWrapper><TransferWithdraw /></PageWrapper>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/debt" element={
+          <ProtectedRoute>
+            <PageWrapper><Debt /></PageWrapper>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/score" element={
+          <ProtectedRoute>
+            <PageWrapper><HealthScore /></PageWrapper>
           </ProtectedRoute>
         } />
 

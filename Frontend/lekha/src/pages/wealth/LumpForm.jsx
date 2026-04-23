@@ -43,7 +43,7 @@ function Result({ decision, reasons }) {
     if (decision === "WARN") {
         return (
             <Warning 
-                message={`Proceed with caution`}
+                message={`Try again after 1 minute`}
                 reasons={reasons}
             />
         );
@@ -52,7 +52,7 @@ function Result({ decision, reasons }) {
     if (decision === "BLOCK") {
         return (
             <Failure 
-                message={`Transaction blocked`}
+                message={`Transaction Blocked`}
                 reasons={reasons}
             />
         );

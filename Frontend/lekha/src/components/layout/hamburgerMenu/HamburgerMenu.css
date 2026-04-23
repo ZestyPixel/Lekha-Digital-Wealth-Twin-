@@ -134,3 +134,38 @@
 .dark-theme .home-icon {
   filter: grayscale(100%) invert(100%) brightness(300%);
 }
+
+.debt-mode-button {
+  border: none 0;
+  background: transparent;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+  left: 0px;
+  margin-right: 50%;
+  margin-top: 40px;
+  position: relative ;
+  border-radius : 50% ;
+  height : 40px ;
+  width : 40px ;
+  display : flex ;
+  justify-content : center;
+  align-items : center ;
+}
+
+.debt-mode-button:hover {
+  background-color: lightgray;
+}
+
+.debt-mode-button:hover .tooltip {
+  opacity: 1;
+}
+
+.debt-icon {
+  height: 32px;
+  width: 32px;
+}
+
+.debt-mode-button i {
+  font-size: 31px;
+}

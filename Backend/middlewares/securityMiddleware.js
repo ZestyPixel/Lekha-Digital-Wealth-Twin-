@@ -22,6 +22,12 @@ async function securityMiddleware(req, res, next) {
             reasons.push("New device detected");
         }
 
+        const hour = new Date().getHours();
+        if (hour >= 0 && hour <= 6) {
+            riskScore += 20;
+            reasons.push("Unusual late-night transaction");
+        }
+        
         if( amount > (2 * user.behavioralBaseline.averageTransactionAmount) ){
             riskScore += 25;
             reasons.push("Unusual transaction amount");
@@ -31,6 +37,11 @@ async function securityMiddleware(req, res, next) {
         //     riskScore += 20;
         //     reasons.push("Multiple OTP attempts");
         // }
+        
+        if (amount % 10000 === 0) {
+            riskScore += 10;
+            reasons.push("Round number transaction pattern");
+        }
 
         let decision = "ALLOW";
         if (riskScore >= 70){

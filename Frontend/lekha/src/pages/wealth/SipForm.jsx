@@ -43,7 +43,7 @@ function Result({ decision, reasons }) {
     if (decision === "WARN") {
         return (
             <Warning 
-                message={`Proceed with caution`}
+                message={`Try again after 1 minute`}
                 reasons={reasons}
             />
         );

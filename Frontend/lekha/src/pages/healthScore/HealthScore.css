@@ -1,0 +1,41 @@
+.division {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.division ul {
+    list-style: none;
+    padding: 0;
+    width: 70%;
+}
+
+.reason {
+    font-size: 30px;
+    text-align: left;
+    padding: 16px 16px;
+    margin: 16px 0;
+    border-radius: 16px;
+    font-weight: 700;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.reason.green {
+    background-color: #e6f9ec;
+    color: #1b8a3c;
+}
+
+.reason.orange {
+    background-color: #fff4e5;
+    color: #cc7a00;
+}
+
+.reason.red {
+    background-color: #ffe6e6;
+    color: #cc0000;
+}
+
+.reason:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 16px rgba(0,0,0,0.08);
+}

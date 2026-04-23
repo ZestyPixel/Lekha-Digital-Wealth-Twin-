@@ -7,8 +7,8 @@ import "./ChatBot.css";
 const chatMenus = {
   main: [
     { label: "💰 Check Balance", action: "Check my current account balance" },
-    { label: "📈 Investment Advice", nextMenu: "investment" },
-    { label: "🛡️ Report Fraud", nextMenu: "fraud" },
+    { label: "📈 Investment", nextMenu: "investment" },
+    // { label: "🛡️ Report Fraud", nextMenu: "fraud" },
     { label: "💳 Spending Analysis", action: "Analyze my spending patterns" }
   ],
   investment: [

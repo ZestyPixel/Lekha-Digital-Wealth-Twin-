@@ -1,66 +1,64 @@
-.success-screen{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
+.success-screen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
 }
 
-.success-check{
-  width:180px;
-  height:180px;
-  margin-bottom:20px;
-  transform:scale(0.8);
-  animation:pop 0.4s ease-out forwards;
+.success-check {
+  width: 180px;
+  height: 180px;
+  margin-bottom: 20px;
+  animation: pop 0.4s ease-out forwards;
 }
 
-.success-circle{
-  stroke:#22c55e;
-  stroke-width:8;
-  stroke-dasharray:339;
-  stroke-dashoffset:339;
-  animation:drawCircle 0.6s ease forwards;
+.success-circle {
+  stroke: #22c55e;
+  stroke-width: 8;
+  stroke-dasharray: 339;
+  stroke-dashoffset: 339;
+  animation: drawCircle 0.6s ease forwards;
 }
 
-.success-tick{
-  stroke:#22c55e;
-  stroke-width:10;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-  stroke-dasharray:120;
-  stroke-dashoffset:120;
-  animation:drawTick 0.5s ease forwards;
-  animation-delay:0.6s;
+.success-tick {
+  stroke: #22c55e;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: drawMark 0.5s ease forwards;
+  animation-delay: 0.6s;
 }
 
-.message-success{
+.message-success {
+  font-size: 36px;
+  font-weight: 700;
   color: #22c55e;
-  font-size:45px;
-  font-weight:700;
-  margin-top:10px;
-  margin-bottom: 140px;
+  margin-top: 10px;
+  margin-bottom: 14px;
 }
 
-@keyframes drawCircle{
-  to{
-    stroke-dashoffset:0;
+@keyframes drawCircle {
+  to { 
+    stroke-dashoffset: 0; 
   }
 }
 
-@keyframes drawTick{
-  to{
-    stroke-dashoffset:0;
+@keyframes drawMark {
+  to { 
+    stroke-dashoffset: 0; 
   }
 }
 
-@keyframes pop{
-  from{
-    transform:scale(0.7);
-    opacity:0;
+@keyframes pop {
+  from { 
+    transform: scale(0.7); opacity: 0; 
   }
-  to{
-    transform:scale(1);
-    opacity:1;
+  to   { 
+    transform: scale(1);   opacity: 1; 
   }
 }
