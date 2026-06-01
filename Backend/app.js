@@ -2,10 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose'); 
 const cors = require('cors');
 require('dotenv').config();
-const {verify} = require('jsonwebtoken');
+const { verify } = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const app = express();
-const{createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken,} = require('./utils/tokens.js');
+const{ createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken } = require('./utils/tokens.js');
 const User = require('./models/user.js');
 const Asset = require('./models/assets.js');
 const Debt = require('./models/debt.js');
@@ -13,11 +13,12 @@ const Transaction = require('./models/transactions.js');
 const Goal = require('./models/goals.js');
 const Profile = require('./models/profile.js');
 const Log = require('./models/logs.js');
+const Finances = require('./models/consolidatedFinances.js');
 
 const { GoogleGenAI } = require("@google/genai"); //To use gemini flash.
 const ai = new GoogleGenAI({});
 
-const {isAuth} = require('./utils/isAuth.js');
+const { isAuth } = require('./utils/isAuth.js');
 const bcrypt = require('bcrypt');
 const authMiddleware = require('./middlewares/authMiddleware.js')
 const securityMiddleware = require('./middlewares/securityMiddleware.js');
@@ -28,7 +29,7 @@ app.use(cors({
 })); 
 app.use(express.json());
 app.use(cookieParser()); 
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
     res.send('Backend is running!');
@@ -168,13 +169,20 @@ app.get('/getUserData', authMiddleware, async (req, res) => {
         const goal = await Goal.find({userId: userId});
         const profile = await Profile.findOne({userId: userId});
         const debt = await Debt.find({userId: userId});
-        if (!userData || !transaction || !asset) {
-            return res.status(404).json({ error: 'User not found' });
-        }
+        const finances = await Finances.find({userId: userId});
 
         const { password, ...data } = userData.toObject(); //This removes the password field from the user data before sending it to the frontend.
 
-        res.json({data, transaction, asset, goal, profile, debt});
+        res.json({
+            data, 
+            transaction, 
+            asset, 
+            goal, 
+            profile, 
+            debt,
+            finances,
+        });
+        
     } catch (error) {
         console.error('Error in /getUserData:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -240,9 +248,54 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
 });
 
 app.get('/advice', authMiddleware, async(req, res)=>{
+    const data = await Finances.findOne({ userId: req.userId });
+    console.log(data);
+    const {
+        bankBalance,
+        investedAssets,
+        totalAssets,
+        totalMonthlyEMI,
+        totalRemainingBalance,
+        savingsRate,
+        essentialExpenses,
+        emergencyMonths,
+        discretionaryRate,
+        investmentRatio,
+        dtiRatio,
+        netWorth,
+        hasBadDebt,
+        score,
+        breakdown
+    } = data;
     const response = await ai.models.generateContent({
-            model: "gemini-3-flash-preview",
-            contents: "Give one short general financial tip relevant to people in India. Do not assume real-time market data. Return only one sentence."
+        model: "gemini-3.5-flash",
+        contents: `
+You are a personal finance advisor.
+
+Analyze the user's financial metrics.
+
+Rules:
+- Identify the biggest weakness.
+- Explain why it is a problem.
+- Give one specific action to improve it.
+- Maximum 30 words.
+- Return only the advice.
+
+Metrics:
+Bank Balance: ${bankBalance}
+Invested Assets: ${investedAssets}
+Total Assets: ${totalAssets}
+Monthly EMI: ${totalMonthlyEMI}
+Remaining Debt: ${totalRemainingBalance}
+Savings Rate: ${savingsRate}
+Emergency Months: ${emergencyMonths}
+Discretionary Rate: ${discretionaryRate}
+Investment Ratio: ${investmentRatio}
+DTI Ratio: ${dtiRatio}
+Net Worth: ${netWorth}
+Bad Debt: ${hasBadDebt}
+Score: ${score}
+`
     });
     const resp = response.text.trim();
     console.log(resp);
@@ -386,7 +439,7 @@ app.get('/getFinancialScore', authMiddleware, async (req, res) => {
         if (savingsRate >= 0.20) {
             breakdown.push("+ Excellent savings rate");
         } else if (savingsRate >= 0.10) {
-            breakdown.push(`~ Savings rate is decent but below the 20% tafdfrget ${p1}`);
+            breakdown.push(`~ Savings rate is decent but below the 20% target ${p1}`);
         } else {
             breakdown.push("- Savings rate is low; aim to save at least 20% of income");
         }
@@ -460,6 +513,31 @@ app.get('/getFinancialScore', authMiddleware, async (req, res) => {
         }
 
         score = Math.max(0, Math.min(100, score));
+
+        await Finances.findOneAndUpdate(
+            { userId },
+            {
+                $set: {
+                    bankBalance,
+                    investedAssets,
+                    totalAssets,
+                    totalMonthlyEMI,
+                    totalRemainingBalance,
+                    savingsRate,
+                    essentialExpenses,
+                    emergencyMonths,
+                    discretionaryRate,
+                    investmentRatio,
+                    dtiRatio,
+                    netWorth,
+                    hasBadDebt,
+                    score,
+                    breakdown,
+                },
+            },
+            { upsert: true, new: true } //upsert: true to update if it exists or create if it does not. 
+            // Also new: true returns the updated document and not the old document.
+        );
 
         res.json({ score, breakdown });
 

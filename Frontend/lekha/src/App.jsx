@@ -23,6 +23,7 @@ import TransferWithdraw from './pages/wealth/TransferWithdrawForm';
 import ChatBot from './components/chatbot/ChatBot';
 import Debt from './pages/debt/Debt';
 import HealthScore from './pages/healthScore/HealthScore';
+import LandingPage from './pages/landingPage/LandingPage';
 
 //We wrote the routes in a separate component so that we can use the useLocation hook which can only be used inside a component that is rendered by a Route. 
 // This allows us to animate the route transitions using AnimatePresence from framer-motion. 
@@ -129,7 +130,8 @@ function App() {
       <AuthProvider>
         <Routes>
           {/* Public routes without layout */}
-          <Route path="/" element={<SignupForm />} />
+          <Route path="/signUpForm" element={<SignupForm />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginForm />} />
 
           {/* Layout wrapper for all authenticated routes */}
