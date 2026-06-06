@@ -17,7 +17,7 @@ export default function HealthScore({ Title }) {
   const { label, color } = getScoreConfig(score);
 
   return (
-    <div className="health-card Total-expenses-trans card-trans">
+    <div className="health-card Total-expenses-trans card-trans card">
 
       <div className="heading-trans">{Title}</div>
 

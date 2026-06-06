@@ -2,7 +2,7 @@ import './App.css'
 import LoginForm from './pages/login/LoginForm';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion'; //motion
 import PageWrapper from './utils/PageWrapper';
 import Navbar from './components/layout/navbar/NavBar'
 import Hamburger from './components/layout/hamburgerMenu/HamburgerMenu'
@@ -25,7 +25,7 @@ import Debt from './pages/debt/Debt';
 import HealthScore from './pages/healthScore/HealthScore';
 import LandingPage from './pages/landingPage/LandingPage';
 
-//We wrote the routes in a separate component so that we can use the useLocation hook which can only be used inside a component that is rendered by a Route. 
+// We wrote the routes in a separate component so that we can use the useLocation hook which can only be used inside a component that is rendered by a Route. 
 // This allows us to animate the route transitions using AnimatePresence from framer-motion. 
 // The key prop on Routes ensures that the animation runs whenever the route changes.
 function AnimatedRoutes() { 

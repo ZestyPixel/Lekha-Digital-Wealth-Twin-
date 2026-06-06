@@ -63,7 +63,7 @@ export default function MonthlyExpenses({Data = []}){
     ];
     
     return(
-        <div className="expen-pie">
+        <div className="expen-pie card">
             <ResponsiveContainer width="100%" height={190}>
               <PieChart>
                 <Pie

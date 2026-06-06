@@ -46,7 +46,7 @@ async function securityMiddleware(req, res, next) {
         let decision = "ALLOW";
         if (riskScore >= 70){
             decision = "BLOCK";
-        }else if (riskScore >= 40){
+        }else if (riskScore >= 50){
             decision = "WARN";
         }
         req.security = {

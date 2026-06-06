@@ -3,7 +3,7 @@ import { formatCurrency } from "../../../utils/functions";
 
 export default function LastTransaction({Title, data}){
     return(
-        <div className="Total-expenses-trans card-trans">
+        <div className="Total-expenses-trans card-trans card">
             <div className="heading-trans">
                 {Title}
             </div>

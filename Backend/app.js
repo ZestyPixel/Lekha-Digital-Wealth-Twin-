@@ -268,34 +268,34 @@ app.get('/advice', authMiddleware, async(req, res)=>{
         breakdown
     } = data;
     const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash-lite",
         contents: `
-You are a personal finance advisor.
+        You are a personal finance advisor.
 
-Analyze the user's financial metrics.
+        Analyze the user's financial metrics.
 
-Rules:
-- Identify the biggest weakness.
-- Explain why it is a problem.
-- Give one specific action to improve it.
-- Maximum 30 words.
-- Return only the advice.
+        Rules:
+        - Identify the biggest weakness.
+        - Explain why it is a problem.
+        - Give one specific action to improve it.
+        - Maximum 25 words.
+        - Return only the advice.
 
-Metrics:
-Bank Balance: ${bankBalance}
-Invested Assets: ${investedAssets}
-Total Assets: ${totalAssets}
-Monthly EMI: ${totalMonthlyEMI}
-Remaining Debt: ${totalRemainingBalance}
-Savings Rate: ${savingsRate}
-Emergency Months: ${emergencyMonths}
-Discretionary Rate: ${discretionaryRate}
-Investment Ratio: ${investmentRatio}
-DTI Ratio: ${dtiRatio}
-Net Worth: ${netWorth}
-Bad Debt: ${hasBadDebt}
-Score: ${score}
-`
+        Metrics:
+        Bank Balance: ${bankBalance}
+        Invested Assets: ${investedAssets}
+        Total Assets: ${totalAssets}
+        Monthly EMI: ${totalMonthlyEMI}
+        Remaining Debt: ${totalRemainingBalance}
+        Savings Rate: ${savingsRate}
+        Emergency Months: ${emergencyMonths}
+        Discretionary Rate: ${discretionaryRate}
+        Investment Ratio: ${investmentRatio}
+        DTI Ratio: ${dtiRatio}
+        Net Worth: ${netWorth}
+        Bad Debt: ${hasBadDebt}
+        Score: ${score}
+        `
     });
     const resp = response.text.trim();
     console.log(resp);
@@ -325,6 +325,12 @@ app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
             { $inc: {currentValue: amount}} 
         )
     }
+
+    await Asset.findOneAndUpdate(
+        { userId, type: "Bank Account" },
+        { $inc: {currentValue: -amount}} 
+    )
+
     res.json({
         success: true,
         security: req.security
@@ -361,17 +367,28 @@ app.post('/transferwithdraw', authMiddleware, securityMiddleware, async(req, res
         await Asset.findOneAndUpdate(
             { userId, type: "Account" },
             { $inc: {currentValue: -amount}}
-        )
+        );
     }else if(sourceType === "MutualFund"){
         await Asset.findOneAndUpdate(
             { userId, type: "Mutual Funds" },
             { $inc: {currentValue: -amount}}
-        )
+        );
+
+        await Asset.findOneAndUpdate(
+            {userId, type: "Bank Account"},
+            { $inc: {currentValue: amount}}
+        );
+
     }else{
         await Asset.findOneAndUpdate(
             { userId, type: "Gold" },
             { $inc: {currentValue: -amount}}
-        )
+        );
+
+        await Asset.findOneAndUpdate(
+            {userId, type: "Bank Account"},
+            { $inc: {currentValue: amount}}
+        );
     }
     
     res.json({
@@ -546,6 +563,13 @@ app.get('/getFinancialScore', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+app.post('/chatbot', async (req, res)=>{
+    console.log(req.body);
+    res.json({
+        finalData: 'Hello Hello'
+    })
+})
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))

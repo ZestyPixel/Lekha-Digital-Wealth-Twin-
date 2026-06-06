@@ -1,6 +1,262 @@
-.landing-button{
-      border: 2px solid black;
-      margin-left: 700px;
-      margin-top: 100px;
-      width: 100px;
+html {
+  font-size: 16px;
+}
+
+.body-landing-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.header-landing-page {
+  z-index: 100;
+  top: 0;
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: #0033cc;
+  color: #F5F5F5;
+  border-bottom: 1px solid gray;
+  width: 100%;
+  height: 5rem;
+  left: 0;
+}
+
+.text {
+  font-family: arial;
+  font-size: 1.6875rem;
+  font-weight: bold;
+}
+
+.container {
+  padding-top : 110px ; /*add padding if element above is fixed/absolute not margin, for space*/
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  position: relative;
+}
+
+.demo {
+  outline: none;
+  cursor: pointer;
+  border: none;
+  height: 170px;
+  width: 370px;
+  font-size: 45px;
+  border-radius: 80px;
+  color: white;
+  font-family: arial;
+  background-color: #0033cc;
+  border: 2px solid white;
+}
+
+.sign-Up {
+  outline: none;
+  cursor: pointer;
+  border: none;
+  height: 170px;
+  width: 370px;
+  font-size: 45px;
+  border-radius: 80px;
+  color: #0033cc;
+  font-family: arial;
+  background-color: white;
+  border: 2px solid #0033cc;
+}
+
+.main-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  /* height : 370px ; */
+  height : 42vh ;
+  margin-bottom: 0;
+  /* padding: 1.25rem 0; */
+  border-top: 1px solid gray;
+  background-color: #F5F5F5;
+  width : 100% ;
+}
+
+.footer {
+  display: flex;
+  width: 100%;
+  left: 0;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  /* background-color:#F5F5F5; */
+}
+
+.Useful-links {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  /* text-align: center; */
+  font-family: Arial;
+  /* width : 100% ; */
+  margin-left: 6.25rem;
+  margin-top: 1.0625rem;
+  color: #0033cc;
+  /* text-align : center ; */
+}
+
+@media(max-width : 768px) {
+  .Useful-links {
+    margin-left: 3rem;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.usfl-links {
+  font-size: 1.5625rem;
+  font-weight: bold;
+}
+
+.links {
+  font-size: 1.375rem;
+  color: black;
+}
+
+.links:hover {
+  color: #0033cc;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  /* text-align: center; */
+  font-family: Arial;
+  /* width : 100% ; */
+  color: #0033cc;
+  margin-top: 1.0625rem;
+  margin-left: 0.625rem;
+  /* text-align : center ; */
+
+}
+
+@media(max-width : 768px) {
+  .contact {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.contacts {
+  font-size: 1.5625rem;
+  font-weight: bold;
+}
+
+.address {
+  font-size: 1.375rem;
+  color: black;
+}
+
+.policy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: start;
+  font-family: Arial;
+  /* width : 100% ; */
+  color: #0033cc;
+  margin-top: 1.0625rem;
+  margin-right: 6.25rem;
+  /* text-align : center ; */
+}
+
+@media(max-width : 768px) {
+  .policy {
+    margin-right: 3rem;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.Policy {
+  font-size: 1.5625rem;
+  font-weight: bold;
+}
+
+.policies {
+  font-size: 1.375rem;
+  color: black;
+}
+
+.divider {
+  width: 70%;
+  border: 0;
+  border-top: 1px solid #333;
+  margin: 0.625rem auto;
+}
+
+.social-media {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.facebook,
+.x,
+.youtube {
+  border: none 0;
+  background: transparent;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+  left: 0;
+  margin-top: 0.625rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 50%;
+  border: 2px solid #181818;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.facebook-icon,
+.x-icon,
+.youtube-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.copyright {
+  font-size: 1.25rem;
+}
+
+.body-landing-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #f8fbff 0%,
+    #eef4ff 35%,
+    #e2ecff 70%,
+    #d8e7ff 100%
+  );
 }

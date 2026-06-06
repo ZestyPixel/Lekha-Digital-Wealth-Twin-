@@ -26,7 +26,7 @@ export default function PieChartCard({ Data }) {
   const total = chartData.reduce((sum, d) => sum + d.value, 0);
 
   return (
-      <div className="pie">
+      <div className="pie card">
         <div className="heading-networth" >
             Net Worth
         </div>

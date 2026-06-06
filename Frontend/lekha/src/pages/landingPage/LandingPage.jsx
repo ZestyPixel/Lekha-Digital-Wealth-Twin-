@@ -19,20 +19,31 @@ export default function LandingPage() {
     }
 
     return (
-        <div>
-            <button className='landing-button' onClick={handleDemoLogin}>
-                Use Demo Account
-            </button>
-            <Link to={'/signUpForm'}>
-                <button className='landing-button'>
-                    Create New Account
-                </button>
-            </Link>
-            <Link to={'/login'}>
-                <button className='landing-button'>
-                    Login
-                </button>
-            </Link>
+    <div className="body-landing-page">
+        <div className="header-landing-page">
+            <p className="text">Welcome To Lekha !</p>
         </div>
+        <div className="container">
+            <div>
+                <Link to={'/login'}>
+                <button className='sign-Up'>
+                    <span>Login</span>
+                </button>
+                </Link>
+            </div>
+            <div>
+                <button className="demo" onClick={handleDemoLogin}>
+                    <span className="text-demo" onClick={handleDemoLogin}>Use Demo Account</span>
+                </button>
+            </div>
+            <div>
+                <Link to={'/signUpForm'}>
+                <button className="sign-Up">
+                    <span>Sign Up</span>
+                </button>
+                </Link>
+            </div>
+        </div>    
+    </div>
     );
 }

@@ -1,19 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import axios from "axios";
 import { MessageSquare, X, Send } from "lucide-react";
 import "./ChatBot.css";
+import { useAuth } from "../../context/useAuth";
 
 const chatMenus = {
   main: [
-    { label: "💰 Check Balance", action: "Check my current account balance" },
-    { label: "📈 Investment", nextMenu: "investment" },
-    // { label: "🛡️ Report Fraud", nextMenu: "fraud" },
-    { label: "💳 Spending Analysis", action: "Analyze my spending patterns" }
+    { label: "💰 Financial Health", action: "Check my current account balance" },
+    { label: "📈 My Goals", nextMenu: "investment" },
+    { label: "💳 My Investments", action: "Analyze my spending patterns" }
   ],
   investment: [
-    { label: "Start a SIP", action: "I want to start a SIP investment" },
-    { label: "Risk Profile", action: "What is my risk profile?" },
+    { label: "Save More", action: "I want to start a SIP investment" },
+    { label: "Reduce Debt", action: "What is my risk profile?" },
     { label: "🔙 Back to Main", nextMenu: "main" }
   ],
   fraud: [
@@ -32,6 +31,7 @@ export default function ChatBot(){
     const [currentMenu, setCurrentMenu] = useState("main");
 
     const chatEndRef = useRef(null);
+    const { requestWithAuth } = useAuth();
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -56,14 +56,14 @@ export default function ChatBot(){
 
         setLoadingStatus(true);
         setQuestion("");
-
         try {
-            const response = await axios.post("http://localhost:8000/ask", {
-                question: text,
-                history: chatHistory
+            const response = await requestWithAuth('/chatbot', {
+                method: 'POST',
+                body: JSON.stringify({ message: text }),
             });
 
-            const botMessage = { role: "model", text: response.data.finalData };
+            const data = await response.json();
+            const botMessage = { role: "model", text: data.finalData };
             setChatHistory(prev => [...prev, botMessage]);
 
         } catch (error) {
@@ -92,7 +92,7 @@ export default function ChatBot(){
                     <div className="chat-header">
                         <div>
                             <h3>Ask Hisaab</h3>
-                            <p>Your AI Financial Assistant</p>
+                            <p>Your Financial Assistant</p>
                         </div>
 
                         <button
