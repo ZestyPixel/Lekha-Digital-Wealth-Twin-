@@ -100,7 +100,7 @@ import { useEffect } from "react";
                     <input type="checkbox" id="show-pass" onClick={showPass} />
                     <label htmlFor="show-pass"> Show Password</label>
                 </div>
-                <button className="sign-in">SIGN IN</button>
+                <button className="sign-in-in">SIGN IN</button>
                 <div className="forgot">
                     <p>Forgot <span className="user-pass">Username / Password</span>?</p>
                     <Link to="/"> <p>Don't have an account? <span className="sign-up-link">Sign Up</span></p> </Link>

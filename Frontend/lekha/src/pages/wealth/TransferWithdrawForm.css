@@ -1,0 +1,34 @@
+.ask-hisaab {
+   outline: none;
+   cursor: pointer;
+   border: none;
+   background-color: #0033cc;
+   color: white;
+   height: 90px;
+   margin-top: 10px;
+   font-size: 25px;
+   border-radius: 15px;
+   flex : 1 ;
+ }
+
+  .sign {
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
+   width : 100% ;
+   text-align : center ; 
+ }
+
+ .sign-in {
+   /* width: 100%; */
+   height: 90px;
+   margin-top: 10px;
+   font-size: 25px;
+   background-color: #0033cc;
+   color: white;
+   border: none;
+   border-radius: 15px;
+   flex : 1;
+ }

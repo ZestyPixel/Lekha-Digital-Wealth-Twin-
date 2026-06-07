@@ -5,6 +5,7 @@ import Loading from '../../components/loading/Loading';
 import Success from '../../components/success/Success';
 import Failure from '../../components/failure/Failure';
 import Warning from '../../components/warning/Warning';
+import "./SipForm.css"
 
 const validate = values => {
     const errors = {};
@@ -210,7 +211,10 @@ export default function SIPInvestment() {
                         )}
                     </div>
 
-                    <button type="submit" className="sign-up">Start SIP</button>
+                    <div className="sign">
+                        <button type="submit" className="sign-in">Invest Lumpsum</button>
+                        <button className="ask-hisaab"> Ask Hisaab before transaction ! </button>
+                    </div>
 
                 </form>
             </div>

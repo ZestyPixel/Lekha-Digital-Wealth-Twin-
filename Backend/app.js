@@ -31,6 +31,11 @@ app.use(express.json());
 app.use(cookieParser()); 
 app.use(express.urlencoded({ extended: true }));
 
+function cacheFix (req, res, next){
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  next();
+};
+
 app.get('/', (req, res) => {
     res.send('Backend is running!');
 });
@@ -247,7 +252,7 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
     res.json({success: true});
 });
 
-app.get('/advice', authMiddleware, async(req, res)=>{
+app.get('/advice', authMiddleware, cacheFix, async(req, res)=>{
     const data = await Finances.findOne({ userId: req.userId });
     console.log(data);
     const {

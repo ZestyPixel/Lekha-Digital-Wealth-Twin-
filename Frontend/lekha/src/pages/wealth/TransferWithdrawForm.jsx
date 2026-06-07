@@ -5,6 +5,7 @@ import Loading from '../../components/loading/Loading';
 import Success from '../../components/success/Success';
 import Failure from '../../components/failure/Failure';
 import Warning from '../../components/warning/Warning';
+import "./TransferWithdrawForm.css"
 
 const validate = values => {
     const errors = {};
@@ -374,13 +375,14 @@ export default function TransferWithdraw() {
                             <div className="error">{formik.errors.transactionDate}</div>
                         )}
                     </div>
-
-                    <button type="submit" className="sign-up">
-                        {isTransfer ? 'Transfer Funds'
+                    <div className="sign">
+                        <button type="submit" className="sign-in">
+                            {isTransfer ? 'Transfer Funds'
                             : isRedeem ? 'Redeem Asset'
                             : 'Submit'}
-                    </button>
-
+                        </button>
+                        <button className="ask-hisaab"> Ask Hisaab before transaction ! </button>
+                    </div>
                 </form>
             </div>
         </div>

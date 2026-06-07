@@ -14,3 +14,40 @@
   margin-bottom: 0px;
   text-align: center;
 }
+
+@media(max-width : 768px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+@media(max-width : 768px) {
+  .profile-button {
+    margin-left: 0.625rem;
+  }
+}
+
+@media(max-width : 768px) {
+  .Useful-links {
+    margin-left: 3rem;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media(max-width : 768px) {
+  .contact {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media(max-width : 768px) {
+  .policy {
+    margin-right: 3rem;
+    width: 100%;
+    text-align: center;
+  }
+}

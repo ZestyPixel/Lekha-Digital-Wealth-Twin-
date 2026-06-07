@@ -34,8 +34,9 @@ export default function HomePage(){
   }
 }, [user]);
 
-useEffect(() => { //Wealth card advice
-    const storedAdvice = localStorage.getItem("advice");
+useEffect(() => { 
+    // Wealth card advice - Fetches once per browser session
+    const storedAdvice = sessionStorage.getItem("advice");
 
     if (storedAdvice && storedAdvice !== "undefined") {
         setAdvice(storedAdvice);
@@ -43,12 +44,16 @@ useEffect(() => { //Wealth card advice
     }
 
     const fetchAdvice = async () => {
-        const res = await requestWithAuth('/advice');
-        const data = await res.json();
+        try {
+            const res = await requestWithAuth('/advice');
+            const data = await res.json();
 
-        if (data) {
-            setAdvice(data);
-            localStorage.setItem("advice", data);
+            if (data) {
+                setAdvice(data);
+                sessionStorage.setItem("advice", data); // Saves only for this tab's lifespan
+            }
+        } catch (error) {
+            console.error("Failed to fetch advice:", error);
         }
     };
 
