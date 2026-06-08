@@ -49,3 +49,9 @@
   margin-left: 20px;
   margin-top: 20px;
 }
+
+.pie:active,
+.pie:focus {
+  border: 2px solid #0033cc;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.8);
+}

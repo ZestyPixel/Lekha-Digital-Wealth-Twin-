@@ -48,7 +48,7 @@ export default function BudgetCard({ DataP, DataT }) {
     }
 
     return (
-        <div className="Total-expenses-budget card-budget card">
+        <div className="Total-expenses-budget">
             <div className="budget-grid">
                 {chartData.map((d) => {
                     const status = statusClass(d.pct);

@@ -44,3 +44,9 @@
   position: relative;
   overflow: visible;
 }
+
+.expen-pie:active,
+.expen-pie:focus {
+  border: 2px solid #0033cc;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.8);
+}

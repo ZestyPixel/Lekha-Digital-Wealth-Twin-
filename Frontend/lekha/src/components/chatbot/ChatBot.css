@@ -221,6 +221,8 @@
   box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 
   transition: transform 0.2s;
+
+  z-index: 100000;
 }
 
 .floating-btn:hover {

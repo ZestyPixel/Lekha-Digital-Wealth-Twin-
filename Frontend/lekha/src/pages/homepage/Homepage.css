@@ -1,10 +1,13 @@
 .card-container{
     display: flex;
+    justify-content: center;
+    align-items: flex-start;
     flex-wrap: wrap;
     flex-direction:row;
     column-gap: 0.5cm;
     row-gap: 0.5cm;
-    overflow: visible;
+    transition: transform 0.5s ease-in-out;
+    padding-bottom: 3.125rem;
 }
 
 .welcome {
