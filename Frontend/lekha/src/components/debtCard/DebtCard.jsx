@@ -2,7 +2,7 @@ import { formatCurrency } from "../../utils/functions";
 
 export default function DebtCard({ Name, Total, Remaining, EMI, Progress }) {
     return (
-        <div className="Total-expenses-trans card-trans">
+        <div className="Total-expenses-trans card-trans card">
             <div className="heading-trans">
                 {Name}
             </div>

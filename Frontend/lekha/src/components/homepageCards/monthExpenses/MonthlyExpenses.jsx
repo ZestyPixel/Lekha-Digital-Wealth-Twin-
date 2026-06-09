@@ -20,7 +20,7 @@ const CustomTooltip = ({ active, payload }) => {
 
 export default function MonthlyExpenses({Data = []}){
 
-    const expenses = useMemo(() => {
+    const expenses = useMemo(() => { //So that you can cache the computed values and dont have to compute them everytime a refresh happens.
         const result = {
             houUtil: 0,
             foodDin: 0,
@@ -32,7 +32,7 @@ export default function MonthlyExpenses({Data = []}){
             misc: 0,
         };
 
-        (Data ?? []).forEach((point) => {
+        (Data ?? []).forEach((point) => { //If Data does not exist, use [] otherwise use Data
             switch (point.category) {
                 case "Housing": result.houUtil += point.amount; break;
                 case "Food": result.foodDin += point.amount; break;
@@ -72,7 +72,7 @@ export default function MonthlyExpenses({Data = []}){
                   cy="55%"          
                   innerRadius="70%"  
                   outerRadius="89%"
-                  paddingAngle={1}
+                  paddingAngle={5}
                   dataKey="value"
                 >
                 <Label //label has a content prop which can be a function that receives the viewBox(coordinates) of the pie chart 

@@ -1,6 +1,7 @@
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #0033cc;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.8);
 }
 
 .Total-expenses-trans {
@@ -26,10 +27,4 @@
   font-family: arial;
   margin-left: 20px;
   margin-top: 20px;
-}
-
-.Total-expenses-trans:active,
-.Total-expenses-trans:focus {
-  border: 2px solid #0033cc;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.8);
 }

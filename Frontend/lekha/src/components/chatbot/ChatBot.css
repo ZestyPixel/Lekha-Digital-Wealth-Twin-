@@ -228,3 +228,17 @@
 .floating-btn:hover {
   transform: scale(1.1);
 }
+
+@media (max-width: 768px) {
+  .chat-window{
+    width: 380px;
+    height: 600px;
+  }
+}
+
+@media (max-width: 400px) {
+  .chat-window{
+    width: 335px;
+    height: 600px;
+  }
+}
