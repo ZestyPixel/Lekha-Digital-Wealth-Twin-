@@ -92,6 +92,7 @@ export default function AddDebt() {
                     />
                 ))}
             </div>
+            
             <div className="box">
                 <div className="login-title">Add Debt</div>
                 <form className="login-box" onSubmit={formik.handleSubmit}>

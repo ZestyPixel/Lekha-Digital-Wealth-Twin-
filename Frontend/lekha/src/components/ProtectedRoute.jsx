@@ -3,7 +3,6 @@ import { useAuth } from '../context/useAuth';
 
 export const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-
   if (loading) {
     return (
       <div style={{ 

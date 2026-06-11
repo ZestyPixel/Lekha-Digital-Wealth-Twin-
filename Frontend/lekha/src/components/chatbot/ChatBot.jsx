@@ -6,20 +6,10 @@ import { useAuth } from "../../context/useAuth";
 
 const chatMenus = {
   main: [
-    { label: "💰 Financial Health", action: "Check my current account balance" },
-    { label: "📈 My Goals", nextMenu: "investment" },
-    { label: "💳 My Investments", action: "Analyze my spending patterns" }
+    { label: "💰 Financial Health", action: "Analyze my financial health." },
+    { label: "📈 My Goals", action: "Check my current goals and progress with regards to finances." },
+    { label: "💳 My Investments", action: "Analyze my investments." }
   ],
-  investment: [
-    { label: "Save More", action: "I want to start a SIP investment" },
-    { label: "Reduce Debt", action: "What is my risk profile?" },
-    { label: "🔙 Back to Main", nextMenu: "main" }
-  ],
-  fraud: [
-    { label: "Report Transaction", action: "I want to report a suspicious transaction" },
-    { label: "Block Card", action: "How do I block my debit card?" },
-    { label: "🔙 Back to Main", nextMenu: "main" }
-  ]
 };
 
 export default function ChatBot(){
@@ -51,19 +41,26 @@ export default function ChatBot(){
     const handleSend = async (text) => {
         if (!text.trim()) return;
 
-        const newuserMessage = { role: "user", text: text };
-        setChatHistory(prev => [...prev, newuserMessage]);
+        const userMessage = { role: "user", text };
+
+        const nextHistory = [...chatHistory, userMessage];
+        setChatHistory(nextHistory);
 
         setLoadingStatus(true);
         setQuestion("");
+
         try {
             const response = await requestWithAuth('/chatbot', {
                 method: 'POST',
-                body: JSON.stringify({ message: text }),
+                body: JSON.stringify({
+                    message: text,
+                    history: nextHistory.slice(-10) // last 10 messages only
+                }),
             });
 
             const data = await response.json();
             const botMessage = { role: "model", text: data.finalData };
+
             setChatHistory(prev => [...prev, botMessage]);
 
         } catch (error) {
@@ -72,7 +69,6 @@ export default function ChatBot(){
                 role: "model",
                 text: "⚠️ Error connecting to server."
             }]);
-
         } finally {
             setLoadingStatus(false);
         }

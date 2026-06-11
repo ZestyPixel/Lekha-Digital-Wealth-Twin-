@@ -10,6 +10,6 @@ export default function LastTransaction({Amount, Category, CreatedAt}){
                 Amount : {formatCurrency(Amount)} <br></br>
                 Date : {new Date(CreatedAt).toLocaleDateString()}
             </p>
-    </div>
+        </div>
     );
 }

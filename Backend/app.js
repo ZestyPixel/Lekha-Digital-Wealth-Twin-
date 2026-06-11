@@ -254,7 +254,6 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
 
 app.get('/advice', authMiddleware, cacheFix, async(req, res)=>{
     const data = await Finances.findOne({ userId: req.userId });
-    console.log(data);
     const {
         bankBalance,
         investedAssets,
@@ -287,6 +286,7 @@ app.get('/advice', authMiddleware, cacheFix, async(req, res)=>{
         - Return only the advice.
 
         Metrics:
+        Nation: India
         Bank Balance: ${bankBalance}
         Invested Assets: ${investedAssets}
         Total Assets: ${totalAssets}
@@ -569,10 +569,55 @@ app.get('/getFinancialScore', authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/chatbot', async (req, res)=>{
-    console.log(req.body);
+app.post('/chatbot', authMiddleware, async (req, res)=>{
+    const { message, history } = req.body;
+    const data = await Finances.findOne({ userId: req.userId });
+    const assets = await Asset.find({ 
+        userId: req.userId,
+        type: { $ne: 'Bank Account' }, //To exclude bank account data, which we already fed from the finances collection.
+     });
+    const goals = await Goal.find({userId: req.userId});
+    console.log(assets);
+    const {
+        bankBalance,
+        investedAssets,
+        totalAssets,
+        totalMonthlyEMI,
+        totalRemainingBalance,
+        savingsRate,
+        essentialExpenses,
+        emergencyMonths,
+        discretionaryRate,
+        investmentRatio,
+        dtiRatio,
+        netWorth,
+        hasBadDebt,
+        score,
+        breakdown
+    } = data;
+
+    const conversation = history.map(msg => `${msg.role}: ${msg.text}`).join('\n');
+
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `
+
+        This is the user's latest message, respond to this as if you were a financial advisor. Keep it short and to the point: ${message}
+
+        Conversation history:${conversation}
+
+        Metrics:
+        Nation: India
+        Finances: ${data}
+        Assets: ${assets}
+        Goals: ${goals}
+        `
+    });
+    const resp = response.text.trim();
+    console.log(resp);
+
     res.json({
-        finalData: 'Hello Hello'
+        finalData: resp,
     })
 })
 
