@@ -32,3 +32,13 @@
    border-radius: 15px;
    flex : 1;
  }
+
+ .form-container{
+  display: flex;
+  flex-direction: row;
+ }
+
+ .text{
+  margin-top: 500px;
+  width: 500px;
+ }

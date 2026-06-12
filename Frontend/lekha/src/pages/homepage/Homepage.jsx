@@ -34,10 +34,9 @@ export default function HomePage(){
   }
 }, [user]);
 
-useEffect(() => { 
-    // Wealth card advice - Fetches once per browser session
+// Wealth card advice — fetches once per browser session
+useEffect(() => {
     const storedAdvice = sessionStorage.getItem("advice");
-
     if (storedAdvice && storedAdvice !== "undefined") {
         setAdvice(storedAdvice);
         return;
@@ -47,10 +46,9 @@ useEffect(() => {
         try {
             const res = await requestWithAuth('/advice');
             const data = await res.json();
-
             if (data) {
                 setAdvice(data);
-                sessionStorage.setItem("advice", data); // Saves only for this tab's lifespan
+                sessionStorage.setItem("advice", data);
             }
         } catch (error) {
             console.error("Failed to fetch advice:", error);
@@ -59,15 +57,28 @@ useEffect(() => {
 
     fetchAdvice();
 }, [user]);
- 
-useEffect(() => { //Health Score
+
+// Health score — fetches once per browser session
+useEffect(() => {
+    const storedScore = sessionStorage.getItem("score");
+    if (storedScore) {
+        try {
+            setScore(JSON.parse(storedScore));
+            return;
+        } catch {
+            sessionStorage.removeItem("score"); // evict corrupted entry
+        }
+    }
 
     const fetchScore = async () => {
-        const res = await requestWithAuth('/getFinancialScore');
-        const data = await res.json();
-
-        setScore(data); // already an object
-        localStorage.setItem("score", JSON.stringify(data)); // store properly
+        try {
+            const res = await requestWithAuth('/getFinancialScore');
+            const data = await res.json();
+            setScore(data);
+            sessionStorage.setItem("score", JSON.stringify(data));
+        } catch (error) {
+            console.error("Failed to fetch score:", error);
+        }
     };
 
     fetchScore();
@@ -95,7 +106,7 @@ useEffect(()=>{
             )}
             
             <div className="card-container">
-              <Link to={'/score'} ><HealthScore Title={"Financial Health Score"}/></Link>
+              <Link to={'/score'} ><HealthScore Title={"Financial Health Score"} score={score}/></Link>
               <Link to={'/networth'} state={protectedData?.asset ?? []}><PieChartCard Data={protectedData?.asset} /></Link>
               <Link to={'/wealth'} ><WealthCard Title={"Manage Wealth"} Advice={advice}/></Link>
               <Link to={'/recenttransactions'} state={protectedData?.transaction ?? []}> <LastTransaction Title={"Last Transaction"} data={protectedData?.transaction?.[protectedData.transaction.length-1]} /> </Link> {/* To access the last element */}

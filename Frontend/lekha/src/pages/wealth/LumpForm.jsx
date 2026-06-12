@@ -63,13 +63,29 @@ function Result({ decision, reasons }) {
 export default function LumpsumInvestment() {
     const { requestWithAuth } = useAuth();
     const [resultComponent, setResultComponent] = useState(null);
+    const [asked, setAsked] = useState(false);
+    const [answer, setAnswer] = useState('');
 
     useEffect(()=>{
         window.scrollTo({
-            top: 100,
+            top: 120,
             behavior: 'smooth',
         });
     },[]);
+
+    async function askHisaab(){
+        const amount = document.getElementById("amount").value;
+        const assetType = document.getElementById("assetType").value;
+        const fundName = document.getElementById("fundName").value;
+        const query = `Should I make a lumpsum investment of rupees ${amount} into ${assetType} through ${fundName}`;
+        const response = await requestWithAuth('/askHisaab', {
+            method: 'POST',
+            body: JSON.stringify({query})
+        })
+        const message = await response.json();
+        setAnswer(message.finalData);
+        setAsked(true);
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -121,7 +137,7 @@ export default function LumpsumInvestment() {
     // at a time so when this is truthy, the code will never reach the form's return below.
 
     return (
-        <div>
+        <div className='form-container'>
             <div className="box">
                 <div className="login-title">Lumpsum Investment</div>
                 <form className="login-box" onSubmit={formik.handleSubmit}>
@@ -213,11 +229,16 @@ export default function LumpsumInvestment() {
 
                     <div className="sign">
                         <button type="submit" className="sign-in">Invest Lumpsum</button>
-                        <button className="ask-hisaab"> Ask Hisaab before transaction ! </button>
+                        <button className="ask-hisaab" onClick={askHisaab} type='button'> Ask Hisaab before transaction ! </button>
+                        {/* Have to write type = 'button' otherwise it is treated as submit by default. */}
                     </div>
 
                 </form>
             </div>
+            {asked && 
+            <div className='text'>
+                {answer}   
+            </div>}
         </div>
     );
 }

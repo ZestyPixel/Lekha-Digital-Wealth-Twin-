@@ -442,7 +442,7 @@ app.get('/getFinancialScore', authMiddleware, async (req, res) => {
             .reduce((sum, a) => sum + a.currentValue, 0);
 
         const investedAssets = assets
-            .filter(a => ['Stocks', 'Mutual Fund', 'Gold'].includes(a.type))
+            .filter(a => ['Stocks', 'Mutual Funds', 'Gold', 'Real Estate'].includes(a.type))
             .reduce((sum, a) => sum + a.currentValue, 0);
 
         const totalAssets = assets
@@ -461,7 +461,7 @@ app.get('/getFinancialScore', authMiddleware, async (req, res) => {
         if (savingsRate >= 0.20) {
             breakdown.push("+ Excellent savings rate");
         } else if (savingsRate >= 0.10) {
-            breakdown.push(`~ Savings rate is decent but below the 20% target ${p1}`);
+            breakdown.push(`~ Savings rate is decent but below the 20% target`);
         } else {
             breakdown.push("- Savings rate is low; aim to save at least 20% of income");
         }
@@ -615,6 +615,35 @@ app.post('/chatbot', authMiddleware, async (req, res)=>{
     });
     const resp = response.text.trim();
     console.log(resp);
+
+    res.json({
+        finalData: resp,
+    })
+})
+
+app.post('/askHisaab', authMiddleware, async (req, res)=>{
+    console.log('received');
+    const { query } = req.body;
+    const data = await Finances.findOne({ userId: req.userId });
+    const assets = await Asset.find({ 
+        userId: req.userId,
+        type: { $ne: 'Bank Account' }, //To exclude bank account data, which we already fed from the finances collection.
+     });
+    const goals = await Goal.find({userId: req.userId});
+
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash-lite",
+        contents: `
+
+        User's query: ${query}
+        Nation: India
+        Finances: ${data}
+        Assets: ${assets}
+        Goals: ${goals}
+        Answer simply and in less than 40 words but make it relevant and consider what the finances will look like after the action.
+        `
+    });
+    const resp = response.text.trim();
 
     res.json({
         finalData: resp,

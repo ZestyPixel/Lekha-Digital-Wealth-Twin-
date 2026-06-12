@@ -9,7 +9,7 @@ const getScoreConfig = (score) => {
 };
 
 export default function HealthScore({ Title }) {
-  const raw = localStorage.getItem('score');
+  const raw = sessionStorage.getItem('score');
   if (!raw) return null; // or a loading/empty state
 
   const scoreFinal = JSON.parse(raw);

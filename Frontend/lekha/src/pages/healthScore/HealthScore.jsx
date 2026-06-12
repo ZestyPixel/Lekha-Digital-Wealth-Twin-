@@ -1,7 +1,7 @@
 import "./HealthScore.css";
 
 export default function HealthScore() {
-  const raw = localStorage.getItem('score');
+  const raw = sessionStorage.getItem('score');
   if (!raw) return null; // or a loading/empty state
 
   const data = JSON.parse(raw);
