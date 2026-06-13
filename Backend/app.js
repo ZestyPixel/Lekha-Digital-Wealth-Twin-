@@ -622,7 +622,6 @@ app.post('/chatbot', authMiddleware, async (req, res)=>{
 })
 
 app.post('/askHisaab', authMiddleware, async (req, res)=>{
-    console.log('received');
     const { query } = req.body;
     const data = await Finances.findOne({ userId: req.userId });
     const assets = await Asset.find({ 
@@ -641,6 +640,7 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
         Assets: ${assets}
         Goals: ${goals}
         Answer simply and in less than 40 words but make it relevant and consider what the finances will look like after the action.
+        Give strong and definitive opinion with a concrete yes or no.
         `
     });
     const resp = response.text.trim();

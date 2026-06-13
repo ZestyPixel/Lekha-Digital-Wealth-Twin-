@@ -63,19 +63,36 @@ function Result({ decision, reasons }) {
 export default function SIPInvestment() {
     const { requestWithAuth } = useAuth();
     const [resultComponent, setResultComponent] = useState(null);
+    const [asked, setAsked] = useState(false);
+    const [answer, setAnswer] = useState('');
+
     useEffect(()=>{
         window.scrollTo({
             top: 100,
             behavior: 'smooth',
         });
     },[]);
+
+    async function askHisaab(){
+        const amount = document.getElementById("amount").value;
+        const assetType = document.getElementById("assetType").value;
+        const fundName = document.getElementById("fundName").value;
+        const query = `Should I start an SIP of rupees ${amount} into ${assetType} through ${fundName}`;
+        const response = await requestWithAuth('/askHisaab', {
+            method: 'POST',
+            body: JSON.stringify({query})
+        })
+        const message = await response.json();
+        setAnswer(message.finalData);
+        setAsked(true);
+    }
+
     const formik = useFormik({
         initialValues: {
             amount: '',
             assetType: '',
             fundName: '',
             sipDate: '',
-            startDate: '',
         },
         validate,
         onSubmit: async (values, {setSubmitting}) => {
@@ -117,7 +134,7 @@ export default function SIPInvestment() {
     // at a time so when this is truthy, the code will never reach the form's return below. 
 
     return (
-        <div>
+        <div className='form-container'>
             <div className="box">
                 <div className="login-title">Setup SIP</div>
                 <form className="login-box" onSubmit={formik.handleSubmit}>
@@ -195,29 +212,17 @@ export default function SIPInvestment() {
                         )}
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="startDate" className="email-and-password">SIP Start Date:</label>
-                        <input
-                            id="startDate"
-                            name="startDate"
-                            className="email-bar"
-                            type="date"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.startDate}
-                        />
-                        {formik.touched.startDate && formik.errors.startDate && (
-                            <div className="error">{formik.errors.startDate}</div>
-                        )}
-                    </div>
-
                     <div className="sign">
                         <button type="submit" className="sign-in">Invest Lumpsum</button>
-                        <button className="ask-hisaab"> Ask Hisaab before transaction ! </button>
+                        <button className="ask-hisaab" onClick={askHisaab}> Ask Hisaab before transaction ! </button>
                     </div>
 
                 </form>
             </div>
+            {asked && 
+            <div className='text'>
+                {answer}   
+            </div>}
         </div>
     );
 }

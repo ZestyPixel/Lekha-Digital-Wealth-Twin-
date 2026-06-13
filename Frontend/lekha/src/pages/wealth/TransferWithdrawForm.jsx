@@ -207,12 +207,30 @@ function DestinationDetailFields({ destinationType, formik }) {
 export default function TransferWithdraw() {
     const [resultComponent, setResultComponent] = useState(null);
     const { requestWithAuth } = useAuth();
+    const [asked, setAsked] = useState(false);
+    const [answer, setAnswer] = useState('');
+
     useEffect(()=>{
         window.scrollTo({
             top: 100,
             behavior: 'smooth',
         });
     },[]);
+
+    async function askHisaab(){
+        const amount = document.getElementById("amount").value;
+        const sourceType = document.getElementById("sourceType").value;
+        const reason = document.getElementById("reason").value;
+        const query = `Should I redeem ${amount} from ${sourceType} with the reason being: ${reason}`;
+
+        const response = await requestWithAuth('/askHisaab', {
+            method: 'POST',
+            body: JSON.stringify({query})
+        })
+        const message = await response.json();
+        setAnswer(message.finalData);
+        setAsked(true);
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -223,10 +241,8 @@ export default function TransferWithdraw() {
             destAccountNumber: '',
             destIfsc: '',
             destBankName: '',
-            destFundName: '',
-            destGoldGrams: '',
-            destGoldPurity: '',
             transactionDate: '',
+            reason: '',
         },
         validate,
         onSubmit: async (values, {setSubmitting}) => {
@@ -271,7 +287,7 @@ export default function TransferWithdraw() {
     // at a time so when this is truthy, the code will never reach the form's return below.  
 
     return (
-        <div>
+        <div className='form-container'>
             <div className="box">
                 <div className="login-title">Transfer / Withdraw</div>
                 <form className="login-box" onSubmit={formik.handleSubmit}>
@@ -361,6 +377,22 @@ export default function TransferWithdraw() {
                     )}
 
                     <div className="form-group">
+                        <label htmlFor="reason" className="email-and-password">Reason:</label>
+                        <input
+                            id="reason"
+                            name="reason"
+                            className="email-bar"
+                            placeholder="Enter reason"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.reason}
+                        />
+                        {formik.touched.reason && formik.errors.reason && (
+                            <div className="error">{formik.errors.reason}</div>
+                        )}
+                    </div>
+
+                    <div className="form-group">
                         <label htmlFor="transactionDate" className="email-and-password">Transaction Date:</label>
                         <input
                             id="transactionDate"
@@ -381,10 +413,14 @@ export default function TransferWithdraw() {
                             : isRedeem ? 'Redeem Asset'
                             : 'Submit'}
                         </button>
-                        <button className="ask-hisaab"> Ask Hisaab before transaction ! </button>
+                        { isRedeem && <button className="ask-hisaab" type="button" onClick={askHisaab}> Ask Hisaab before transaction ! </button>}
                     </div>
                 </form>
             </div>
+            {asked && 
+            <div className='text'>
+                {answer}   
+            </div>}
         </div>
     );
 }
