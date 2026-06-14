@@ -23,6 +23,8 @@ const bcrypt = require('bcrypt');
 const authMiddleware = require('./middlewares/authMiddleware.js')
 const securityMiddleware = require('./middlewares/securityMiddleware.js');
 
+const { cleanAsset, cleanGoals, cleanDebts, cleanFinances, cleanProfile } = require('./utils/dataCleaning.js');
+
 app.use(cors({
     origin: ['http://localhost:5173', 'https://lekha-digital-wealth-twin.vercel.app'],
     credentials: true
@@ -252,31 +254,26 @@ app.post('/setprofile', authMiddleware, async(req, res)=>{
     res.json({success: true});
 });
 
-app.get('/advice', authMiddleware, cacheFix, async(req, res)=>{
+app.get('/advice', authMiddleware, cacheFix, async (req, res) => {
     const data = await Finances.findOne({ userId: req.userId });
-    const {
-        bankBalance,
-        investedAssets,
-        totalAssets,
-        totalMonthlyEMI,
-        totalRemainingBalance,
-        savingsRate,
-        essentialExpenses,
-        emergencyMonths,
-        discretionaryRate,
-        investmentRatio,
-        dtiRatio,
-        netWorth,
-        hasBadDebt,
-        score,
-        breakdown
-    } = data;
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-lite",
-        contents: `
+    const assets = await Asset.find({
+        userId: req.userId,
+        type: { $ne: 'Bank Account' }, // Excluded since bank account data is already in Finances
+    });
+    const goals = await Goal.find({ userId: req.userId });
+    const debt = await Debt.find({ userId: req.userId });
+    const profile = await Profile.findOne({ userId: req.userId });
+
+    const cleanedFinances = cleanFinances(data);
+    const cleanedAssets = assets.map(cleanAsset);
+    const cleanedGoals = goals.map(cleanGoals);
+    const cleanedDebts = debt.map(cleanDebts);
+    const cleanedProfile = cleanProfile(profile);
+
+    const content = `
         You are a personal finance advisor.
 
-        Analyze the user's financial metrics.
+        Analyze the user's financial data below.
 
         Rules:
         - Identify the biggest weakness.
@@ -284,26 +281,33 @@ app.get('/advice', authMiddleware, cacheFix, async(req, res)=>{
         - Give one specific action to improve it.
         - Maximum 25 words.
         - Return only the advice.
+        - Do not invent financial information.
 
-        Metrics:
         Nation: India
-        Bank Balance: ${bankBalance}
-        Invested Assets: ${investedAssets}
-        Total Assets: ${totalAssets}
-        Monthly EMI: ${totalMonthlyEMI}
-        Remaining Debt: ${totalRemainingBalance}
-        Savings Rate: ${savingsRate}
-        Emergency Months: ${emergencyMonths}
-        Discretionary Rate: ${discretionaryRate}
-        Investment Ratio: ${investmentRatio}
-        DTI Ratio: ${dtiRatio}
-        Net Worth: ${netWorth}
-        Bad Debt: ${hasBadDebt}
-        Score: ${score}
-        `
+
+        Finances:
+        ${JSON.stringify(cleanedFinances, null, 2)}
+
+        Assets:
+        ${JSON.stringify(cleanedAssets, null, 2)}
+
+        Goals:
+        ${JSON.stringify(cleanedGoals, null, 2)}
+
+        Debts:
+        ${JSON.stringify(cleanedDebts, null, 2)}
+
+        Monthly Profile:
+        ${JSON.stringify(cleanedProfile, null, 2)}
+    `;
+
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash-lite",
+        contents: content,
     });
+
     const resp = response.text.trim();
-    console.log(resp);
+
     res.json(resp);
 });
 
@@ -577,44 +581,57 @@ app.post('/chatbot', authMiddleware, async (req, res)=>{
         type: { $ne: 'Bank Account' }, //To exclude bank account data, which we already fed from the finances collection.
      });
     const goals = await Goal.find({userId: req.userId});
-    console.log(assets);
-    const {
-        bankBalance,
-        investedAssets,
-        totalAssets,
-        totalMonthlyEMI,
-        totalRemainingBalance,
-        savingsRate,
-        essentialExpenses,
-        emergencyMonths,
-        discretionaryRate,
-        investmentRatio,
-        dtiRatio,
-        netWorth,
-        hasBadDebt,
-        score,
-        breakdown
-    } = data;
+    const debt = await Debt.find({userId: req.userId});
+    const profile = await Profile.findOne({ userId: req.userId });
+
+    const cleanedFinances = cleanFinances(data);
+    const cleanedAssets = assets.map(cleanAsset);
+    const cleanedGoals = goals.map(cleanGoals);
+    const cleanedDebts = debt.map(cleanDebts);
+    const cleanedProfile = cleanProfile(profile);
 
     const conversation = history.map(msg => `${msg.role}: ${msg.text}`).join('\n');
 
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `
+    const content = `
 
-        This is the user's latest message, respond to this as if you were a financial advisor. Keep it short and to the point: ${message}
+        You are a financial advisor chatbot.
+
+        Rules:
+        - Answer the user's latest message.
+        - Use the financial data provided below.
+        - Be concise (under 150 words).
+        - Give actionable advice.
+        - Do not invent financial information.
+
+        User Message:
+        ${message}
 
         Conversation history:${conversation}
 
-        Metrics:
-        Nation: India
-        Finances: ${data}
-        Assets: ${assets}
-        Goals: ${goals}
-        `
+        User's current financial snapshot:
+
+        Finances:
+        ${JSON.stringify(cleanedFinances, null, 2)}
+
+        Assets:
+        ${JSON.stringify(cleanedAssets, null, 2)}
+
+        Goals:
+        ${JSON.stringify(cleanedGoals, null, 2)}
+
+        Debts:
+        ${JSON.stringify(cleanedDebts, null, 2)}
+
+        Monthly Profile:
+        ${JSON.stringify(cleanedProfile, null, 2)}
+    `
+     console.log(content);
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: content,
     });
+
     const resp = response.text.trim();
-    console.log(resp);
 
     res.json({
         finalData: resp,
@@ -622,6 +639,9 @@ app.post('/chatbot', authMiddleware, async (req, res)=>{
 })
 
 app.post('/askHisaab', authMiddleware, async (req, res)=>{
+
+    // await new Promise(()=>{}); to make an indefinite pause
+
     const { query } = req.body;
     const data = await Finances.findOne({ userId: req.userId });
     const assets = await Asset.find({ 
@@ -629,24 +649,85 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
         type: { $ne: 'Bank Account' }, //To exclude bank account data, which we already fed from the finances collection.
      });
     const goals = await Goal.find({userId: req.userId});
+    const debt = await Debt.find({userId: req.userId});
+    const profile = await Profile.findOne({ userId: req.userId });
 
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-lite",
-        contents: `
+    const cleanedFinances = cleanFinances(data);
+    const cleanedAssets = assets.map(cleanAsset);
+    const cleanedGoals = goals.map(cleanGoals);
+    const cleanedDebts = debt.map(cleanDebts);
+    const cleanedProfile = cleanProfile(profile);
 
-        User's query: ${query}
-        Nation: India
-        Finances: ${data}
-        Assets: ${assets}
-        Goals: ${goals}
-        Answer simply and in less than 40 words but make it relevant and consider what the finances will look like after the action.
-        Give strong and definitive opinion with a concrete yes or no.
+    //What this does is it converts the transaction object to a string. 
+    //What the null does is it removes any extra spaces from the stringified object and the 2 adds indentation to make it more readable.
+    
+    const contents = `
+
+        You are Hisaab, a strict, numbers-first personal finance advisor for a user in India. All monetary values below are in INR.
+
+        Transaction requested:
+        ${JSON.stringify(query, null, 2)}
+
+        User's current financial snapshot:
+
+        Finances:
+        ${JSON.stringify(cleanedFinances, null, 2)}
+
+        Assets:
+        ${JSON.stringify(cleanedAssets, null, 2)}
+
+        Goals:
+        ${JSON.stringify(cleanedGoals, null, 2)}
+
+        Debts:
+        ${JSON.stringify(cleanedDebts, null, 2)}
+
+        Monthly Profile:
+        ${JSON.stringify(cleanedProfile, null, 2)}
+
+        Work through this internally. Do not show these steps in your output.
+
+        Step 1 - Feasibility:
+        First check if the transaction is even possible (check value of asset, bank account, etc whichever is relevant)
+        In case of mutual funds or gold etf, look up the specific fund itself and consider its performance.
+
+        Step 2 - Impact (only if Step 1 passes):
+        Estimate netWorth, investedAssets, bankBalance, and savingsRate after this transaction.
+        Weigh the opportunity cost.
+        Check the effect on progress toward Goals, especially High priority goals with near deadlines.
+        Check Debts and totalMonthlyEMI for any effect on debt servicing or the emergency fund.
+        If the transaction's "reason" is discretionary/consumption, prefer wealth creation over consumption unless the amount is small relative to discretionary capacity in Monthly Profile.
+
+        Output rules:
+        Return ONLY a valid JSON object. No markdown, no code fences, nothing outside the JSON. Output must start with { and end with }.
+        "reason" and "alternative" must each cite at least one specific number or name from the data above (an amount, percentage, asset, or goal). No generic advice.
+        Be decisive: choose "YES" or "NO" with no hedging.
+        "reason": maximum 25 words.
+        "alternative": maximum 20 words.
+
+        {
+        "decision": "YES" | "NO",
+        "risk": "LOW" | "MEDIUM" | "HIGH",
+        "reason": "...",
+        "alternative": "..."
+        }
+
         `
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: contents,
     });
-    const resp = response.text.trim();
+
+    const text = response.text; //What .text does is it extracts the text content from the response object returned by the Gemini API. 
+    // The response object may contain other metadata, but we are only interested in the generated text, which is accessed using .text.
+
+    let parsed;
+
+    parsed = JSON.parse(text); // What JSON.parse does is it takes the text string returned by the Gemini API and converts it into a JavaScript object 
+    // that we can easily work with in our code.
 
     res.json({
-        finalData: resp,
+        finalData: parsed,
     })
 })
 

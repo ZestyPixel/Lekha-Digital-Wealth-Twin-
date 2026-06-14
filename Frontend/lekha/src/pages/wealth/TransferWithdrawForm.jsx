@@ -218,18 +218,25 @@ export default function TransferWithdraw() {
     },[]);
 
     async function askHisaab(){
+        setAsked(true);  
+        setAnswer('');
         const amount = document.getElementById("amount").value;
         const sourceType = document.getElementById("sourceType").value;
         const reason = document.getElementById("reason").value;
-        const query = `Should I redeem ${amount} from ${sourceType} with the reason being: ${reason}`;
+        const query = {
+            action: "redeem",
+            amount,
+            sourceType,
+            reason
+        };
 
         const response = await requestWithAuth('/askHisaab', {
             method: 'POST',
             body: JSON.stringify({query})
         })
         const message = await response.json();
-        setAnswer(message.finalData);
-        setAsked(true);
+        const advice = message.finalData;
+        setAnswer(advice);
     }
 
     const formik = useFormik({
@@ -417,10 +424,23 @@ export default function TransferWithdraw() {
                     </div>
                 </form>
             </div>
-            {asked && 
-            <div className='text'>
-                {answer}   
-            </div>}
+
+            {asked && !answer && (
+                <div className="hisaab-loader">
+                    <p>Hisaab is reviewing your transaction</p>
+                    <div className="hisaab-line"></div>
+                </div>
+            )}
+
+            {asked && answer && (
+                <div className='text'>
+                    <p><strong>Decision:</strong> {answer.decision}</p>
+                    <p><strong>Risk:</strong> {answer.risk}</p>
+                    <p><strong>Reason:</strong> {answer.reason}</p>
+                    <p><strong>Alternative:</strong> {answer.alternative}</p>
+                </div>
+            )}
+
         </div>
     );
 }

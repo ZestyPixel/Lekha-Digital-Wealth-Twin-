@@ -74,17 +74,24 @@ export default function LumpsumInvestment() {
     },[]);
 
     async function askHisaab(){
+        setAsked(true);  
+        setAnswer('');      
         const amount = document.getElementById("amount").value;
         const assetType = document.getElementById("assetType").value;
         const fundName = document.getElementById("fundName").value;
-        const query = `Should I make a lumpsum investment of rupees ${amount} into ${assetType} through ${fundName}`;
+        const query = {
+            action: "lumpsum investment",
+            amount,
+            assetType,
+            fundName,
+        };
         const response = await requestWithAuth('/askHisaab', {
             method: 'POST',
             body: JSON.stringify({query})
         })
         const message = await response.json();
-        setAnswer(message.finalData);
-        setAsked(true);
+        const advice = message.finalData;
+        setAnswer(advice);
     }
 
     const formik = useFormik({
@@ -235,10 +242,22 @@ export default function LumpsumInvestment() {
 
                 </form>
             </div>
-            {asked && 
-            <div className='text'>
-                {answer}   
-            </div>}
+            
+            {asked && !answer && (
+                <div className="hisaab-loader">
+                    <p>Hisaab is reviewing your transaction</p>
+                    <div className="hisaab-line"></div>
+                </div>
+            )}
+
+            {asked && answer && (
+                <div className='text'>
+                    <p><strong>Decision:</strong> {answer.decision}</p>
+                    <p><strong>Risk:</strong> {answer.risk}</p>
+                    <p><strong>Reason:</strong> {answer.reason}</p>
+                    <p><strong>Alternative:</strong> {answer.alternative}</p>
+                </div>
+            )}
         </div>
     );
 }
