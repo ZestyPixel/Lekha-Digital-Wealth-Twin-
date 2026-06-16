@@ -9,7 +9,7 @@ import TransferWithdraw from "./TransferWithdrawForm";
 
 export default function ManageWealth(){
     return(
-        <div className="card-container">
+        <div className="card-container-wealth">
             <div className="lumpsum-form">
                 <Link to={'/lump'}><LumpSum Title={'Lumpsum Investment'}/></Link>
             </div>

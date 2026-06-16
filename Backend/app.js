@@ -196,20 +196,29 @@ app.get('/getUserData', authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/addasset', authMiddleware, async(req, res)=>{
+app.post('/addasset', authMiddleware, async (req, res) => {
   const { type, currentValue, institution } = req.body;
   const userId = req.userId;
-  const newAsset = await new Asset({
-    userId,
-    type,
-    currentValue,
-    institution,
-  });
-  await newAsset.save();
-  console.log(newAsset);
-  setTimeout(()=>{
-    res.json({success: true});
-  }, 1000);
+
+  try {
+    const asset = await Asset.findOneAndUpdate(
+      { userId, type },
+      { $inc: { currentValue: currentValue } },
+      { new: true, upsert: true, setDefaultsOnInsert: true } //What new: true does is it returns the updated document after the update operation. 
+      // If you don't set this option, it will return the document as it was before the update.
+      // upsert: true means that if a document matching the query doesn't exist, it will create a new one with the specified update.
+      // setDefaultsOnInsert: true means that if a new document is created due to the upsert, 
+      // it will apply the default values defined in the schema for any fields that are not specified in the update.
+    );
+
+    console.log(asset);
+    setTimeout(() => {
+      res.json({ success: true, asset });
+    }, 1000);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.post('/addtransaction', authMiddleware, async(req, res)=>{
@@ -328,6 +337,11 @@ app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
             { $inc: {currentValue: amount}} //$inc does an increment operation, it will add the amount to the existing price field of the asset document. 
             // If the price field doesn't exist, it will create it and set it to the value of amount.
         )
+    } else if(assetType === "Stocks"){
+        await Asset.findOneAndUpdate(
+            { userId, type: "Stocks" },
+            { $inc: {currentValue: amount}} 
+        )
     }else{
         await Asset.findOneAndUpdate(
             { userId, type: "Gold" },
@@ -354,12 +368,23 @@ app.post('/addsip', authMiddleware, securityMiddleware, async(req, res)=>{
             { userId, type: "Mutual Funds" },
             { $inc: {currentValue: amount}}
         )
+    } else if(assetType === "Stocks"){
+        await Asset.findOneAndUpdate(
+            { userId, type: "Stocks" },
+            { $inc: {currentValue: amount}} 
+        )
     }else{
         await Asset.findOneAndUpdate(
             { userId, type: "Gold" },
             { $inc: {currentValue: amount}} 
         )
     }
+
+    await Asset.findOneAndUpdate(
+        { userId, type: "Bank Account" },
+        { $inc: {currentValue: -amount}} 
+    )
+
     res.json({
         success: true,
         security: req.security
@@ -383,6 +408,16 @@ app.post('/transferwithdraw', authMiddleware, securityMiddleware, async(req, res
             { $inc: {currentValue: -amount}}
         );
 
+        await Asset.findOneAndUpdate(
+            {userId, type: "Bank Account"},
+            { $inc: {currentValue: amount}}
+        );
+        
+    } else if(sourceType === "Stocks"){
+        await Asset.findOneAndUpdate(
+            { userId, type: "Stocks" },
+            { $inc: {currentValue: -amount}}
+        );
         await Asset.findOneAndUpdate(
             {userId, type: "Bank Account"},
             { $inc: {currentValue: amount}}
@@ -629,6 +664,9 @@ app.post('/chatbot', authMiddleware, async (req, res)=>{
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: content,
+        config: {
+            tools: [{ googleSearch: {} }] 
+        }
     });
 
     const resp = response.text.trim();
@@ -714,8 +752,11 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
 
         `
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-2.5-flash-lite",
         contents: contents,
+        config: {
+            tools: [{ googleSearch: {} }] 
+        },
     });
 
     const text = response.text; //What .text does is it extracts the text content from the response object returned by the Gemini API. 

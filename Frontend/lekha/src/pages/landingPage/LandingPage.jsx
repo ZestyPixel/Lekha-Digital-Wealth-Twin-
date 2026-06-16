@@ -21,7 +21,7 @@ export default function LandingPage() {
     return (
     <div className="body-landing-page">
         <div className="header-landing-page">
-            <p className="text">Welcome To Lekha !</p>
+            <p className="texts">Welcome To Lekha !</p>
         </div>
         <div className="container">
             <div>

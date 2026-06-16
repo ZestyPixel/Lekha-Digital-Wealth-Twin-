@@ -311,7 +311,7 @@ export default function TransferWithdraw() {
                         >
                             <option value="" disabled>Select transaction type</option>
                             <option value="Transfer">Transfer</option>
-                            <option value="Redeem">Redeem (Mutual Fund / Gold)</option>
+                            <option value="Redeem">Redeem (Mutual Fund / Gold / Stocks)</option>
                         </select>
                         {formik.touched.transactionType && formik.errors.transactionType && (
                             <div className="error">{formik.errors.transactionType}</div>
@@ -349,6 +349,7 @@ export default function TransferWithdraw() {
                                 <option value="" disabled>What are you redeeming?</option>
                                 <option value="MutualFund">Mutual Fund</option>
                                 <option value="Gold">Gold</option>
+                                <option value="Stocks">Stocks</option>
                             </select>
                             {formik.touched.sourceType && formik.errors.sourceType && (
                                 <div className="error">{formik.errors.sourceType}</div>

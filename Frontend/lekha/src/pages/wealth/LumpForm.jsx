@@ -179,6 +179,7 @@ export default function LumpsumInvestment() {
                             <option value="" disabled>Select asset type</option>
                             <option value="MutualFund">Mutual Fund</option>
                             <option value="Gold">Gold (Digital)</option>
+                            <option value="Stocks">Stocks</option>
                         </select>
                         {formik.touched.assetType && formik.errors.assetType && (
                             <div className="error">{formik.errors.assetType}</div>
