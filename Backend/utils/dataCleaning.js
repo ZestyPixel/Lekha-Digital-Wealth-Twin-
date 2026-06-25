@@ -52,6 +52,8 @@ function round(n) {
 function cleanProfile(profile) {
     return {
         monthlyIncome: profile.monthlyIncome,
+        age: profile.age,
+        riskProfile: profile.riskProfile,
         bills: profile.bills,
         food: profile.food,
         transport: profile.transport,
@@ -64,10 +66,50 @@ function cleanProfile(profile) {
     };
 }
 
+function extractStockContext(data) {
+    const {
+        companyName,
+        industry,
+        currentPrice,
+        percentChange,
+        yearHigh,
+        yearLow,
+        recosBar: { averageRating, noOfRecommendations, meanValue },
+        riskMeter: { categoryName: riskCategory },
+        stockDetailsReusableData: {
+            marketCap,
+            pPerEBasicExcludingExtraordinaryItemsTTM: peRatio,
+            currentDividendYieldCommonStockPrimaryIssueLTM: dividendYield,
+            priceYTDPricePercentChange: ytdChange,
+        },
+        recentNews,
+    } = data;
+
+    const topNews = recentNews.slice(0, 3).map(({ headline, date }) => ({
+        headline,
+        date,
+    }));
+
+    return {
+        companyName,
+        industry,
+        currentPrice,
+        percentChange,
+        yearHigh,
+        yearLow,
+        analystConsensus: { averageRating, noOfRecommendations, meanValue },
+        risk: riskCategory,
+        marketCap,
+        ytdChange,
+        recentNews: topNews,
+    };
+}
+
 module.exports = {
     cleanAsset,
     cleanGoals,
     cleanDebts,
     cleanFinances,
     cleanProfile,
+    extractStockContext,
 }

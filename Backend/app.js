@@ -23,7 +23,7 @@ const bcrypt = require('bcrypt');
 const authMiddleware = require('./middlewares/authMiddleware.js')
 const securityMiddleware = require('./middlewares/securityMiddleware.js');
 
-const { cleanAsset, cleanGoals, cleanDebts, cleanFinances, cleanProfile } = require('./utils/dataCleaning.js');
+const { cleanAsset, cleanGoals, cleanDebts, cleanFinances, cleanProfile, extractStockContext } = require('./utils/dataCleaning.js');
 
 app.use(cors({
     origin: ['http://localhost:5173', 'https://lekha-digital-wealth-twin.vercel.app'],
@@ -252,11 +252,11 @@ app.post('/addgoal', authMiddleware, async(req, res)=>{
 
 app.post('/setprofile', authMiddleware, async(req, res)=>{
     const userId = req.userId;
-    const {monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport} = req.body;
+    const { age, riskProfile, monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport } = req.body;
 
     await Profile.findOneAndUpdate(
         { userId },
-        { monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport },
+        { age, riskProfile, monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport },
         { upsert: true, new: true } //If a profile doesn't exist for the user, it will create a new one. 
         // If it does exist, it will update the existing profile with the new data.
     );
@@ -311,8 +311,11 @@ app.get('/advice', authMiddleware, cacheFix, async (req, res) => {
     `;
 
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-lite",
+        model: "gemini-3.1-pro-preview",
         contents: content,
+        thinkingConfig: {
+            thinkingLevel: "low"
+        }
     });
 
     const resp = response.text.trim();
@@ -335,7 +338,7 @@ app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
         await Asset.findOneAndUpdate(
             { userId, type: "Mutual Funds" },
             { $inc: {currentValue: amount}} //$inc does an increment operation, it will add the amount to the existing price field of the asset document. 
-            // If the price field doesn't exist, it will create it and set it to the value of amount.
+            // If the price field doesn't exist, it will create it and set it to the value of amount.F
         )
     } else if(assetType === "Stocks"){
         await Asset.findOneAndUpdate(
@@ -412,7 +415,7 @@ app.post('/transferwithdraw', authMiddleware, securityMiddleware, async(req, res
             {userId, type: "Bank Account"},
             { $inc: {currentValue: amount}}
         );
-        
+
     } else if(sourceType === "Stocks"){
         await Asset.findOneAndUpdate(
             { userId, type: "Stocks" },
@@ -470,7 +473,7 @@ app.get('/getFinancialScore', authMiddleware, async (req, res) => {
         const debts   = await Debt.find({ userId });
 
         const {
-            monthlyIncome: salary,
+            monthlyIncome: salary, age, riskProfile, 
             bills, food, health,
             obligations, lifestyle,
             misc, transport, savings,
@@ -604,7 +607,6 @@ app.get('/getFinancialScore', authMiddleware, async (req, res) => {
 
     } catch (error) {
         console.error('Error in /getFinancialScore:', error);
-        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -660,7 +662,7 @@ app.post('/chatbot', authMiddleware, async (req, res)=>{
         Monthly Profile:
         ${JSON.stringify(cleanedProfile, null, 2)}
     `
-     console.log(content);
+    console.log(content);
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: content,
@@ -681,6 +683,117 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     // await new Promise(()=>{}); to make an indefinite pause
 
     const { query } = req.body;
+    console.log(query);
+    const { assetType, fundName } = query;
+
+    const question = `What is the ISIN number of ${JSON.stringify(fundName, null, 2)} ?`;
+    console.log(question);
+
+    const mf = false;
+    let reply;
+    if(assetType == "MutualFund"){
+        const mf = true;
+        reply = await ai.models.generateContent({
+            model: "gemini-3.1-pro-preview",
+            contents: question,
+            config: {
+                tools: [{ googleSearch: {} }], 
+            },
+            
+        });
+    }
+
+    let detes;
+
+    if(mf){
+        const ans = reply.text;
+
+        const regex = /\b[A-Z0-9]{12}\b/;
+        const match = ans.match(regex);
+        console.log(match[0]);
+
+        let mfdata;
+
+        if (match) {
+            const isin = match[0];
+            const url = `https://mf.captnemo.in/kuvera/${isin}`;
+            
+            try {
+                const response = await fetch(url);
+            
+                mfdata = await response.json(); 
+            
+                console.log(mfdata);
+            
+            } catch (error) {
+                console.error("Failed to fetch mutual fund data:", error);
+            }
+        } else {
+            console.log("No ISIN was found in the text.");
+        }
+        
+        const fund = mfdata[0];
+
+        // Returns
+        const {
+            returns: {
+                year_1: return1Y,
+                year_3: return3Y,
+                year_5: return5Y,
+                inception: returnInception,
+                date: returnsDate,
+            } = {},
+            volatility,
+            fund_rating: fundRating,
+            fund_rating_date: fundRatingDate,
+        } = fund;
+
+        // Fund Details
+        const {
+            crisil_rating: crisilRating,
+            investment_objective: investmentObjective,
+            portfolio_turnover: portfolioTurnover,
+            aum,
+        } = fund;
+
+        const comparison = fund.comparison ?? [];
+
+        const categoryAvg = (key) => {
+            const valid = comparison.filter((fund) => {
+                return fund[key];
+            });
+
+            const total = valid.reduce((sum, fund) => {
+                return sum + fund[key];
+            }, 0);
+
+            const average = total / valid.length;
+
+            return average.toFixed(2);
+        };
+
+        const categoryAvg1Y            = categoryAvg("1y");
+        const categoryAvg3Y            = categoryAvg("3y");
+        const categoryAvg5Y            = categoryAvg("5y");
+        const categoryAvgVolatility    = categoryAvg("volatility");
+        const categoryAvgExpenseRatio  = categoryAvg("expense_ratio");
+
+        const bestPeer1Y           = [...comparison].sort((a, b) => b["1y"] - a["1y"])[0];
+        const bestPeer3Y           = [...comparison].sort((a, b) => b["3y"] - a["3y"])[0];
+        const bestPeer5Y           = [...comparison].sort((a, b) => b["5y"] - a["5y"])[0];
+        const lowestVolatilityPeer = [...comparison].sort((a, b) => a["volatility"] - b["volatility"])[0];
+
+    } else if ( assetType == "Stocks"){
+        console.log("hello");
+        const stock = await fetch(`https://stock.indianapi.in/stock?name=${encodeURIComponent(fundName)}`, {
+            headers: {
+                'x-api-key': process.env.STOCK_API_KEY,
+            }
+        });
+        const jsonStock = await stock.json();
+        detes = extractStockContext(jsonStock);
+    }    
+              
     const data = await Finances.findOne({ userId: req.userId });
     const assets = await Asset.find({ 
         userId: req.userId,
@@ -691,77 +804,138 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     const profile = await Profile.findOne({ userId: req.userId });
 
     const cleanedFinances = cleanFinances(data);
-    const cleanedAssets = assets.map(cleanAsset);
-    const cleanedGoals = goals.map(cleanGoals);
-    const cleanedDebts = debt.map(cleanDebts);
-    const cleanedProfile = cleanProfile(profile);
+    const cleanedAssets   = assets.map(cleanAsset);
+    const cleanedGoals    = goals.map(cleanGoals);
+    const cleanedDebts    = debt.map(cleanDebts);
+    const cleanedProfile  = cleanProfile(profile);
 
     //What this does is it converts the transaction object to a string. 
     //What the null does is it removes any extra spaces from the stringified object and the 2 adds indentation to make it more readable.
     
     const contents = `
 
-        You are Hisaab, a strict, numbers-first personal finance advisor for a user in India. All monetary values below are in INR.
+    You are Hisaab, a strict, numbers-first personal finance advisor for a user in India. All monetary values below are in INR.
 
-        Transaction requested:
-        ${JSON.stringify(query, null, 2)}
+    Transaction requested:
+    ${JSON.stringify(query, null, 2)}
 
-        User's current financial snapshot:
+    User's current financial snapshot:
 
-        Finances:
-        ${JSON.stringify(cleanedFinances, null, 2)}
+    Finances:
+    ${JSON.stringify(cleanedFinances, null, 2)}
 
-        Assets:
-        ${JSON.stringify(cleanedAssets, null, 2)}
+    Assets:
+    ${JSON.stringify(cleanedAssets, null, 2)}
 
-        Goals:
-        ${JSON.stringify(cleanedGoals, null, 2)}
+    Goals:
+    ${JSON.stringify(cleanedGoals, null, 2)}
 
-        Debts:
-        ${JSON.stringify(cleanedDebts, null, 2)}
+    Debts:
+    ${JSON.stringify(cleanedDebts, null, 2)}
 
-        Monthly Profile:
-        ${JSON.stringify(cleanedProfile, null, 2)}
+    Monthly Profile:
+    ${JSON.stringify(cleanedProfile, null, 2)}
 
-        Work through this internally. Do not show these steps in your output.
+    ${mf ? `
+    Mutual Fund Details (use this for the fund involved in the transaction):
+    Name:               ${fund.name}
+    Category:           ${fund.fund_category} (${fund.fund_type})
+    AUM:                ₹${aum} Lakhs
+    Expense Ratio:      ${fund.expense_ratio}%
+    Portfolio Turnover: ${portfolioTurnover}
+    Investment Objective: ${investmentObjective}
 
-        Step 1 - Feasibility:
-        First check if the transaction is even possible (check value of asset, bank account, etc whichever is relevant)
-        In case of mutual funds or gold etf, look up the specific fund itself and consider its performance.
+    Performance (as of ${returnsDate}):
+        1-Year Return:   ${return1Y}%
+        3-Year Return:   ${return3Y}%
+        5-Year Return:   ${return5Y}%
+        Since Inception: ${returnInception}%
 
-        Step 2 - Impact (only if Step 1 passes):
-        Estimate netWorth, investedAssets, bankBalance, and savingsRate after this transaction.
-        Weigh the opportunity cost.
-        Check the effect on progress toward Goals, especially High priority goals with near deadlines.
-        Check Debts and totalMonthlyEMI for any effect on debt servicing or the emergency fund.
-        If the transaction's "reason" is discretionary/consumption, prefer wealth creation over consumption unless the amount is small relative to discretionary capacity in Monthly Profile.
+    Risk & Rating:
+        Volatility:    ${volatility}%
+        CRISIL Rating: ${crisilRating}
+        Fund Rating:   ${fundRating}/5 (as of ${fundRatingDate})
 
-        Output rules:
-        Return ONLY a valid JSON object. No markdown, no code fences, nothing outside the JSON. Output must start with { and end with }.
-        "reason" and "alternative" must each cite at least one specific number or name from the data above (an amount, percentage, asset, or goal). No generic advice.
-        Be decisive: choose "YES" or "NO" with no hedging.
-        "reason": maximum 25 words.
-        "alternative": maximum 20 words.
+    Category Comparison (${fund.fund_category} peers):
+        Metric            This Fund     Category Avg  
+        1Y Return         ${return1Y}%       ${categoryAvg1Y}%
+        3Y Return         ${return3Y}%      ${categoryAvg3Y}%
+        5Y Return         ${return5Y}%      ${categoryAvg5Y}%
+        Volatility        ${volatility}%    ${categoryAvgVolatility}%
+        Expense Ratio     ${fund.expense_ratio}%      ${categoryAvgExpenseRatio}%
 
-        {
-        "decision": "YES" | "NO",
-        "risk": "LOW" | "MEDIUM" | "HIGH",
-        "reason": "...",
-        "alternative": "..."
-        }
+    Standout peers:
+        Best 1Y return:       ${bestPeer1Y?.short_name} at ${bestPeer1Y?.["1y"]}%
+        Best 3Y return:       ${bestPeer3Y?.short_name} at ${bestPeer3Y?.["3y"]}%
+        Best 5Y return:       ${bestPeer5Y?.short_name} at ${bestPeer5Y?.["5y"]}%
+        Lowest volatility:    ${lowestVolatilityPeer?.short_name} at ${lowestVolatilityPeer?.volatility}%
+    ` : ''}
 
-        `
+    ${detes ? `
+    Stock Details (use this for the stock involved in the transaction):
+    Company:         ${detes.companyName} (${detes.industry})
+    Current Price:   ₹${detes.currentPrice.NSE} (NSE) / ₹${detes.currentPrice.BSE} (BSE)
+    Day Change:      ${detes.percentChange}%
+    52-Week Range:   ₹${detes.yearLow} – ₹${detes.yearHigh}
+    YTD Change:      ${detes.ytdChange}%
+    Market Cap:      ₹${detes.marketCap} Cr
+    Risk Profile:    ${detes.risk}
+
+    Analyst Consensus (${detes.analystConsensus.noOfRecommendations} analysts):
+        Rating:      ${detes.analystConsensus.averageRating}
+        Mean Score:  ${detes.analystConsensus.meanValue.toFixed(2)} / 5 (1 = Strong Buy, 5 = Strong Sell)
+
+    Recent News:
+    ${detes.recentNews.map((n, i) => `
+        ${i + 1}. ${n.headline} (${new Date(n.date).toDateString()})`).join('\n')}
+    ` : ''}
+
+    Work through this internally. Do not show these steps in your output.
+
+    Step 1 - Feasibility:
+    Check if the transaction is possible (bank balance, existing holdings, lock-in periods, etc.).
+    ${mf ? `For this mutual fund: 1Y return is ${return1Y}% vs category avg of ${categoryAvg1Y}%, volatility is ${volatility}% vs category avg of ${categoryAvgVolatility}%.` : 'For mutual funds or gold ETFs, consider the funds specific performance and risk profile.'}
+    ${detes ? `For this stock: current price is ₹${detes.currentPrice.NSE}, sitting in a 52-week range of ₹${detes.yearLow}–₹${detes.yearHigh}. Risk profile is ${detes.risk}. Check if the user has sufficient bank balance for this purchase.` : ''}
+
+    Step 2 - Impact (only if Step 1 passes):
+    Estimate netWorth, investedAssets, bankBalance, and savingsRate after this transaction.
+    Weigh the opportunity cost.
+    Check the effect on progress toward Goals, especially high-priority goals with near deadlines.
+    Check Debts and totalMonthlyEMI for any effect on debt servicing or the emergency fund.
+    If the transaction's "reason" is discretionary/consumption, prefer wealth creation over consumption unless the amount is small relative to discretionary capacity in Monthly Profile.
+    ${mf ? `For this fund: its 3Y return of ${return3Y}% is ${(return3Y - categoryAvg3Y).toFixed(2)}% ${return3Y >= categoryAvg3Y ? "above" : "below"} the category avg (${categoryAvg3Y}%). Its volatility of ${volatility}% is ${(volatility - categoryAvgVolatility).toFixed(2)}% ${volatility <= categoryAvgVolatility ? "below" : "above"} category avg (${categoryAvgVolatility}%). 
+    Factor this into your risk and return assessment. Give more priority to 5 year returns` : ''}
+    ${detes ? `For this stock: analyst consensus is "${detes.analystConsensus.averageRating}" with a mean score of ${detes.analystConsensus.meanValue.toFixed(2)}/5 across ${detes.analystConsensus.noOfRecommendations} analysts. The stock is ${detes.percentChange}% today and ${detes.ytdChange}% YTD. Factor recent news sentiment and the ${detes.risk} risk profile into your opportunity cost assessment.` : ''}
+
+    Output rules:
+    Return ONLY a valid JSON object. No markdown, no code fences, nothing outside the JSON. Output must start with { and end with }.
+    "reason" and "alternative" must each cite at least one specific number or name from the data above (an amount, percentage, asset, goal, or fund metric). No generic advice.
+    Be decisive: choose "YES" or "NO" with no hedging.
+    "reason": maximum 25 words. Make sure to mention one statistic or news (especially in case of stocks) to support your reasoning.
+    "alternative": maximum 20 words.
+
+    {
+    "decision": "YES" | "NO",
+    "risk": "LOW" | "MEDIUM" | "HIGH",
+    "reason": "...",
+    "alternative": "..."
+    }
+
+    `
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-lite",
+        model: "gemini-3.1-pro-preview",
         contents: contents,
         config: {
-            tools: [{ googleSearch: {} }] 
+            tools: [{ googleSearch: {} }],
+            thinkingConfig: {
+                thinkingLevel: "medium",
+            } 
         },
     });
 
     const text = response.text; //What .text does is it extracts the text content from the response object returned by the Gemini API. 
     // The response object may contain other metadata, but we are only interested in the generated text, which is accessed using .text.
-
+    console.log(text);
     let parsed;
 
     parsed = JSON.parse(text); // What JSON.parse does is it takes the text string returned by the Gemini API and converts it into a JavaScript object 
@@ -770,7 +944,7 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     res.json({
         finalData: parsed,
     })
-})
+});
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))

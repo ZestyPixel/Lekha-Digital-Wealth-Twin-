@@ -93,18 +93,6 @@ useEffect(()=>{
 
     return(
         <div >
-            {user && (
-              <div className="user-info-section">
-                {protectedData ? (
-                  <>
-                  <h1 className="welcome">Welcome, {protectedData.data.name}</h1> <br /><br />
-                  </>
-                ) : (
-                <p>Loading user data...</p>
-                )}
-              </div>
-            )}
-            
             <div className="card-container">
               <Link to={'/score'} ><HealthScore Title={"Financial Health Score"} score={score}/></Link>
               <Link to={'/networth'} state={protectedData?.asset ?? []}><PieChartCard Data={protectedData?.asset} /></Link>

@@ -76,9 +76,7 @@ export default function LumpsumInvestment() {
     async function askHisaab(){
         setAsked(true);  
         setAnswer('');      
-        const amount = document.getElementById("amount").value;
-        const assetType = document.getElementById("assetType").value;
-        const fundName = document.getElementById("fundName").value;
+        const { amount, assetType, fundName } = formik.values;
         const query = {
             action: "lumpsum investment",
             amount,

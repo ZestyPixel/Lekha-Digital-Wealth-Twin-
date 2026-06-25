@@ -18,8 +18,8 @@ const validate = values => {
         errors.amount = 'Enter a valid amount';
     }
 
-    if (values.transactionType === 'Redeem' && !values.sourceType) {
-        errors.sourceType = 'Required';
+    if (values.transactionType === 'Redeem' && !values.assetType) {
+        errors.assetType = 'Required';
     }
 
     if (values.transactionType === 'Transfer') {
@@ -220,14 +220,13 @@ export default function TransferWithdraw() {
     async function askHisaab(){
         setAsked(true);  
         setAnswer('');
-        const amount = document.getElementById("amount").value;
-        const sourceType = document.getElementById("sourceType").value;
-        const reason = document.getElementById("reason").value;
+        const { amount, assetType, reason, fundName } = formik.values;
         const query = {
             action: "redeem",
             amount,
-            sourceType,
-            reason
+            assetType,
+            reason,
+            fundName,
         };
 
         const response = await requestWithAuth('/askHisaab', {
@@ -243,13 +242,14 @@ export default function TransferWithdraw() {
         initialValues: {
             transactionType: '',
             amount: '',
-            sourceType: '',
+            assetType: '',
             destinationType: '',
             destAccountNumber: '',
             destIfsc: '',
             destBankName: '',
             transactionDate: '',
             reason: '',
+            fundName: '',
         },
         validate,
         onSubmit: async (values, {setSubmitting}) => {
@@ -337,24 +337,25 @@ export default function TransferWithdraw() {
 
                     {isRedeem && (
                         <div className="form-group">
-                            <label htmlFor="sourceType" className="email-and-password">Redeem From:</label>
+                            <label htmlFor="assetType" className="email-and-password">Redeem From:</label>
                             <select
-                                id="sourceType"
-                                name="sourceType"
+                                id="assetType"
+                                name="assetType"
                                 className="email-bar"
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                value={formik.values.sourceType}
+                                value={formik.values.assetType}
                             >
                                 <option value="" disabled>What are you redeeming?</option>
                                 <option value="MutualFund">Mutual Fund</option>
                                 <option value="Gold">Gold</option>
                                 <option value="Stocks">Stocks</option>
                             </select>
-                            {formik.touched.sourceType && formik.errors.sourceType && (
-                                <div className="error">{formik.errors.sourceType}</div>
+                            {formik.touched.assetType && formik.errors.assetType && (
+                                <div className="error">{formik.errors.assetType}</div>
                             )}
                         </div>
+
                     )}
 
                     {isTransfer && (
@@ -383,6 +384,23 @@ export default function TransferWithdraw() {
                             />
                         </>
                     )}
+
+                    <div className="form-group">
+                        <label htmlFor="fundName" className="email-and-password">Asset Name:</label>
+                        <input
+                            id="fundName"
+                            name="fundName"
+                            className="email-bar"
+                            type="text"
+                            placeholder="Enter fund name"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.fundName}
+                        />
+                        {formik.touched.fundName && formik.errors.fundName && (
+                            <div className="error">{formik.errors.fundName}</div>
+                        )}
+                    </div>
 
                     <div className="form-group">
                         <label htmlFor="reason" className="email-and-password">Reason:</label>

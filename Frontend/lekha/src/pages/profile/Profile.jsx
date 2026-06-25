@@ -35,6 +35,8 @@ export default function Profile() {
     const formik = useFormik({
         initialValues: {
             monthlyIncome: '',
+            age: '',
+            riskProfile: '',
             bills: '',
             food: '',
             health: '',
@@ -71,7 +73,7 @@ export default function Profile() {
             <div className="box">
                 <div className="login-title">Set Monthly Budget</div>
                 <form className="login-box" onSubmit={formik.handleSubmit}>
-
+                    
                     <div className="form-group">
                         <label htmlFor="monthlyIncome" className="email-and-password">Monthly Income:</label>
                         <input
@@ -85,6 +87,41 @@ export default function Profile() {
                             value={formik.values.monthlyIncome}
                         />
                         {formik.errors.monthlyIncome && <div className="error">{formik.errors.monthlyIncome}</div>}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="age" className="email-and-password">Age:</label>
+                        <input
+                            id="age"
+                            name="age"
+                            className="email-bar"
+                            type="number"
+                            placeholder="Enter your age"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.age}
+                        />
+                        {formik.errors.age && <div className="error">{formik.errors.age}</div>}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="riskProfile" className="email-and-password">Risk Profile: </label>
+                        <select
+                            id="riskProfile"
+                            name="riskProfile"
+                            className="email-bar"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.riskProfile}
+                        >
+                            <option value="" disabled>Select asset type</option>
+                            <option value="Aggressive">Aggressive</option>
+                            <option value="Balanced">Balanced</option>
+                            <option value="Conservative">Conservative</option>
+                        </select>
+                        {formik.touched.riskProfile && formik.errors.riskProfile && (
+                            <div className="error">{formik.errors.riskProfile}</div>
+                        )}
                     </div>
 
                     <div className="form-group">
