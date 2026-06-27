@@ -45,6 +45,9 @@ export default function Profile() {
             obligations: '',
             savings: '',
             transport: '',
+            number: '',
+            emergencyEmail: '',
+            emergencyNumber: '',
         },
         validate,
         onSubmit: async (values) => {
@@ -87,6 +90,51 @@ export default function Profile() {
                             value={formik.values.monthlyIncome}
                         />
                         {formik.errors.monthlyIncome && <div className="error">{formik.errors.monthlyIncome}</div>}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="number" className="email-and-password">Number:</label>
+                        <input
+                            id="number"
+                            name="number"
+                            className="email-bar"
+                            type="number"
+                            placeholder="Enter your number"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.number}
+                        />
+                        {formik.errors.number && <div className="error">{formik.errors.number}</div>}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="emergencyEmail" className="email-and-password">Emergency Email:</label>
+                        <input
+                            id="emergencyEmail"
+                            name="emergencyEmail"
+                            className="email-bar"
+                            type="email"
+                            placeholder="Enter your emergency email"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.emergencyEmail}
+                        />
+                        {formik.errors.emergencyEmail && <div className="error">{formik.errors.emergencyEmail}</div>}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="emergencyNumber" className="email-and-password">Emergency Number:</label>
+                        <input
+                            id="emergencyNumber"
+                            name="emergencyNumber"
+                            className="email-bar"
+                            type="number"
+                            placeholder="Enter your emergencyNumber"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.emergencyNumber}
+                        />
+                        {formik.errors.emergencyNumber && <div className="error">{formik.errors.emergencyNumber}</div>}
                     </div>
 
                     <div className="form-group">

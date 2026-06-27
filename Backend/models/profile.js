@@ -38,6 +38,15 @@ const profileSchema = new mongoose.Schema({
     transport: {
         type: Number,
     },
+    number: {
+        type: Number,
+    },
+    emergencyEmail: {
+        type: String,
+    },
+    emergencyNumber: {
+        type: Number,
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Profile', profileSchema);

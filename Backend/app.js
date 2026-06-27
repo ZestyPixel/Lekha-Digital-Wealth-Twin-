@@ -252,11 +252,11 @@ app.post('/addgoal', authMiddleware, async(req, res)=>{
 
 app.post('/setprofile', authMiddleware, async(req, res)=>{
     const userId = req.userId;
-    const { age, riskProfile, monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport } = req.body;
+    const { age, riskProfile, monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport, emergencyNumber, emergencyEmail, number } = req.body;
 
     await Profile.findOneAndUpdate(
         { userId },
-        { age, riskProfile, monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport },
+        { age, riskProfile, monthlyIncome, bills, food, health, lifestyle, misc, obligations, savings, transport, emergencyNumber, emergencyEmail, number },
         { upsert: true, new: true } //If a profile doesn't exist for the user, it will create a new one. 
         // If it does exist, it will update the existing profile with the new data.
     );
@@ -928,7 +928,7 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
         config: {
             tools: [{ googleSearch: {} }],
             thinkingConfig: {
-                thinkingLevel: "medium",
+                thinkingLevel: "high",
             } 
         },
     });
