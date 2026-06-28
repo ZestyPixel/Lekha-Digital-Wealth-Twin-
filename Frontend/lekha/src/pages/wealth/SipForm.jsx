@@ -94,6 +94,7 @@ export default function SIPInvestment() {
 
     const formik = useFormik({
         initialValues: {
+            transactionType: 'sip',
             amount: '',
             assetType: '',
             fundName: '',

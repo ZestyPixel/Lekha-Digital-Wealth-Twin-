@@ -94,6 +94,7 @@ export default function LumpsumInvestment() {
 
     const formik = useFormik({
         initialValues: {
+            transactionType: 'lumpsum',
             amount: '',
             assetType: '',
             fundName: '',

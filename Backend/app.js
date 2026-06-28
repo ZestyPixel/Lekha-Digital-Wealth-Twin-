@@ -168,6 +168,7 @@ app.post('/refresh_token', async (req, res)=>{
 
 app.get('/getUserData', authMiddleware, async (req, res) => {
     try {
+
         const userId = req.userId;
 
         const userData = await User.findById(userId);

@@ -105,6 +105,10 @@ function extractStockContext(data) {
     };
 }
 
+function formatCurrency (value) {
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
+}
+ 
 module.exports = {
     cleanAsset,
     cleanGoals,
@@ -112,4 +116,5 @@ module.exports = {
     cleanFinances,
     cleanProfile,
     extractStockContext,
+    formatCurrency,
 }
