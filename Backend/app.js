@@ -314,9 +314,6 @@ app.get('/advice', authMiddleware, cacheFix, async (req, res) => {
     const response = await ai.models.generateContent({
         model: "gemini-3.1-pro-preview",
         contents: content,
-        thinkingConfig: {
-            thinkingLevel: "low"
-        }
     });
 
     const resp = response.text.trim();
@@ -681,8 +678,6 @@ app.post('/chatbot', authMiddleware, async (req, res)=>{
 
 app.post('/askHisaab', authMiddleware, async (req, res)=>{
 
-    // await new Promise(()=>{}); to make an indefinite pause
-
     const { query } = req.body;
     console.log(query);
     const { assetType, fundName } = query;
@@ -690,102 +685,121 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     const question = `What is the ISIN number of ${JSON.stringify(fundName, null, 2)} ?`;
     console.log(question);
 
-    const mf = false;
+    // FIX 1: was `const mf = false;` — a `const mf = true` inside the
+    // `if(assetType == "MutualFund")` block below was shadowing this instead
+    // of assigning to it, so `mf` was ALWAYS false outside that block,
+    // no matter what assetType was. `let` allows the inner assignment to
+    // actually mutate this variable.
+    let mf = false;
     let reply;
-    if(assetType == "MutualFund"){
-        const mf = true;
+
+    // FIX 2: all fund-related variables are hoisted here, at function scope,
+    // instead of being declared with `const`/destructuring `const` inside the
+    // `if(mf){ ... }` block below. Previously they went out of scope the
+    // moment that block closed, so the template string (which uses them
+    // AFTER the block) would throw "not defined" the instant `mf` correctly
+    // became true. Declaring them here as `let`, and using bare `=`
+    // (not `const ... =`) to assign inside the block, keeps them alive for
+    // the template string later in this function.
+    let fund, return1Y, return3Y, return5Y, returnInception, returnsDate,
+        volatility, fundRating, fundRatingDate,
+        crisilRating, investmentObjective, portfolioTurnover, aum,
+        categoryAvg1Y, categoryAvg3Y, categoryAvg5Y,
+        categoryAvgVolatility, categoryAvgExpenseRatio,
+        bestPeer1Y, bestPeer3Y, bestPeer5Y, lowestVolatilityPeer,
+        fundTags, comparisonCount;
+
+    if (assetType == "MutualFund") {
+        mf = true; // FIX 1 continued: assign, don't redeclare with const
         reply = await ai.models.generateContent({
             model: "gemini-3.1-pro-preview",
             contents: question,
             config: {
-                tools: [{ googleSearch: {} }], 
+                tools: [{ googleSearch: {} }],
             },
-            
         });
     }
 
     let detes;
 
-    if(mf){
+    if (mf) {
         const ans = reply.text;
 
         const regex = /\b[A-Z0-9]{12}\b/;
         const match = ans.match(regex);
-        console.log(match[0]);
 
         let mfdata;
 
         if (match) {
             const isin = match[0];
             const url = `https://mf.captnemo.in/kuvera/${isin}`;
-            
+
             try {
                 const response = await fetch(url);
-            
-                mfdata = await response.json(); 
-            
+                mfdata = await response.json();
                 console.log(mfdata);
-            
             } catch (error) {
                 console.error("Failed to fetch mutual fund data:", error);
             }
         } else {
             console.log("No ISIN was found in the text.");
         }
-        
-        const fund = mfdata[0];
 
-        // Returns
-        const {
-            returns: {
-                year_1: return1Y,
-                year_3: return3Y,
-                year_5: return5Y,
-                inception: returnInception,
-                date: returnsDate,
-            } = {},
-            volatility,
-            fund_rating: fundRating,
-            fund_rating_date: fundRatingDate,
-        } = fund;
+        // FIX 3: mfdata[0] used to run unconditionally even when mfdata was
+        // never assigned (ISIN not found, or fetch failed in the catch
+        // block) — that throws "Cannot read properties of undefined".
+        // Guard it, and fall back to mf = false so the rest of the function
+        // treats this exactly like "no fund data available" instead of
+        // crashing the whole route.
+        if (!mfdata || !mfdata[0]) {
+            console.error("No mutual fund data available — proceeding without fund details.");
+            mf = false;
+        } else {
+            fund = mfdata[0]; // FIX 2 continued: assign to hoisted `fund`, no `const`
 
-        // Fund Details
-        const {
-            crisil_rating: crisilRating,
-            investment_objective: investmentObjective,
-            portfolio_turnover: portfolioTurnover,
-            aum,
-        } = fund;
+            ({
+                returns: {
+                    year_1: return1Y,
+                    year_3: return3Y,
+                    year_5: return5Y,
+                    inception: returnInception,
+                    date: returnsDate,
+                } = {},
+                volatility,
+                fund_rating: fundRating,
+                fund_rating_date: fundRatingDate,
+            } = fund);
 
-        const comparison = fund.comparison ?? [];
+            ({
+                crisil_rating: crisilRating,
+                investment_objective: investmentObjective,
+                portfolio_turnover: portfolioTurnover,
+                aum,
+            } = fund);
 
-        const categoryAvg = (key) => {
-            const valid = comparison.filter((fund) => {
-                return fund[key];
-            });
+            const comparison = fund.comparison ?? [];
+            comparisonCount = comparison.length;
+            fundTags = fund.tags ?? [];
 
-            const total = valid.reduce((sum, fund) => {
-                return sum + fund[key];
-            }, 0);
+            const categoryAvg = (key) => {
+                const valid = comparison.filter((f) => f[key]);
+                const total = valid.reduce((sum, f) => sum + f[key], 0);
+                const average = total / valid.length;
+                return average.toFixed(2);
+            };
 
-            const average = total / valid.length;
+            categoryAvg1Y           = categoryAvg("1y");
+            categoryAvg3Y           = categoryAvg("3y");
+            categoryAvg5Y           = categoryAvg("5y");
+            categoryAvgVolatility   = categoryAvg("volatility");
+            categoryAvgExpenseRatio = categoryAvg("expense_ratio");
 
-            return average.toFixed(2);
-        };
-
-        const categoryAvg1Y            = categoryAvg("1y");
-        const categoryAvg3Y            = categoryAvg("3y");
-        const categoryAvg5Y            = categoryAvg("5y");
-        const categoryAvgVolatility    = categoryAvg("volatility");
-        const categoryAvgExpenseRatio  = categoryAvg("expense_ratio");
-
-        const bestPeer1Y           = [...comparison].sort((a, b) => b["1y"] - a["1y"])[0];
-        const bestPeer3Y           = [...comparison].sort((a, b) => b["3y"] - a["3y"])[0];
-        const bestPeer5Y           = [...comparison].sort((a, b) => b["5y"] - a["5y"])[0];
-        const lowestVolatilityPeer = [...comparison].sort((a, b) => a["volatility"] - b["volatility"])[0];
-
-    } else if ( assetType == "Stocks"){
-        console.log("hello");
+            bestPeer1Y           = [...comparison].sort((a, b) => b["1y"] - a["1y"])[0];
+            bestPeer3Y           = [...comparison].sort((a, b) => b["3y"] - a["3y"])[0];
+            bestPeer5Y           = [...comparison].sort((a, b) => b["5y"] - a["5y"])[0];
+            lowestVolatilityPeer = [...comparison].sort((a, b) => a["volatility"] - b["volatility"])[0];
+        }
+    } else if (assetType == "Stocks") {
         const stock = await fetch(`https://stock.indianapi.in/stock?name=${encodeURIComponent(fundName)}`, {
             headers: {
                 'x-api-key': process.env.STOCK_API_KEY,
@@ -793,15 +807,15 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
         });
         const jsonStock = await stock.json();
         detes = extractStockContext(jsonStock);
-    }    
-              
+    }
+
     const data = await Finances.findOne({ userId: req.userId });
-    const assets = await Asset.find({ 
+    const assets = await Asset.find({
         userId: req.userId,
-        type: { $ne: 'Bank Account' }, //To exclude bank account data, which we already fed from the finances collection.
-     });
-    const goals = await Goal.find({userId: req.userId});
-    const debt = await Debt.find({userId: req.userId});
+        type: { $ne: 'Bank Account' },
+    });
+    const goals = await Goal.find({ userId: req.userId });
+    const debt = await Debt.find({ userId: req.userId });
     const profile = await Profile.findOne({ userId: req.userId });
 
     const cleanedFinances = cleanFinances(data);
@@ -810,9 +824,6 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     const cleanedDebts    = debt.map(cleanDebts);
     const cleanedProfile  = cleanProfile(profile);
 
-    //What this does is it converts the transaction object to a string. 
-    //What the null does is it removes any extra spaces from the stringified object and the 2 adds indentation to make it more readable.
-    
     const contents = `
 
     You are Hisaab, a strict, numbers-first personal finance advisor for a user in India. All monetary values below are in INR.
@@ -838,7 +849,7 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     ${JSON.stringify(cleanedProfile, null, 2)}
 
     ${mf ? `
-    Mutual Fund Details (use this for the fund involved in the transaction):
+    Mutual Fund Details (present only when assetType is "MutualFund". Use the 1Y/3Y/5Y returns, volatility, category comparison, fund rating, and platform signals below for your decision and citation. AUM and portfolio turnover are background context ONLY — never cite them in "reason". Expense ratio is background context UNLESS it is more than 0.5% above category average, since that is the only case where fund cost materially changes the outcome):
     Name:               ${fund.name}
     Category:           ${fund.fund_category} (${fund.fund_type})
     AUM:                ₹${aum} Lakhs
@@ -855,9 +866,12 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     Risk & Rating:
         Volatility:    ${volatility}%
         CRISIL Rating: ${crisilRating}
-        Fund Rating:   ${fundRating}/5 (as of ${fundRatingDate})
+        Fund Rating:   ${fundRating}/5 (as of ${fundRatingDate}) — this is an independent quality signal, not derived from the returns above. A rating of 4 or 5 is meaningful positive evidence and should be weighed against a small category-average gap, not ignored.
 
-    Category Comparison (${fund.fund_category} peers):
+    Platform Signals: ${fundTags.length > 0 ? fundTags.join(', ') : 'none available'}
+        Treat "top_rated" and "top_bought" as mild independent positive evidence, particularly when return-based numbers are mixed or only marginally below average.
+
+    Category Comparison (${fund.fund_category} peers, averaged across ${comparisonCount} peer fund${comparisonCount === 1 ? '' : 's'} — a small peer count means this average is a rougher benchmark, not a market-wide figure):
         Metric            This Fund     Category Avg  
         1Y Return         ${return1Y}%       ${categoryAvg1Y}%
         3Y Return         ${return3Y}%      ${categoryAvg3Y}%
@@ -865,7 +879,7 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
         Volatility        ${volatility}%    ${categoryAvgVolatility}%
         Expense Ratio     ${fund.expense_ratio}%      ${categoryAvgExpenseRatio}%
 
-    Standout peers:
+    Standout peers (background context only — do not cite unless the chosen fund is a clear outlier vs. one of these):
         Best 1Y return:       ${bestPeer1Y?.short_name} at ${bestPeer1Y?.["1y"]}%
         Best 3Y return:       ${bestPeer3Y?.short_name} at ${bestPeer3Y?.["3y"]}%
         Best 5Y return:       ${bestPeer5Y?.short_name} at ${bestPeer5Y?.["5y"]}%
@@ -873,7 +887,7 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     ` : ''}
 
     ${detes ? `
-    Stock Details (use this for the stock involved in the transaction):
+    Stock Details (present only when assetType is "Stocks". Use ONLY current price vs. 52-week range, analyst consensus mean score, and today's/YTD % change for your decision and citation. Market cap and industry are background context ONLY — never cite them in "reason"):
     Company:         ${detes.companyName} (${detes.industry})
     Current Price:   ₹${detes.currentPrice.NSE} (NSE) / ₹${detes.currentPrice.BSE} (BSE)
     Day Change:      ${detes.percentChange}%
@@ -886,33 +900,42 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
         Rating:      ${detes.analystConsensus.averageRating}
         Mean Score:  ${detes.analystConsensus.meanValue.toFixed(2)} / 5 (1 = Strong Buy, 5 = Strong Sell)
 
-    Recent News:
+    Recent News (cite the single most decision-relevant headline only if it directly affects feasibility or risk — do not cite news just because it exists):
     ${detes.recentNews.map((n, i) => `
         ${i + 1}. ${n.headline} (${new Date(n.date).toDateString()})`).join('\n')}
     ` : ''}
 
+    ${(!mf && !detes) ? `
+    Note: assetType is "${assetType}". No fund-specific or stock-specific performance, volatility, or risk-profile data exists for this transaction — none was provided because none applies (or, for MutualFund, because lookup failed). Do NOT invent, estimate, or reference performance/volatility/risk-profile figures. Evaluate this transaction purely on bankBalance, netWorth impact, and progress toward Goals/Debts in the financial snapshot above.
+    ` : ''}
+
     Work through this internally. Do not show these steps in your output.
 
-    Step 1 - Feasibility:
+    Step 1 - Feasibility (the gate: check this first, and if it fails, stop here):
     Check if the transaction is possible (bank balance, existing holdings, lock-in periods, etc.).
-    ${mf ? `For this mutual fund: 1Y return is ${return1Y}% vs category avg of ${categoryAvg1Y}%, volatility is ${volatility}% vs category avg of ${categoryAvgVolatility}%.` : 'For mutual funds or gold ETFs, consider the funds specific performance and risk profile.'}
+    ${mf ? `For this mutual fund: 1Y return is ${return1Y}% vs category avg of ${categoryAvg1Y}%, volatility is ${volatility}% vs category avg of ${categoryAvgVolatility}%.` : ''}
     ${detes ? `For this stock: current price is ₹${detes.currentPrice.NSE}, sitting in a 52-week range of ₹${detes.yearLow}–₹${detes.yearHigh}. Risk profile is ${detes.risk}. Check if the user has sufficient bank balance for this purchase.` : ''}
+    ${(!mf && !detes) ? `For this asset type: check only bank balance sufficiency and any relevant holdings. There is no fund/stock performance data to weigh here.` : ''}
 
     Step 2 - Impact (only if Step 1 passes):
     Estimate netWorth, investedAssets, bankBalance, and savingsRate after this transaction.
     Weigh the opportunity cost.
     Check the effect on progress toward Goals, especially high-priority goals with near deadlines.
     Check Debts and totalMonthlyEMI for any effect on debt servicing or the emergency fund.
-    If the transaction's "reason" is discretionary/consumption, prefer wealth creation over consumption unless the amount is small relative to discretionary capacity in Monthly Profile.
+    If query.reason is a non-empty string AND describes discretionary/consumption spending, prefer wealth creation over consumption unless the amount is small relative to discretionary capacity in Monthly Profile. If query.reason is empty, missing, or purely descriptive (e.g. "SIP", "investment"), skip this check entirely — do not treat an empty reason as evidence of discretionary intent.
     ${mf ? `For this fund: its 3Y return of ${return3Y}% is ${(return3Y - categoryAvg3Y).toFixed(2)}% ${return3Y >= categoryAvg3Y ? "above" : "below"} the category avg (${categoryAvg3Y}%). Its volatility of ${volatility}% is ${(volatility - categoryAvgVolatility).toFixed(2)}% ${volatility <= categoryAvgVolatility ? "below" : "above"} category avg (${categoryAvgVolatility}%). 
-    Factor this into your risk and return assessment. Give more priority to 5 year returns` : ''}
+    Factor this into your risk and return assessment. Give more priority to 5 year returns.
+    Materiality rule: a 5Y-return gap vs. category average of LESS THAN 2 percentage points is NOT on its own sufficient grounds for NO — treat it as roughly comparable performance, especially if fund_rating is 4 or 5, or platform signals include "top_rated"/"top_bought". In that case let bank balance, goal timeline, and risk profile carry the decision instead of the return gap. Only treat 5Y underperformance as the primary rejection reason when the gap is 2 points or more, or when 1Y/3Y/5Y all underperform in the same direction (as opposed to a single window lagging while others are competitive).` : ''}
     ${detes ? `For this stock: analyst consensus is "${detes.analystConsensus.averageRating}" with a mean score of ${detes.analystConsensus.meanValue.toFixed(2)}/5 across ${detes.analystConsensus.noOfRecommendations} analysts. The stock is ${detes.percentChange}% today and ${detes.ytdChange}% YTD. Factor recent news sentiment and the ${detes.risk} risk profile into your opportunity cost assessment.` : ''}
+
+    Step 3 - Identify the deciding factor:
+    Before writing your output, identify internally the SINGLE factor that most influenced your decision — either the Step 1 feasibility number (if feasibility was genuinely at risk) or the single most decisive Step 2 number (if feasibility was clearly fine). Do not combine a Step 1 number and a Step 2 number in the same "reason". Background-context fields marked above (AUM, portfolio turnover, market cap, "Standout peers" unless the fund is an outlier, comparisonCount, expense ratio unless flagged) must never be the deciding factor and must never appear in "reason". fund_rating and platform tags may be the deciding factor ONLY when they are what tipped a close call (per the materiality rule in Step 2) — if so, cite the rating or tag by name instead of a return-gap number.
 
     Output rules:
     Return ONLY a valid JSON object. No markdown, no code fences, nothing outside the JSON. Output must start with { and end with }.
-    "reason" and "alternative" must each cite at least one specific number or name from the data above (an amount, percentage, asset, goal, or fund metric). No generic advice.
+    "reason" must state the deciding factor identified in Step 3, plus the one number/name that proves it. No generic advice, and no second number from a different step.
     Be decisive: choose "YES" or "NO" with no hedging.
-    "reason": maximum 25 words. Make sure to mention one statistic or news (especially in case of stocks) to support your reasoning.
+    "reason": maximum 25 words.
     "alternative": maximum 20 words.
 
     {
@@ -923,24 +946,20 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     }
 
     `
+
     const response = await ai.models.generateContent({
         model: "gemini-3.1-pro-preview",
         contents: contents,
         config: {
             tools: [{ googleSearch: {} }],
-            thinkingConfig: {
-                thinkingLevel: "high",
-            } 
         },
     });
 
-    const text = response.text; //What .text does is it extracts the text content from the response object returned by the Gemini API. 
-    // The response object may contain other metadata, but we are only interested in the generated text, which is accessed using .text.
+    const text = response.text;
     console.log(text);
     let parsed;
 
-    parsed = JSON.parse(text); // What JSON.parse does is it takes the text string returned by the Gemini API and converts it into a JavaScript object 
-    // that we can easily work with in our code.
+    parsed = JSON.parse(text);
 
     res.json({
         finalData: parsed,

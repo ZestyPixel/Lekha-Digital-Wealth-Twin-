@@ -76,12 +76,13 @@ export default function LumpsumInvestment() {
     async function askHisaab(){
         setAsked(true);  
         setAnswer('');      
-        const { amount, assetType, fundName } = formik.values;
+        const { amount, assetType, fundName, reason } = formik.values;
         const query = {
             action: "lumpsum investment",
             amount,
             assetType,
             fundName,
+            reason,
         };
         const response = await requestWithAuth('/askHisaab', {
             method: 'POST',
@@ -100,6 +101,7 @@ export default function LumpsumInvestment() {
             fundName: '',
             purchaseDate: '',
             pin: '',
+            reason: '',
         },
         validate,
         onSubmit: async (values, {setSubmitting}) => { //what setSubmitting does is it sets formik.isSubmitting to true, 
@@ -199,6 +201,22 @@ export default function LumpsumInvestment() {
                         />
                         {formik.touched.fundName && formik.errors.fundName && (
                             <div className="error">{formik.errors.fundName}</div>
+                        )}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="reason" className="email-and-password">Reason:</label>
+                        <input
+                            id="reason"
+                            name="reason"
+                            className="email-bar"
+                            placeholder="Enter reason"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.reason}
+                        />
+                        {formik.touched.reason && formik.errors.reason && (
+                            <div className="error">{formik.errors.reason}</div>
                         )}
                     </div>
 

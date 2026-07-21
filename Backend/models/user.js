@@ -67,15 +67,6 @@ const userSchema = new mongoose.Schema({
     }
   },
 
-  gamification: {
-    healthScore: {
-      type: Number,
-      min: 0,
-      max: 100,
-      default: 50
-    }
-  },
-
   refreshToken: {
     type: String,
     default: "",

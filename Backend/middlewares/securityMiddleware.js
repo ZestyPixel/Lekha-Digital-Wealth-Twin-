@@ -15,7 +15,7 @@ async function securityMiddleware(req, res, next) {
         let reasons = [];
         const user = await User.findById( id );
         const { email } = user;
-
+        
         const loginGap = Date.now() - user.behavioralBaseline.lastLoginTime;
         if (loginGap/1000 < 20) {
             riskScore += 25;
@@ -23,7 +23,7 @@ async function securityMiddleware(req, res, next) {
         }
 
         if(!device){ //user.behaviouralBaseline.trustedDevices.includes(device)
-            riskScore += 20;
+            riskScore += 30;
             reasons.push("New device detected");
         }
 
@@ -49,9 +49,9 @@ async function securityMiddleware(req, res, next) {
         }
 
         let decision = "ALLOW";
-        if (riskScore >= 70){
+        if (riskScore >= 50){
             decision = "BLOCK";
-        }else if (riskScore >= 50){
+        }else if (riskScore >= 40){
             decision = "WARN";
         }
 
