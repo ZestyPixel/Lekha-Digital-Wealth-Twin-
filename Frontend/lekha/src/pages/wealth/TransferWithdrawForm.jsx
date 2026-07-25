@@ -250,6 +250,7 @@ export default function TransferWithdraw() {
             transactionDate: '',
             reason: '',
             fundName: '',
+            pin: '',
         },
         validate,
         onSubmit: async (values, {setSubmitting}) => {
@@ -433,6 +434,23 @@ export default function TransferWithdraw() {
                             <div className="error">{formik.errors.transactionDate}</div>
                         )}
                     </div>
+
+                    <div className="form-group">
+                        <label htmlFor="pin" className="email-and-password">Pin:</label>
+                        <input
+                            id="pin"
+                            name="pin"
+                            className="email-bar"
+                            type="password"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.pin}
+                        />
+                        {formik.touched.pin && formik.errors.pin && (
+                            <div className="error">{formik.errors.pin}</div>
+                        )}
+                    </div>
+
                     <div className="sign">
                         <button type="submit" className="sign-in">
                             {isTransfer ? 'Transfer Funds'

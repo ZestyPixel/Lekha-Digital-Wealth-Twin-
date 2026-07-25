@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose'); 
 const cors = require('cors');
+const axios = require('axios');
 require('dotenv').config();
 const { verify } = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -34,8 +35,8 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 function cacheFix (req, res, next){
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-  next();
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    next();
 };
 
 app.get('/', (req, res) => {
@@ -311,14 +312,23 @@ app.get('/advice', authMiddleware, cacheFix, async (req, res) => {
         ${JSON.stringify(cleanedProfile, null, 2)}
     `;
 
-    const response = await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
-        contents: content,
-    });
+    const response = await axios.post(
+        "http://localhost:11434/api/generate",
+        {
+            model: "gemma3:4b",
+            prompt: content,
+            stream: false
+        }
+    );
 
-    const resp = response.text.trim();
+    const rawText = response.data.response;
 
-    res.json(resp);
+    const cleaned = rawText
+        .replace(/<think>[\s\S]*?<\/think>/gi, "")
+        .replace(/```json\s*|```/g, "")
+        .trim();
+
+    res.json(cleaned);
 });
 
 app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
@@ -327,7 +337,13 @@ app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
     const {pin} = req.body;
     const compare = await user.comparePassword(pin);
     if (!compare) {
-        return res.status(401).json({ error: 'Invalid credentials' });
+        console.log(req.security);
+        req.security.reasons.push("Wrong Password");
+        req.security.decision = "BLOCK";
+        return res.json({ 
+            error: 'Invalid credentials',
+            security: req.security, 
+        });
     }
     const { amount, assetType, fundName, purchaseDate } = req.body;
 
@@ -362,7 +378,21 @@ app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
 });
 
 app.post('/addsip', authMiddleware, securityMiddleware, async(req, res)=>{
+    console.log("SIP Request");
     const userId = req.userId;
+    const user = await User.findById(userId);
+    const {pin} = req.body;
+    const compare = await user.comparePassword(pin);
+    if (!compare) {
+        console.log(req.security);
+        req.security.reasons.push("Wrong Password");
+        req.security.decision = "BLOCK";
+        return res.json({ 
+            error: 'Invalid credentials',
+            security: req.security, 
+        });
+    }
+
     const { amount, assetType, fundName, sipDate, startDate} = req.body;
     if(assetType === "MutualFund"){
         await Asset.findOneAndUpdate(
@@ -394,7 +424,19 @@ app.post('/addsip', authMiddleware, securityMiddleware, async(req, res)=>{
 
 app.post('/transferwithdraw', authMiddleware, securityMiddleware, async(req, res)=>{
     const userId = req.userId;
-    console.log(req.body);
+    const user = await User.findById(userId);
+    const {pin} = req.body;
+    const compare = await user.comparePassword(pin);
+    if (!compare) {
+        console.log(req.security);
+        req.security.reasons.push("Wrong Password");
+        req.security.decision = "BLOCK";
+        return res.json({ 
+            error: 'Invalid credentials',
+            security: req.security, 
+        });
+    }
+
     const { transactionType, amount, sourceType, destinationType, destAccountNumber, destIfsc, destBankName, destFundName, destGoldGrams, destGoldPurity, 
         destStockShares, transactionDate } = req.body;
     
@@ -573,7 +615,7 @@ app.get('/getFinancialScore', authMiddleware, async (req, res) => {
             score -= 15;
             breakdown.push("- Negative net worth, liabilities exceed assets");
         }
-
+        
         score = Math.max(0, Math.min(100, score));
 
         await Finances.findOneAndUpdate(
@@ -661,20 +703,27 @@ app.post('/chatbot', authMiddleware, async (req, res)=>{
         ${JSON.stringify(cleanedProfile, null, 2)}
     `
     console.log(content);
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: content,
-        config: {
-            tools: [{ googleSearch: {} }] 
-        }
-    });
 
-    const resp = response.text.trim();
+    const response = await axios.post(
+        "http://localhost:11434/api/generate",
+        {
+            model: "gemma3:4b",
+            prompt: content,
+            stream: false
+        }
+    );
+
+    const rawText = response.data.response;
+
+    const cleaned = rawText
+        .replace(/<think>[\s\S]*?<\/think>/gi, "")
+        .replace(/```json\s*|```/g, "")
+        .trim();
 
     res.json({
-        finalData: resp,
-    })
-})
+        finalData: cleaned,
+    });
+});
 
 app.post('/askHisaab', authMiddleware, async (req, res)=>{
 
@@ -685,22 +734,9 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     const question = `What is the ISIN number of ${JSON.stringify(fundName, null, 2)} ?`;
     console.log(question);
 
-    // FIX 1: was `const mf = false;` — a `const mf = true` inside the
-    // `if(assetType == "MutualFund")` block below was shadowing this instead
-    // of assigning to it, so `mf` was ALWAYS false outside that block,
-    // no matter what assetType was. `let` allows the inner assignment to
-    // actually mutate this variable.
     let mf = false;
     let reply;
 
-    // FIX 2: all fund-related variables are hoisted here, at function scope,
-    // instead of being declared with `const`/destructuring `const` inside the
-    // `if(mf){ ... }` block below. Previously they went out of scope the
-    // moment that block closed, so the template string (which uses them
-    // AFTER the block) would throw "not defined" the instant `mf` correctly
-    // became true. Declaring them here as `let`, and using bare `=`
-    // (not `const ... =`) to assign inside the block, keeps them alive for
-    // the template string later in this function.
     let fund, return1Y, return3Y, return5Y, returnInception, returnsDate,
         volatility, fundRating, fundRatingDate,
         crisilRating, investmentObjective, portfolioTurnover, aum,
@@ -745,17 +781,11 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
             console.log("No ISIN was found in the text.");
         }
 
-        // FIX 3: mfdata[0] used to run unconditionally even when mfdata was
-        // never assigned (ISIN not found, or fetch failed in the catch
-        // block) — that throws "Cannot read properties of undefined".
-        // Guard it, and fall back to mf = false so the rest of the function
-        // treats this exactly like "no fund data available" instead of
-        // crashing the whole route.
         if (!mfdata || !mfdata[0]) {
             console.error("No mutual fund data available — proceeding without fund details.");
             mf = false;
         } else {
-            fund = mfdata[0]; // FIX 2 continued: assign to hoisted `fund`, no `const`
+            fund = mfdata[0]; 
 
             ({
                 returns: {
@@ -824,7 +854,7 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
     const cleanedDebts    = debt.map(cleanDebts);
     const cleanedProfile  = cleanProfile(profile);
 
-    const contents = `
+    const content = `
 
     You are Hisaab, a strict, numbers-first personal finance advisor for a user in India. All monetary values below are in INR.
 
@@ -947,23 +977,34 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
 
     `
 
-    const response = await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
-        contents: contents,
-        config: {
-            tools: [{ googleSearch: {} }],
-        },
-    });
+    const response = await axios.post(
+        "http://localhost:11434/api/generate",
+        {
+            model: "qwen3:8b",
+            prompt: content,
+            stream: false
+        }
+    );
 
-    const text = response.text;
-    console.log(text);
-    let parsed;
+    const rawText = response.data.response;
 
-    parsed = JSON.parse(text);
+    // Strip ```json ... ``` or plain ``` ... ``` fences
+    const cleaned = rawText.replace(/```json\s*|```/g, "").trim();
+
+    let parsedResult;
+    try {
+        parsedResult = JSON.parse(cleaned);
+    } catch (err) {
+        console.error("Failed to parse model output:", cleaned);
+        return res.status(502).json({
+            error: "Model returned invalid JSON",
+            raw: rawText
+        });
+    }
 
     res.json({
-        finalData: parsed,
-    })
+        finalData: parsedResult,
+    });
 });
 
 mongoose.connect(process.env.MONGO_URI)

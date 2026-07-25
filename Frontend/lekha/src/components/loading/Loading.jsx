@@ -10,9 +10,9 @@ export default function Loading() {
     },[]);
 
     return (
-    <div class="page">
-        <div class="rotate"></div>
-        <div class="loading">Loading...</div>
+    <div className="page">
+        <div className="rotate"></div>
+        <div className="loading">Loading...</div>
     </div>
     );
 }

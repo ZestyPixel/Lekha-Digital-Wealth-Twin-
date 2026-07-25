@@ -28,10 +28,6 @@ const validate = values => {
         errors.sipDate = 'Required';
     }
 
-    if (!values.startDate) {
-        errors.startDate = 'Required';
-    }
-
     return errors;
 };
 
@@ -101,6 +97,7 @@ export default function SIPInvestment() {
             fundName: '',
             sipDate: '',
             reason: '',
+            pin: '',
         },
         validate,
         onSubmit: async (values, {setSubmitting}) => {
@@ -123,7 +120,7 @@ export default function SIPInvestment() {
 
                 setTimeout(() => {
                     setResultComponent(null); // Reset to show form again
-                }, 500); // Show result for 5 seconds
+                }, 5000); // Show result for 5 seconds
 
             } catch (error) {
                 console.error("SIP setup failed:", error);
@@ -237,9 +234,25 @@ export default function SIPInvestment() {
                         )}
                     </div>
 
+                    <div className="form-group">
+                        <label htmlFor="pin" className="email-and-password">Pin:</label>
+                        <input
+                            id="pin"
+                            name="pin"
+                            className="email-bar"
+                            type="password"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.pin}
+                        />
+                        {formik.touched.pin && formik.errors.pin && (
+                            <div className="error">{formik.errors.pin}</div>
+                        )}
+                    </div>
+
                     <div className="sign">
-                        <button type="submit" className="sign-in">Invest Lumpsum</button>
-                        <button className="ask-hisaab" onClick={askHisaab}> Ask Hisaab before transaction ! </button>
+                        <button type="submit" className="sign-in">Start SIP</button>
+                        <button className="ask-hisaab" onClick={askHisaab} type='button'> Ask Hisaab before transaction ! </button>
                     </div>
 
                 </form>

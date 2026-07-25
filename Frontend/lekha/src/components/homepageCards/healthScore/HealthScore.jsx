@@ -11,7 +11,7 @@ const getScoreConfig = (score) => {
 export default function HealthScore({ Title }) {
   const raw = sessionStorage.getItem('score');
   if (!raw) return null; // or a loading/empty state
-
+   console.log('RAW SCORE STORAGE:', raw); // TEMP
   const scoreFinal = JSON.parse(raw);
   const score = scoreFinal?.score ?? 0;
   const { label, color } = getScoreConfig(score);

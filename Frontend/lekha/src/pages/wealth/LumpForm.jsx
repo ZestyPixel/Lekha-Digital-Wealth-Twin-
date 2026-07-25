@@ -89,6 +89,7 @@ export default function LumpsumInvestment() {
             body: JSON.stringify({query})
         })
         const message = await response.json();
+        console.log(message);
         const advice = message.finalData;
         setAnswer(advice);
     }

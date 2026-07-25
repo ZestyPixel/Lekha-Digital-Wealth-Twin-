@@ -22,34 +22,6 @@ const userSchema = new mongoose.Schema({
     type: String
   },
 
-  financialProfile: {
-    monthlyIncome: {
-      type: Number,
-      default: 0
-    },
-    riskAppetite: {
-      type: String,
-      enum: ["Low", "Medium", "High"],
-      default: "Medium"
-    },
-    goals: [
-      {
-        name: {
-          type: String,
-          required: true
-        },
-        targetAmount: {
-          type: Number,
-          required: true
-        },
-        currentSaved: {
-          type: Number,
-          default: 0
-        }
-      }
-    ]
-  },
-
   behavioralBaseline: {
     trustedDevices: {
       type: [String],
