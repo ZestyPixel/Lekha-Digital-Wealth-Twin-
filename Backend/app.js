@@ -15,6 +15,16 @@ const Goal = require('./models/goals.js');
 const Profile = require('./models/profile.js');
 const Log = require('./models/logs.js');
 const Finances = require('./models/consolidatedFinances.js');
+const Session = require('./models/session.js');
+const { generateOtpCode, storeOtp, verifyOtp } = require('./utils/otpService.js');
+
+const loginOtpTransporter = require('nodemailer').createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+    },
+});
 
 const { GoogleGenAI } = require("@google/genai"); //To use gemini flash.
 const ai = new GoogleGenAI({});
@@ -34,9 +44,40 @@ app.use(express.json());
 app.use(cookieParser()); 
 app.use(express.urlencoded({ extended: true }));
 
-function cacheFix (req, res, next){
+function cacheFix (req, res, next){ //What this does is it sets the Cache-Control header to prevent caching of the response.
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     next();
+};
+
+async function executeLumpsum(userId, payload) {
+    const { amount, assetType } = payload;
+    const typeMap = { MutualFund: 'Mutual Funds', Stocks: 'Stocks' };
+    await Asset.findOneAndUpdate({ userId, type: typeMap[assetType] || 'Gold' }, { $inc: { currentValue: amount } });
+    await Asset.findOneAndUpdate({ userId, type: 'Bank Account' }, { $inc: { currentValue: -amount } });
+}
+
+async function executeSip(userId, payload) {
+    const { amount, assetType } = payload;
+    const typeMap = { MutualFund: 'Mutual Funds', Stocks: 'Stocks' };
+    await Asset.findOneAndUpdate({ userId, type: typeMap[assetType] || 'Gold' }, { $inc: { currentValue: amount } });
+    await Asset.findOneAndUpdate({ userId, type: 'Bank Account' }, { $inc: { currentValue: -amount } });
+}
+
+async function executeTransferWithdraw(userId, payload) {
+    const { transactionType, amount, sourceType } = payload;
+    if (transactionType === 'Transfer') {
+        await Asset.findOneAndUpdate({ userId, type: 'Account' }, { $inc: { currentValue: -amount } });
+    } else {
+        const typeMap = { MutualFund: 'Mutual Funds', Stocks: 'Stocks' };
+        await Asset.findOneAndUpdate({ userId, type: typeMap[sourceType] || 'Gold' }, { $inc: { currentValue: -amount } });
+        await Asset.findOneAndUpdate({ userId, type: 'Bank Account' }, { $inc: { currentValue: amount } });
+    }
+}
+
+const TRANSACTION_HANDLERS = {
+    '/addlumpsum': executeLumpsum,
+    '/addsip': executeSip,
+    '/transferwithdraw': executeTransferWithdraw,
 };
 
 app.get('/', (req, res) => {
@@ -75,18 +116,26 @@ app.post('/login', async (req, res)=>{
         if (!compare) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        const refreshToken = createRefreshToken(user.id);
-        const accessToken = createAccessToken(user.id);
-        const hashedToken = await bcrypt.hash(refreshToken, 10);
-        user.refreshToken = hashedToken;
-        user.behavioralBaseline.lastLoginTime = new Date();
-        await user.save();
-        sendRefreshToken(res, refreshToken);
-        res.send({
-            accessToken,
+
+        const otpCode = generateOtpCode();
+        try {
+            await loginOtpTransporter.sendMail({
+                from: '"Hisaab: Your Finance Assistant" <umar2004.mahmood@gmail.com>',
+                to: user.email,
+                subject: '🔐 Your login verification code',
+                html: `<p>Your verification code to complete login is:
+                    <b style="font-size: 18px; letter-spacing: 2px;">${otpCode}</b></p>
+                    <p>This code expires in 5 minutes. If you did not request this, ignore this email.</p>`,
+            });
+        } catch (error) {
+            console.error("Error sending login OTP email", error);
+            return res.status(500).json({ error: 'Could not send verification email' });
+        }
+        await storeOtp({ userId: user._id, plainCode: otpCode, purpose: 'login' });
+        return res.json({
+            otpRequired: true,
             email: user.email,
-            name: user.name,
-            userId: user._id
+            message: "We've emailed a verification code to complete login.",
         });
     }catch(err){
         res.send(err);
@@ -334,18 +383,30 @@ app.get('/advice', authMiddleware, cacheFix, async (req, res) => {
 app.post('/addlumpsum', authMiddleware, securityMiddleware, async(req, res)=>{
     const userId = req.userId;
     const user = await User.findById(userId);
-    const {pin} = req.body;
-    const compare = await user.comparePassword(pin);
-    if (!compare) {
-        console.log(req.security);
-        req.security.reasons.push("Wrong Password");
-        req.security.decision = "BLOCK";
-        return res.json({ 
-            error: 'Invalid credentials',
-            security: req.security, 
-        });
+
+    if (!req.body.otpVerified) {
+        const { pin } = req.body;
+        const compare = await user.comparePassword(pin);
+        if (!compare) {
+            console.log(req.security);
+            req.security.reasons.push("Wrong Password");
+            req.security.decision = "BLOCK";
+            return res.json({ 
+                error: 'Invalid credentials',
+                security: req.security, 
+            });
+        }
     }
     const { amount, assetType, fundName, purchaseDate } = req.body;
+
+    if (!req.body.otpVerified && (req.security.decision === "WARN" || req.security.decision === "BLOCK")) {
+        return res.json({
+            success: false,
+            otpRequired: true,
+            security: req.security,
+            message: "We've emailed a verification code to confirm this transaction.",
+        });
+    }
 
     if(assetType === "MutualFund"){
         
@@ -381,19 +442,31 @@ app.post('/addsip', authMiddleware, securityMiddleware, async(req, res)=>{
     console.log("SIP Request");
     const userId = req.userId;
     const user = await User.findById(userId);
-    const {pin} = req.body;
-    const compare = await user.comparePassword(pin);
-    if (!compare) {
-        console.log(req.security);
-        req.security.reasons.push("Wrong Password");
-        req.security.decision = "BLOCK";
-        return res.json({ 
-            error: 'Invalid credentials',
-            security: req.security, 
-        });
+    if (!req.body.otpVerified) {
+        const {pin} = req.body;
+        const compare = await user.comparePassword(pin);
+        if (!compare) {
+            console.log(req.security);
+            req.security.reasons.push("Wrong Password");
+            req.security.decision = "BLOCK";
+            return res.json({ 
+                error: 'Invalid credentials',
+                security: req.security, 
+            });
+        }
     }
 
     const { amount, assetType, fundName, sipDate, startDate} = req.body;
+
+    if (!req.body.otpVerified && (req.security.decision === "WARN" || req.security.decision === "BLOCK")) {
+        return res.json({
+            success: false,
+            otpRequired: true,
+            security: req.security,
+            message: "We've emailed a verification code to confirm this transaction.",
+        });
+    }
+
     if(assetType === "MutualFund"){
         await Asset.findOneAndUpdate(
             { userId, type: "Mutual Funds" },
@@ -425,20 +498,32 @@ app.post('/addsip', authMiddleware, securityMiddleware, async(req, res)=>{
 app.post('/transferwithdraw', authMiddleware, securityMiddleware, async(req, res)=>{
     const userId = req.userId;
     const user = await User.findById(userId);
-    const {pin} = req.body;
-    const compare = await user.comparePassword(pin);
-    if (!compare) {
-        console.log(req.security);
-        req.security.reasons.push("Wrong Password");
-        req.security.decision = "BLOCK";
-        return res.json({ 
-            error: 'Invalid credentials',
-            security: req.security, 
-        });
+
+    if (!req.body.otpVerified) {
+        const {pin} = req.body;
+        const compare = await user.comparePassword(pin);
+        if (!compare) {
+            console.log(req.security);
+            req.security.reasons.push("Wrong Password");
+            req.security.decision = "BLOCK";
+            return res.json({ 
+                error: 'Invalid credentials',
+                security: req.security, 
+            });
+        }
     }
 
     const { transactionType, amount, sourceType, destinationType, destAccountNumber, destIfsc, destBankName, destFundName, destGoldGrams, destGoldPurity, 
         destStockShares, transactionDate } = req.body;
+
+    if (!req.body.otpVerified && (req.security.decision === "WARN" || req.security.decision === "BLOCK")) {
+        return res.json({
+            success: false,
+            otpRequired: true,
+            security: req.security,
+            message: "We've emailed a verification code to confirm this transaction.",
+        });
+    }
     
     if(transactionType === "Transfer"){
         await Asset.findOneAndUpdate(
@@ -1004,6 +1089,57 @@ app.post('/askHisaab', authMiddleware, async (req, res)=>{
 
     res.json({
         finalData: parsedResult,
+    });
+});
+
+app.post('/verify-otp-transaction', authMiddleware, async (req, res) => {
+    const userId = req.userId;
+    const { otp } = req.body;
+
+    const result = await verifyOtp({ userId, purpose: 'transaction', submittedCode: otp });
+
+    if (!result.valid) {
+        return res.status(400).json({ success: false, error: result.reason });
+    }
+    if (!result.pendingAction?.route) {
+        return res.status(400).json({ success: false, error: 'No pending transaction to confirm.' });
+    }
+
+    const handler = TRANSACTION_HANDLERS[result.pendingAction.route];
+    if (!handler) {
+        return res.status(400).json({ success: false, error: 'Unknown transaction type.' });
+    }
+
+    try {
+        await handler(userId, result.pendingAction.payload);
+        return res.json({ success: true });
+    } catch (err) {
+        console.error('OTP-verified transaction failed:', err);
+        return res.status(500).json({ success: false, error: 'Transaction failed.' });
+    }
+});
+
+app.post('/verify-otp-login', async (req, res) => {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const result = await verifyOtp({ userId: user._id, purpose: 'login', submittedCode: otp });
+    if (!result.valid) {
+        return res.status(400).json({ success: false, error: result.reason });
+    }
+
+    const refreshToken = createRefreshToken(user.id);
+    const accessToken = createAccessToken(user.id);
+    const hashedToken = await bcrypt.hash(refreshToken, 10);
+    user.refreshToken = hashedToken;
+    await user.save();
+    sendRefreshToken(res, refreshToken);
+    res.json({
+        accessToken,
+        email: user.email,
+        name: user.name,
+        userId: user._id,
     });
 });
 

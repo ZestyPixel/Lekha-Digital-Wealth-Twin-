@@ -2,7 +2,7 @@ import "./LoginPage.css";
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const validate = (values) => {
     const errors = {};
@@ -29,7 +29,12 @@ export default function LoginForm() {
         });
     }, []);
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, verifyLoginOtp } = useAuth();
+
+    const [otpEmail, setOtpEmail] = useState(null);
+    const [otp, setOtp] = useState('');
+    const [otpError, setOtpError] = useState('');
+    const [verifying, setVerifying] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -40,6 +45,10 @@ export default function LoginForm() {
         onSubmit: async (values) => {
             try {
                 const result = await login(values.email, values.password);
+                if (result.otpRequired) {
+                    setOtpEmail(result.email);
+                    return;
+                }
                 if (result.success) {
                     console.log("Login successful");
                     navigate("/homepage");
@@ -52,6 +61,23 @@ export default function LoginForm() {
             }
         },
     });
+
+    async function handleVerifyOtp(e) {
+        e.preventDefault();
+        setOtpError('');
+        setVerifying(true);
+        try {
+            const result = await verifyLoginOtp(otpEmail, otp);
+            if (result.success) {
+                navigate("/homepage");
+            } else {
+                setOtpError(result.error || 'Verification failed');
+            }
+        } finally {
+            setVerifying(false);
+        }
+    }
+
     function showPass() {
         //Show pass function
         const x = document.getElementById("password");
@@ -60,6 +86,51 @@ export default function LoginForm() {
         } else {
             x.type = "password";
         }
+    }
+
+    if (otpEmail) {
+        return (
+            <div className="box">
+                <div className="login-title">Verify It's You</div>
+                <form className="login-box" onSubmit={handleVerifyOtp}>
+                    <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                        We've emailed a code to <b>{otpEmail}</b>
+                    </p>
+                    <div className="form-group">
+                        <label htmlFor="otp" className="email-and-password">
+                            Verification Code:
+                        </label>
+                        <input
+                            id="otp"
+                            name="otp"
+                            className="email-bar"
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={6}
+                            placeholder="6-digit code"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                            autoFocus
+                        />
+                        {otpError ? <div className="error">{otpError}</div> : null}
+                    </div>
+                    <button className="sign-in-in" type="submit" disabled={verifying || otp.length !== 6}>
+                        {verifying ? 'Verifying...' : 'VERIFY'}
+                    </button>
+                    <div className="forgot">
+                        <p>
+                            <span
+                                className="user-pass"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => { setOtpEmail(null); setOtp(''); setOtpError(''); }}
+                            >
+                                Back to login
+                            </span>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        );
     }
 
     return (

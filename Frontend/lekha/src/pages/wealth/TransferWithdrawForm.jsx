@@ -5,6 +5,7 @@ import Loading from '../../components/loading/Loading';
 import Success from '../../components/success/Success';
 import Failure from '../../components/failure/Failure';
 import Warning from '../../components/warning/Warning';
+import TransactionOtpVerify from '../../components/transactionOtp/TransactionOtpVerify';
 import "./TransferWithdrawForm.css"
 
 const validate = values => {
@@ -209,6 +210,7 @@ export default function TransferWithdraw() {
     const { requestWithAuth } = useAuth();
     const [asked, setAsked] = useState(false);
     const [answer, setAnswer] = useState('');
+    const [otpContext, setOtpContext] = useState(null);
 
     useEffect(()=>{
         window.scrollTo({
@@ -261,6 +263,16 @@ export default function TransferWithdraw() {
                 });
 
                 const result = await response.json();
+
+                if (result.otpRequired) {
+                    setOtpContext({
+                        message: result.message,
+                        reasons: result.security?.reasons ?? [],
+                    });
+                    setSubmitting(false);
+                    return;
+                }
+
                 if (response.ok) {
                     setResultComponent(
                         <Result 
@@ -289,6 +301,31 @@ export default function TransferWithdraw() {
 
     if(formik.isSubmitting) { // Show loading while waiting for response
         return <Loading/>
+    }
+
+    if (otpContext) {
+        return (
+            <TransactionOtpVerify
+                message={otpContext.message}
+                reasons={otpContext.reasons}
+                onVerified={(data) => {
+                    setOtpContext(null);
+                    if (data.security) {
+                        setResultComponent(
+                            <Result
+                                decision={data.security.decision}
+                                reasons={data.security.reasons}
+                                riskScore={data.security.riskScore}
+                            />
+                        );
+                    } else {
+                        setResultComponent(<Success message="Transaction Successful" />);
+                    }
+                    setTimeout(() => setResultComponent(null), 5000);
+                }}
+                onCancel={() => setOtpContext(null)}
+            />
+        );
     }
 
     if (resultComponent) return resultComponent; //We render it. This will get rendered and the form will not cause a react component can only return one thing

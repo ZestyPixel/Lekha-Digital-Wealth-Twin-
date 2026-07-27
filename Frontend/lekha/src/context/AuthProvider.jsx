@@ -109,6 +109,15 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await response.json();
+
+      if (data.otpRequired) {
+        return { success: false, otpRequired: true, email: data.email };
+      }
+
+      if (!data.accessToken) {
+        throw new Error('Unexpected response from server');
+      }
+
       setTokens(data.accessToken);
       setUser({
         email: data.email,
@@ -119,6 +128,39 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
+      return { success: false, error: error.message };
+    }
+  }, [setTokens]);
+
+  const verifyLoginOtp = useCallback(async (email, otp) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/verify-otp-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Verification failed');
+      }
+
+      if (!data.accessToken) {
+        throw new Error('Unexpected response from server');
+      }
+
+      setTokens(data.accessToken);
+      setUser({
+        email: data.email,
+        name: data.name || '',
+        userId: data.userId,
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error('OTP verification error:', error);
       return { success: false, error: error.message };
     }
   }, [setTokens]);
@@ -197,16 +239,38 @@ export const AuthProvider = ({ children }) => {
     return response;
   }, [refreshAccessToken]);
 
+  const verifyTransactionOtp = useCallback(async (otp) => {
+    try {
+      const response = await requestWithAuth('/verify-otp-transaction', {
+        method: 'POST',
+        body: JSON.stringify({ otp }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { success: false, error: data.error || 'Verification failed' };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Transaction OTP verification error:', error);
+      return { success: false, error: error.message };
+    }
+  }, [requestWithAuth]);
+
   const value = useMemo(() => ({
     user,
     accessToken,
     loading,
     login,
+    verifyLoginOtp,
     register,
     logout,
     refreshAccessToken,
     requestWithAuth,
-  }), [user, accessToken, loading, login, register, logout, refreshAccessToken, requestWithAuth]);
+    verifyTransactionOtp,
+  }), [user, accessToken, loading, login, verifyLoginOtp, register, logout, refreshAccessToken, requestWithAuth, verifyTransactionOtp]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

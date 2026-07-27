@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const { formatCurrency } = require('../utils/dataCleaning');
 const { promises } = require('nodemailer/lib/xoauth2');
+const { generateOtpCode, storeOtp } = require('../utils/otpService');
 
 // Add location check, transaction frequency, device fingerprint, failed login attempts
 async function securityMiddleware(req, res, next) {
@@ -140,6 +141,16 @@ async function securityMiddleware(req, res, next) {
             }
         }
 
+        let otpCode = null;
+        if (decision === "WARN" || decision === "BLOCK") {
+            otpCode = generateOtpCode();
+            body += `
+                <p>Your verification code to confirm this transaction is:
+                <b style="font-size: 18px; letter-spacing: 2px;">${otpCode}</b></p>
+                <p>This code expires in 5 minutes.</p>
+            `;
+        }
+
         let mailOptions = {
             from: '"Hisaab: Your Finance Assistant" <umar2004.mahmood@gmail.com>',
             to: email,
@@ -154,11 +165,21 @@ async function securityMiddleware(req, res, next) {
             console.error("Error sending email", error);
         }
 
+        if (otpCode) {
+            await storeOtp({
+                userId: id,
+                plainCode: otpCode,
+                purpose: 'transaction',
+                pendingAction: { route: req.originalUrl, payload: req.body },
+            });
+        }
+
         req.security = {
             riskScore,
             decision,
             reasons,
         };
+        
         next();
     } catch (err) {
         console.error(err);
