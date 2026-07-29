@@ -4,6 +4,8 @@ const nodemailer = require('nodemailer');
 const { formatCurrency } = require('../utils/dataCleaning');
 const { promises } = require('nodemailer/lib/xoauth2');
 const { generateOtpCode, storeOtp } = require('../utils/otpService');
+const dns = require("node:dns");
+dns.setDefaultResultOrder("ipv4first");
 
 // Add location check, transaction frequency, device fingerprint, failed login attempts
 async function securityMiddleware(req, res, next) {
