@@ -18,13 +18,16 @@ const Finances = require('./models/consolidatedFinances.js');
 const Session = require('./models/session.js');
 const { generateOtpCode, storeOtp, verifyOtp } = require('./utils/otpService.js');
 
-const loginOtpTransporter = require('nodemailer').createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
-    },
-});
+const { google } = require('googleapis');
+const MailComposer = require('nodemailer/lib/mail-composer');
+
+const oAuth2Client = new google.auth.OAuth2(
+    process.env.GMAIL_CLIENT_ID,
+    process.env.GMAIL_CLIENT_SECRET,
+    'https://developers.google.com/oauthplayground'
+);
+oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
+const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
 
 const { GoogleGenAI } = require("@google/genai"); //To use gemini flash.
 const ai = new GoogleGenAI({});
@@ -119,18 +122,30 @@ app.post('/login', async (req, res)=>{
 
         const otpCode = generateOtpCode();
         try {
-            await loginOtpTransporter.sendMail({
-                from: '"Hisaab: Your Finance Assistant" <umar2004.mahmood@gmail.com>',
+            const mail = new MailComposer({
+                from: `"Hisaab: Your Finance Assistant" <${process.env.GMAIL_USER}>`,
                 to: user.email,
                 subject: '🔐 Your login verification code',
                 html: `<p>Your verification code to complete login is:
-                    <b style="font-size: 18px; letter-spacing: 2px;">${otpCode}</b></p>
-                    <p>This code expires in 5 minutes. If you did not request this, ignore this email.</p>`,
+                <b style="font-size: 18px; letter-spacing: 2px;">${otpCode}</b></p>
+                <p>This code expires in 5 minutes. If you did not request this, ignore this email.</p>`,
+            });
+            const msg = await mail.compile().build();
+            const encodedMessage = Buffer.from(msg)
+                .toString('base64')
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=+$/, '');
+                
+            await gmail.users.messages.send({
+                userId: 'me',
+                requestBody: { raw: encodedMessage },
             });
         } catch (error) {
             console.error("Error sending login OTP email", error);
             return res.status(500).json({ error: 'Could not send verification email' });
         }
+        
         await storeOtp({ userId: user._id, plainCode: otpCode, purpose: 'login' });
         return res.json({
             otpRequired: true,

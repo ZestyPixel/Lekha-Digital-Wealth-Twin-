@@ -26,6 +26,7 @@ function cleanDebts(debt){
 }
 
 function cleanFinances(finances) {
+    if (!finances) return { bankBalance: 0, totalAssets: 0, investedAssets: 0, netWorth: 0, totalRemainingBalance: 0, totalMonthlyEMI: 0, essentialExpenses: 0, savingsRate: 0, discretionaryRate: 0, dtiRatio: 0, investmentRatio: 0, emergencyMonths: 0, hasBadDebt: false, score: 0, breakdown: {} };
     return {
         bankBalance: finances.bankBalance,
         totalAssets: finances.totalAssets,

@@ -1,11 +1,19 @@
 const User = require('../models/user');
 const mongoose = require('mongoose'); 
-const nodemailer = require('nodemailer');
 const { formatCurrency } = require('../utils/dataCleaning');
-const { promises } = require('nodemailer/lib/xoauth2');
 const { generateOtpCode, storeOtp } = require('../utils/otpService');
 const dns = require("node:dns");
 dns.setDefaultResultOrder("ipv4first");
+const { google } = require('googleapis');
+const MailComposer = require('nodemailer/lib/mail-composer');
+
+const oAuth2Client = new google.auth.OAuth2(
+    process.env.GMAIL_CLIENT_ID,
+    process.env.GMAIL_CLIENT_SECRET,
+    'https://developers.google.com/oauthplayground'
+);
+oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
+const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
 
 // Add location check, transaction frequency, device fingerprint, failed login attempts
 async function securityMiddleware(req, res, next) {
@@ -26,7 +34,7 @@ async function securityMiddleware(req, res, next) {
         }
 
         if(!device){ //user.behaviouralBaseline.trustedDevices.includes(device)
-            riskScore += 30;
+            riskScore += 10;
             reasons.push("New device detected");
         }
 
@@ -57,14 +65,6 @@ async function securityMiddleware(req, res, next) {
         }else if (riskScore >= 40){
             decision = "WARN";
         }
-
-        let transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.GMAIL_USER,
-                pass: process.env.GMAIL_PASS
-            }
-        });
         
         let body;
         let subjectLine;
@@ -152,16 +152,25 @@ async function securityMiddleware(req, res, next) {
                 <p>This code expires in 5 minutes.</p>
             `;
         }
-
-        let mailOptions = {
-            from: '"Hisaab: Your Finance Assistant" <umar2004.mahmood@gmail.com>',
-            to: email,
-            subject: subjectLine,
-            html: body,
-        };
         
         try {
-            let info = await transporter.sendMail(mailOptions);
+            const mail = new MailComposer({
+                from: `"Hisaab: Your Finance Assistant" <${process.env.GMAIL_USER}>`,
+                to: email,
+                subject: subjectLine,
+                html: body,
+            });
+            const msg = await mail.compile().build();
+            const encodedMessage = Buffer.from(msg)
+                .toString('base64')
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=+$/, '');
+                
+            await gmail.users.messages.send({
+                userId: 'me',
+                requestBody: { raw: encodedMessage },
+            });
             console.log("Email sent");
         } catch (error) {
             console.error("Error sending email", error);
