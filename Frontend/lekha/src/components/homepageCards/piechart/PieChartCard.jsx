@@ -47,10 +47,10 @@ export default function PieChartCard({ Data }) {
                 const { cx, cy } = viewBox;
                 return (
                 <>
-                <text x={cx+32} y={cy - 22} textAnchor="middle" fill="white" fontSize={15} fontWeight={600}>
+                <text x={cx+1} y={cy - 2} textAnchor="middle" fill="white" fontSize={20} fontWeight={600}>
                   Total:
                 </text>
-                <text x={cx+29} y={cy + 2} textAnchor="middle" fill="white" fontSize={18} fontWeight={700}>
+                <text x={cx+1} y={cy + 22} textAnchor="middle" fill="white" fontSize={18} fontWeight={700}>
                   {formatCurrency(total)}
                 </text>
                 </>

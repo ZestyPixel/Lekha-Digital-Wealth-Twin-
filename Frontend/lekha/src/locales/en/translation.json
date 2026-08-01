@@ -1,0 +1,315 @@
+{
+  "app": {
+    "title": "Lekha",
+    "pageNotFound": "Page not found",
+    "loading": "Loading..."
+  },
+
+  "landing": {
+    "welcome": "Welcome To Lekha !",
+    "logout": "Log Out",
+    "demoAccount": "Use Demo Account",
+    "signUp": "Sign Up"
+  },
+
+  "login": {
+    "title": "Login",
+    "email": "Email:",
+    "password": "Password:",
+    "emailPlaceholder": "Enter email",
+    "passwordPlaceholder": "Enter password",
+    "showPassword": "Show Password",
+    "forgotCredentials": "Forgot Username / Password?",
+    "noAccount": "Don't have an account?",
+    "signUpLink": "Sign Up",
+    "submitButton": "SIGN IN",
+    "otp": {
+      "title": "Verify It's You",
+      "message": "We've emailed a code to",
+      "label": "Verification Code:",
+      "placeholder": "6-digit code",
+      "verifyButton": "VERIFY",
+      "verifying": "Verifying...",
+      "backToLogin": "Back to login"
+    }
+  },
+
+  "signup": {
+    "title": "Sign Up",
+    "name": "Name:",
+    "email": "Email:",
+    "password": "Password:",
+    "confirmPassword": "Confirm Password:",
+    "namePlaceholder": "Enter name",
+    "emailPlaceholder": "Enter email",
+    "passwordPlaceholder": "Enter password",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "rememberMe": "Remember Me",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Login",
+    "submitButton": "SIGN UP"
+  },
+
+  "validation": {
+    "required": "Required",
+    "invalidEmail": "Invalid email address",
+    "maxChars20": "Must be 20 characters or less",
+    "maxChars50": "Must be 50 characters or less",
+    "maxChars100": "Must be 100 characters or less",
+    "passwordsMustMatch": "Passwords must match",
+    "enterValidAmount": "Enter a valid amount",
+    "enterValidMonthlyAmount": "Enter a valid monthly amount",
+    "amountGreaterThanZero": "Amount must be greater than 0",
+    "cannotBeNegative": "Cannot be negative",
+    "cannotExceedTotal": "Cannot exceed total amount",
+    "emiGreaterThanZero": "EMI must be greater than 0",
+    "requiredForTransfers": "Required for transfers",
+    "enterValidGrams": "Enter valid grams"
+  },
+
+  "dashboard": {
+    "financialHealthScore": "Financial Health Score",
+    "manageWealth": "Manage Wealth",
+    "lastTransaction": "Last Transaction"
+  },
+
+  "netWorth": {
+    "title": "Add Asset",
+    "assetType": "Asset Type:",
+    "assetValue": "Asset Value:",
+    "holdingInstitution": "Holding Institution:",
+    "assetTypePlaceholder": "Enter asset type (Ex- Gold, Money, etc)",
+    "assetValuePlaceholder": "Enter asset value (Ex- 20000)",
+    "holdingPlaceholder": "Enter asset holder (Ex- Bank, Personal, etc)",
+    "submitButton": "Add Asset"
+  },
+
+  "monthlyExpenses": {
+    "title": "Track Expense",
+    "amount": "Amount:",
+    "description": "Description:",
+    "category": "Expense Category:",
+    "amountPlaceholder": "Enter asset value (Ex- 20000)",
+    "descriptionPlaceholder": "Ex: Chai Garam, Mall",
+    "categoryDefault": "Select a category",
+    "categories": {
+      "housing": "Housing & Utilities",
+      "food": "Food & Dining",
+      "transportation": "Transportation",
+      "lifestyle": "Lifestyle & Leisure",
+      "health": "Health & Wellness",
+      "financial": "Financial Obligations",
+      "savings": "Savings & Investments",
+      "misc": "Miscellaneous"
+    },
+    "submitButton": "Track Expense"
+  },
+
+  "wealth": {
+    "lumpsum": "Lumpsum Investment",
+    "sip": "Systematic Investment Plan (SIP)",
+    "transferWithdraw": "Transfer/Withdraw",
+    "assetTypes": {
+      "selectAssetType": "Select asset type",
+      "mutualFund": "Mutual Fund",
+      "stocks": "Stocks",
+      "gold": "Gold",
+      "goldDigital": "Gold (Digital)"
+    },
+    "common": {
+      "assetType": "Asset Type:",
+      "fundName": "Fund / Asset Name:",
+      "reason": "Reason:",
+      "pin": "Pin:",
+      "reasonPlaceholder": "Enter reason",
+      "transactionSuccessful": "Transaction Successful",
+      "tryAgain": "Try again after 1 minute",
+      "transactionBlocked": "Transaction Blocked",
+      "transactionBlockedLower": "Transaction blocked"
+    },
+    "hisaab": {
+      "askBefore": "Ask Hisaab before transaction !",
+      "reviewing": "Hisaab is reviewing your transaction",
+      "decision": "Decision:",
+      "risk": "Risk:",
+      "reason": "Reason:",
+      "alternative": "Alternative:"
+    },
+    "lumpsumForm": {
+      "title": "Lumpsum Investment",
+      "amount": "Investment Amount (₹):",
+      "purchaseDate": "Purchase Date:",
+      "amountPlaceholder": "Enter amount (Ex: 50000)",
+      "fundNamePlaceholder": "Ex: Axis Bluechip Fund, Reliance, SGB",
+      "submitButton": "Invest Lumpsum"
+    },
+    "sipForm": {
+      "title": "Setup SIP",
+      "monthlyAmount": "Monthly SIP Amount (₹):",
+      "debitDate": "Monthly SIP Debit Date:",
+      "amountPlaceholder": "Enter monthly amount (Ex: 5000)",
+      "fundNamePlaceholder": "Ex: Mirae Asset Large Cap Fund",
+      "selectDate": "Select date of month",
+      "dateSuffixSt": "st of every month",
+      "dateSuffixNd": "nd of every month",
+      "dateSuffixRd": "rd of every month",
+      "dateSuffixTh": "th of every month",
+      "submitButton": "Start SIP"
+    },
+    "transferForm": {
+      "title": "Transfer / Withdraw",
+      "transactionType": "Transaction Type:",
+      "selectType": "Select transaction type",
+      "transfer": "Transfer",
+      "redeem": "Redeem (Mutual Fund / Gold / Stocks)",
+      "amount": "Amount (₹):",
+      "amountPlaceholder": "Enter amount (Ex: 10000)",
+      "redeemFrom": "Redeem From:",
+      "redeemFromDefault": "What are you redeeming?",
+      "destinationType": "Destination Type:",
+      "destinationDefault": "Where is the money going to?",
+      "bankAccount": "Bank Account",
+      "accountNumber": "Account Number:",
+      "accountNumberPlaceholder": "Enter account number",
+      "ifscCode": "IFSC Code:",
+      "ifscPlaceholder": "e.g. SBIN0001234",
+      "bankName": "Bank Name:",
+      "bankNamePlaceholder": "e.g. State Bank of India",
+      "fundName": "Fund Name:",
+      "fundNamePlaceholder": "e.g. Axis Bluechip Fund",
+      "weight": "Weight (grams):",
+      "weightPlaceholder": "e.g. 5.5",
+      "purity": "Purity:",
+      "selectPurity": "Select purity",
+      "purity24k": "24K (99.9% Pure)",
+      "purity22k": "22K (91.6% Pure)",
+      "purity18k": "18K (75% Pure)",
+      "assetName": "Asset Name:",
+      "assetNamePlaceholder": "Enter fund name",
+      "transactionDate": "Transaction Date:",
+      "transferButton": "Transfer Funds",
+      "redeemButton": "Redeem Asset",
+      "submitButton": "Submit"
+    }
+  },
+
+  "debt": {
+    "title": "Add Debt",
+    "debtName": "Debt Name:",
+    "totalAmount": "Total Amount:",
+    "remainingBalance": "Remaining Balance:",
+    "monthlyEmi": "Monthly EMI:",
+    "debtNamePlaceholder": "Ex: Home Loan, Car Loan, Credit Card",
+    "totalAmountPlaceholder": "Ex: 500000",
+    "remainingPlaceholder": "Ex: 350000",
+    "emiPlaceholder": "Ex: 15000",
+    "submitButton": "Add Debt"
+  },
+
+  "goals": {
+    "title": "Set Financial Goal",
+    "goalName": "Goal Name:",
+    "targetAmount": "Target Amount:",
+    "currentSaved": "Current Saved:",
+    "targetDate": "Target Date:",
+    "priorityLevel": "Priority Level:",
+    "goalNamePlaceholder": "Ex: Emergency Fund, Car Downpayment",
+    "targetAmountPlaceholder": "Ex: 50000",
+    "currentSavedPlaceholder": "Ex: 5000",
+    "priorities": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "submitButton": "Set Goal"
+  },
+
+  "profile": {
+    "title": "Set Monthly Budget",
+    "monthlyIncome": "Monthly Income:",
+    "monthlyIncomePlaceholder": "Enter your monthly income",
+    "number": "Number:",
+    "numberPlaceholder": "Enter your number",
+    "emergencyEmail": "Emergency Email:",
+    "emergencyEmailPlaceholder": "Enter your emergency email",
+    "emergencyNumber": "Emergency Number:",
+    "emergencyNumberPlaceholder": "Enter your emergencyNumber",
+    "age": "Age:",
+    "agePlaceholder": "Enter your age",
+    "riskProfile": "Risk Profile:",
+    "riskProfiles": {
+      "selectType": "Select asset type",
+      "aggressive": "Aggressive",
+      "balanced": "Balanced",
+      "conservative": "Conservative"
+    },
+    "budgets": {
+      "bills": "Bills Budget:",
+      "billsPlaceholder": "Enter budget for Bills",
+      "food": "Food Budget:",
+      "foodPlaceholder": "Enter budget for Food",
+      "health": "Health Budget:",
+      "healthPlaceholder": "Enter budget for Health",
+      "lifestyle": "Lifestyle Budget:",
+      "lifestylePlaceholder": "Enter budget for Lifestyle",
+      "obligations": "Obligations Budget:",
+      "obligationsPlaceholder": "Enter budget for Obligations",
+      "savings": "Savings/Investments Budget:",
+      "savingsPlaceholder": "Enter budget for Savings/Investments",
+      "transport": "Transport Budget:",
+      "transportPlaceholder": "Enter budget for Transport",
+      "misc": "Misc Budget:",
+      "miscPlaceholder": "Enter budget for Misc"
+    },
+    "submitButton": "Save"
+  },
+
+  "chatbot": {
+    "askHisaab": "Ask Hisaab",
+    "subtitle": "Your Financial Assistant",
+    "greeting": "👋 Hi! How can I help you today?",
+    "typing": "Typing...",
+    "inputPlaceholder": "Type a message...",
+    "error": "⚠️ Error connecting to server.",
+    "menu": {
+      "financialHealth": "💰 Financial Health",
+      "financialHealthPrompt": "Analyze my financial health.",
+      "goals": "📈 My Goals",
+      "goalsPrompt": "Check my current goals and progress with regards to finances.",
+      "investments": "💳 My Investments",
+      "investmentsPrompt": "Analyze my investments."
+    }
+  },
+
+  "transactionOtp": {
+    "title": "Verify to Continue",
+    "message": "We've emailed a verification code to confirm this transaction.",
+    "placeholder": "6-digit code",
+    "verifying": "Verifying...",
+    "verifyButton": "Verify",
+    "cancelButton": "Cancel"
+  },
+
+  "cards": {
+    "asset": {
+      "value": "Value :",
+      "heldBy": "Held By :"
+    },
+    "debt": {
+      "totalAmount": "Total Amount:",
+      "remainingBalance": "Remaining Balance:",
+      "monthlyEmi": "Monthly EMI:",
+      "paidOff": "Paid Off: "
+    },
+    "goal": {
+      "targetAmount": "Target Amount :",
+      "deadline": "Deadline :",
+      "progress": "Progress :",
+      "priority": "Priority :"
+    },
+    "transaction": {
+      "amount": "Amount :",
+      "date": "Date :"
+    }
+  }
+}

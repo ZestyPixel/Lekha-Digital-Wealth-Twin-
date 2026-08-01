@@ -8,30 +8,6 @@ import Warning from '../../components/warning/Warning';
 import TransactionOtpVerify from '../../components/transactionOtp/TransactionOtpVerify';
 import "./SipForm.css"
 
-const validate = values => {
-    const errors = {};
-
-    if (!values.amount || values.amount <= 0) {
-        errors.amount = 'Enter a valid monthly amount';
-    }
-
-    if (!values.assetType) {
-        errors.assetType = 'Required';
-    }
-
-    if (!values.fundName) {
-        errors.fundName = 'Required';
-    } else if (values.fundName.length > 100) {
-        errors.fundName = 'Must be 100 characters or less';
-    }
-
-    if (!values.sipDate) {
-        errors.sipDate = 'Required';
-    }
-
-    return errors;
-};
-
 function Result({ decision, reasons }) {
 
     if (decision === "ALLOW") {
@@ -63,6 +39,30 @@ export default function SIPInvestment() {
     const [asked, setAsked] = useState(false);
     const [answer, setAnswer] = useState('');
     const [otpContext, setOtpContext] = useState(null);
+
+    const validate = (values) => {
+      const errors = {};
+
+      if (!values.amount || values.amount <= 0) {
+        errors.amount = "Enter a valid monthly amount";
+      }
+
+      if (!values.assetType) {
+        errors.assetType = "Required";
+      }
+
+      if (!values.fundName) {
+        errors.fundName = "Required";
+      } else if (values.fundName.length > 100) {
+        errors.fundName = "Must be 100 characters or less";
+      }
+
+      if (!values.sipDate) {
+        errors.sipDate = "Required";
+      }
+
+      return errors;
+    };
 
     useEffect(()=>{
         window.scrollTo({

@@ -1,0 +1,315 @@
+{
+  "app": {
+    "title": "लेखा",
+    "pageNotFound": "पेज नहीं मिला",
+    "loading": "लोड हो रहा है..."
+  },
+
+  "landing": {
+    "welcome": "लेखा में आपका स्वागत है !",
+    "logout": "लॉग आउट",
+    "demoAccount": "डेमो अकाउंट इस्तेमाल करें",
+    "signUp": "साइन अप"
+  },
+
+  "login": {
+    "title": "लॉगिन",
+    "email": "ईमेल:",
+    "password": "पासवर्ड:",
+    "emailPlaceholder": "ईमेल दर्ज करें",
+    "passwordPlaceholder": "पासवर्ड दर्ज करें",
+    "showPassword": "पासवर्ड दिखाएं",
+    "forgotCredentials": "यूज़रनेम / पासवर्ड भूल गए?",
+    "noAccount": "अकाउंट नहीं है?",
+    "signUpLink": "साइन अप",
+    "submitButton": "साइन इन करें",
+    "otp": {
+      "title": "पहचान सत्यापित करें",
+      "message": "हमने एक कोड ईमेल किया है",
+      "label": "सत्यापन कोड:",
+      "placeholder": "6-अंकीय कोड",
+      "verifyButton": "सत्यापित करें",
+      "verifying": "सत्यापित हो रहा है...",
+      "backToLogin": "लॉगिन पर वापस जाएं"
+    }
+  },
+
+  "signup": {
+    "title": "साइन अप",
+    "name": "नाम:",
+    "email": "ईमेल:",
+    "password": "पासवर्ड:",
+    "confirmPassword": "पासवर्ड पुष्टि करें:",
+    "namePlaceholder": "नाम दर्ज करें",
+    "emailPlaceholder": "ईमेल दर्ज करें",
+    "passwordPlaceholder": "पासवर्ड दर्ज करें",
+    "confirmPasswordPlaceholder": "पासवर्ड पुष्टि करें",
+    "rememberMe": "मुझे याद रखें",
+    "hasAccount": "पहले से अकाउंट है?",
+    "loginLink": "लॉगिन",
+    "submitButton": "साइन अप करें"
+  },
+
+  "validation": {
+    "required": "आवश्यक",
+    "invalidEmail": "अमान्य ईमेल पता",
+    "maxChars20": "20 अक्षर या उससे कम होने चाहिए",
+    "maxChars50": "50 अक्षर या उससे कम होने चाहिए",
+    "maxChars100": "100 अक्षर या उससे कम होने चाहिए",
+    "passwordsMustMatch": "पासवर्ड मेल खाने चाहिए",
+    "enterValidAmount": "सही राशि दर्ज करें",
+    "enterValidMonthlyAmount": "सही मासिक राशि दर्ज करें",
+    "amountGreaterThanZero": "राशि 0 से अधिक होनी चाहिए",
+    "cannotBeNegative": "नकारात्मक नहीं हो सकता",
+    "cannotExceedTotal": "कुल राशि से अधिक नहीं हो सकता",
+    "emiGreaterThanZero": "EMI 0 से अधिक होनी चाहिए",
+    "requiredForTransfers": "ट्रांसफर के लिए आवश्यक",
+    "enterValidGrams": "सही ग्राम दर्ज करें"
+  },
+
+  "dashboard": {
+    "financialHealthScore": "वित्तीय स्वास्थ्य स्कोर",
+    "manageWealth": "संपत्ति प्रबंधन",
+    "lastTransaction": "अंतिम लेन-देन"
+  },
+
+  "netWorth": {
+    "title": "संपत्ति जोड़ें",
+    "assetType": "संपत्ति का प्रकार:",
+    "assetValue": "संपत्ति का मूल्य:",
+    "holdingInstitution": "धारक संस्थान:",
+    "assetTypePlaceholder": "संपत्ति का प्रकार दर्ज करें (जैसे- सोना, पैसा, आदि)",
+    "assetValuePlaceholder": "संपत्ति का मूल्य दर्ज करें (जैसे- 20000)",
+    "holdingPlaceholder": "धारक दर्ज करें (जैसे- बैंक, व्यक्तिगत, आदि)",
+    "submitButton": "संपत्ति जोड़ें"
+  },
+
+  "monthlyExpenses": {
+    "title": "खर्च ट्रैक करें",
+    "amount": "राशि:",
+    "description": "विवरण:",
+    "category": "खर्च श्रेणी:",
+    "amountPlaceholder": "राशि दर्ज करें (जैसे- 20000)",
+    "descriptionPlaceholder": "जैसे: चाय गरम, मॉल",
+    "categoryDefault": "श्रेणी चुनें",
+    "categories": {
+      "housing": "आवास और उपयोगिताएं",
+      "food": "भोजन और डाइनिंग",
+      "transportation": "परिवहन",
+      "lifestyle": "जीवनशैली और मनोरंजन",
+      "health": "स्वास्थ्य और कल्याण",
+      "financial": "वित्तीय दायित्व",
+      "savings": "बचत और निवेश",
+      "misc": "विविध"
+    },
+    "submitButton": "खर्च ट्रैक करें"
+  },
+
+  "wealth": {
+    "lumpsum": "एकमुश्त निवेश",
+    "sip": "व्यवस्थित निवेश योजना (SIP)",
+    "transferWithdraw": "ट्रांसफर/निकासी",
+    "assetTypes": {
+      "selectAssetType": "संपत्ति प्रकार चुनें",
+      "mutualFund": "म्यूचुअल फंड",
+      "stocks": "स्टॉक्स",
+      "gold": "सोना",
+      "goldDigital": "सोना (डिजिटल)"
+    },
+    "common": {
+      "assetType": "संपत्ति प्रकार:",
+      "fundName": "फंड / संपत्ति का नाम:",
+      "reason": "कारण:",
+      "pin": "पिन:",
+      "reasonPlaceholder": "कारण दर्ज करें",
+      "transactionSuccessful": "लेन-देन सफल",
+      "tryAgain": "1 मिनट बाद पुनः प्रयास करें",
+      "transactionBlocked": "लेन-देन अवरुद्ध",
+      "transactionBlockedLower": "लेन-देन अवरुद्ध"
+    },
+    "hisaab": {
+      "askBefore": "लेन-देन से पहले हिसाब से पूछें !",
+      "reviewing": "हिसाब आपके लेन-देन की समीक्षा कर रहा है",
+      "decision": "निर्णय:",
+      "risk": "जोखिम:",
+      "reason": "कारण:",
+      "alternative": "विकल्प:"
+    },
+    "lumpsumForm": {
+      "title": "एकमुश्त निवेश",
+      "amount": "निवेश राशि (₹):",
+      "purchaseDate": "खरीद तिथि:",
+      "amountPlaceholder": "राशि दर्ज करें (जैसे: 50000)",
+      "fundNamePlaceholder": "जैसे: एक्सिस ब्लूचिप फंड, रिलायंस, SGB",
+      "submitButton": "एकमुश्त निवेश करें"
+    },
+    "sipForm": {
+      "title": "SIP सेटअप करें",
+      "monthlyAmount": "मासिक SIP राशि (₹):",
+      "debitDate": "मासिक SIP डेबिट तिथि:",
+      "amountPlaceholder": "मासिक राशि दर्ज करें (जैसे: 5000)",
+      "fundNamePlaceholder": "जैसे: मिराए एसेट लार्ज कैप फंड",
+      "selectDate": "महीने की तारीख चुनें",
+      "dateSuffixSt": "तारीख को हर महीने",
+      "dateSuffixNd": "तारीख को हर महीने",
+      "dateSuffixRd": "तारीख को हर महीने",
+      "dateSuffixTh": "तारीख को हर महीने",
+      "submitButton": "SIP शुरू करें"
+    },
+    "transferForm": {
+      "title": "ट्रांसफर / निकासी",
+      "transactionType": "लेन-देन प्रकार:",
+      "selectType": "लेन-देन प्रकार चुनें",
+      "transfer": "ट्रांसफर",
+      "redeem": "रिडीम (म्यूचुअल फंड / सोना / स्टॉक्स)",
+      "amount": "राशि (₹):",
+      "amountPlaceholder": "राशि दर्ज करें (जैसे: 10000)",
+      "redeemFrom": "कहां से रिडीम करें:",
+      "redeemFromDefault": "आप क्या रिडीम कर रहे हैं?",
+      "destinationType": "गंतव्य प्रकार:",
+      "destinationDefault": "पैसा कहां जाएगा?",
+      "bankAccount": "बैंक खाता",
+      "accountNumber": "खाता संख्या:",
+      "accountNumberPlaceholder": "खाता संख्या दर्ज करें",
+      "ifscCode": "IFSC कोड:",
+      "ifscPlaceholder": "जैसे: SBIN0001234",
+      "bankName": "बैंक का नाम:",
+      "bankNamePlaceholder": "जैसे: भारतीय स्टेट बैंक",
+      "fundName": "फंड का नाम:",
+      "fundNamePlaceholder": "जैसे: एक्सिस ब्लूचिप फंड",
+      "weight": "वज़न (ग्राम):",
+      "weightPlaceholder": "जैसे: 5.5",
+      "purity": "शुद्धता:",
+      "selectPurity": "शुद्धता चुनें",
+      "purity24k": "24K (99.9% शुद्ध)",
+      "purity22k": "22K (91.6% शुद्ध)",
+      "purity18k": "18K (75% शुद्ध)",
+      "assetName": "संपत्ति का नाम:",
+      "assetNamePlaceholder": "फंड का नाम दर्ज करें",
+      "transactionDate": "लेन-देन तिथि:",
+      "transferButton": "ट्रांसफर करें",
+      "redeemButton": "संपत्ति रिडीम करें",
+      "submitButton": "सबमिट करें"
+    }
+  },
+
+  "debt": {
+    "title": "ऋण जोड़ें",
+    "debtName": "ऋण का नाम:",
+    "totalAmount": "कुल राशि:",
+    "remainingBalance": "शेष राशि:",
+    "monthlyEmi": "मासिक EMI:",
+    "debtNamePlaceholder": "जैसे: होम लोन, कार लोन, क्रेडिट कार्ड",
+    "totalAmountPlaceholder": "जैसे: 500000",
+    "remainingPlaceholder": "जैसे: 350000",
+    "emiPlaceholder": "जैसे: 15000",
+    "submitButton": "ऋण जोड़ें"
+  },
+
+  "goals": {
+    "title": "वित्तीय लक्ष्य निर्धारित करें",
+    "goalName": "लक्ष्य का नाम:",
+    "targetAmount": "लक्ष्य राशि:",
+    "currentSaved": "वर्तमान बचत:",
+    "targetDate": "लक्ष्य तिथि:",
+    "priorityLevel": "प्राथमिकता स्तर:",
+    "goalNamePlaceholder": "जैसे: आपातकालीन निधि, कार डाउनपेमेंट",
+    "targetAmountPlaceholder": "जैसे: 50000",
+    "currentSavedPlaceholder": "जैसे: 5000",
+    "priorities": {
+      "high": "उच्च",
+      "medium": "मध्यम",
+      "low": "निम्न"
+    },
+    "submitButton": "लक्ष्य निर्धारित करें"
+  },
+
+  "profile": {
+    "title": "मासिक बजट निर्धारित करें",
+    "monthlyIncome": "मासिक आय:",
+    "monthlyIncomePlaceholder": "अपनी मासिक आय दर्ज करें",
+    "number": "नंबर:",
+    "numberPlaceholder": "अपना नंबर दर्ज करें",
+    "emergencyEmail": "आपातकालीन ईमेल:",
+    "emergencyEmailPlaceholder": "अपना आपातकालीन ईमेल दर्ज करें",
+    "emergencyNumber": "आपातकालीन नंबर:",
+    "emergencyNumberPlaceholder": "अपना आपातकालीन नंबर दर्ज करें",
+    "age": "आयु:",
+    "agePlaceholder": "अपनी आयु दर्ज करें",
+    "riskProfile": "जोखिम प्रोफ़ाइल:",
+    "riskProfiles": {
+      "selectType": "प्रकार चुनें",
+      "aggressive": "आक्रामक",
+      "balanced": "संतुलित",
+      "conservative": "रूढ़िवादी"
+    },
+    "budgets": {
+      "bills": "बिल बजट:",
+      "billsPlaceholder": "बिल का बजट दर्ज करें",
+      "food": "भोजन बजट:",
+      "foodPlaceholder": "भोजन का बजट दर्ज करें",
+      "health": "स्वास्थ्य बजट:",
+      "healthPlaceholder": "स्वास्थ्य का बजट दर्ज करें",
+      "lifestyle": "जीवनशैली बजट:",
+      "lifestylePlaceholder": "जीवनशैली का बजट दर्ज करें",
+      "obligations": "दायित्व बजट:",
+      "obligationsPlaceholder": "दायित्व का बजट दर्ज करें",
+      "savings": "बचत/निवेश बजट:",
+      "savingsPlaceholder": "बचत/निवेश का बजट दर्ज करें",
+      "transport": "परिवहन बजट:",
+      "transportPlaceholder": "परिवहन का बजट दर्ज करें",
+      "misc": "विविध बजट:",
+      "miscPlaceholder": "विविध का बजट दर्ज करें"
+    },
+    "submitButton": "सहेजें"
+  },
+
+  "chatbot": {
+    "askHisaab": "हिसाब से पूछें",
+    "subtitle": "आपका वित्तीय सहायक",
+    "greeting": "👋 नमस्ते! आज मैं आपकी कैसे मदद कर सकता हूं?",
+    "typing": "टाइप कर रहा है...",
+    "inputPlaceholder": "संदेश लिखें...",
+    "error": "⚠️ सर्वर से कनेक्शन में त्रुटि।",
+    "menu": {
+      "financialHealth": "💰 वित्तीय स्वास्थ्य",
+      "financialHealthPrompt": "मेरे वित्तीय स्वास्थ्य का विश्लेषण करें।",
+      "goals": "📈 मेरे लक्ष्य",
+      "goalsPrompt": "मेरे वर्तमान लक्ष्य और वित्तीय प्रगति की जांच करें।",
+      "investments": "💳 मेरे निवेश",
+      "investmentsPrompt": "मेरे निवेश का विश्लेषण करें।"
+    }
+  },
+
+  "transactionOtp": {
+    "title": "जारी रखने के लिए सत्यापित करें",
+    "message": "इस लेन-देन की पुष्टि के लिए हमने एक सत्यापन कोड ईमेल किया है।",
+    "placeholder": "6-अंकीय कोड",
+    "verifying": "सत्यापित हो रहा है...",
+    "verifyButton": "सत्यापित करें",
+    "cancelButton": "रद्द करें"
+  },
+
+  "cards": {
+    "asset": {
+      "value": "मूल्य :",
+      "heldBy": "धारक :"
+    },
+    "debt": {
+      "totalAmount": "कुल राशि:",
+      "remainingBalance": "शेष राशि:",
+      "monthlyEmi": "मासिक EMI:",
+      "paidOff": "चुकाया गया: "
+    },
+    "goal": {
+      "targetAmount": "लक्ष्य राशि :",
+      "deadline": "समय सीमा :",
+      "progress": "प्रगति :",
+      "priority": "प्राथमिकता :"
+    },
+    "transaction": {
+      "amount": "राशि :",
+      "date": "तिथि :"
+    }
+  }
+}

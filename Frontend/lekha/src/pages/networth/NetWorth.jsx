@@ -5,27 +5,28 @@ import { useAuth } from "../../context/useAuth";
 import { useLocation } from "react-router-dom";
 import AssetCard from "../../components/assetCard/AssetCard";
 
-const validate = values => {
-    const errors = {};
-
-    if (!values.type) {
-        errors.type = 'Required';
-    } else if (values.type.length > 50) {
-        errors.type = 'Must be 50 characters or less';
-    }
-
-    if (!values.currentValue) {
-        errors.currentValue = 'Required';
-    }
-
-    if (!values.institution) {
-        errors.institution = 'Required';
-    }
-
-    return errors;
-};
-
 export default function AddAssetForm() {
+
+    const validate = (values) => {
+      const errors = {};
+
+      if (!values.type) {
+        errors.type = "Required";
+      } else if (values.type.length > 50) {
+        errors.type = "Must be 50 characters or less";
+      }
+
+      if (!values.currentValue) {
+        errors.currentValue = "Required";
+      }
+
+      if (!values.institution) {
+        errors.institution = "Required";
+      }
+
+      return errors;
+    };
+
     const location = useLocation();
     const asset = location.state;
     const navigate = useNavigate();

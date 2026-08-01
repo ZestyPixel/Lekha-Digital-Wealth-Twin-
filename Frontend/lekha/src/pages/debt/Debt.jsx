@@ -5,39 +5,40 @@ import { useAuth } from "../../context/useAuth";
 import { useEffect } from "react";
 import DebtCard from "../../components/debtCard/DebtCard";
 
-const validate = values => {
-    const errors = {};
-
-    if (!values.debtName) {
-        errors.debtName = 'Required';
-    } else if (values.debtName.length > 50) {
-        errors.debtName = 'Must be 50 characters or less';
-    }
-
-    if (!values.totalAmount) {
-        errors.totalAmount = 'Required';
-    } else if (values.totalAmount <= 0) {
-        errors.totalAmount = 'Amount must be greater than 0';
-    }
-
-    if (values.remainingBalance === '' || values.remainingBalance === null) {
-        errors.remainingBalance = 'Required';
-    } else if (values.remainingBalance < 0) {
-        errors.remainingBalance = 'Cannot be negative';
-    } else if (Number(values.remainingBalance) > Number(values.totalAmount)) {
-        errors.remainingBalance = 'Cannot exceed total amount';
-    }
-
-    if (!values.monthlyEMI) {
-        errors.monthlyEMI = 'Required';
-    } else if (values.monthlyEMI <= 0) {
-        errors.monthlyEMI = 'EMI must be greater than 0';
-    }
-
-    return errors;
-};
-
 export default function AddDebt() {
+
+    const validate = (values) => {
+      const errors = {};
+
+      if (!values.debtName) {
+        errors.debtName = "Required";
+      } else if (values.debtName.length > 50) {
+        errors.debtName = "Must be 50 characters or less";
+      }
+
+      if (!values.totalAmount) {
+        errors.totalAmount = "Required";
+      } else if (values.totalAmount <= 0) {
+        errors.totalAmount = "Amount must be greater than 0";
+      }
+
+      if (values.remainingBalance === "" || values.remainingBalance === null) {
+        errors.remainingBalance = "Required";
+      } else if (values.remainingBalance < 0) {
+        errors.remainingBalance = "Cannot be negative";
+      } else if (Number(values.remainingBalance) > Number(values.totalAmount)) {
+        errors.remainingBalance = "Cannot exceed total amount";
+      }
+
+      if (!values.monthlyEMI) {
+        errors.monthlyEMI = "Required";
+      } else if (values.monthlyEMI <= 0) {
+        errors.monthlyEMI = "EMI must be greater than 0";
+      }
+
+      return errors;
+    };
+
     useEffect(() => {
         window.scroll({
             top: '0',

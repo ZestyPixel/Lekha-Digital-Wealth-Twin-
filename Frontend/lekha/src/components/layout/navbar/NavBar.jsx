@@ -1,9 +1,15 @@
 import { useAuth } from '../../../context/useAuth';
 import './NavBar.css';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Navbar({ onToggleSidebar }) {
   const { logout } = useAuth();
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (e) => {
+    i18n.changeLanguage(e.target.value);
+  };
 
   const handleLogout = () => {
     logout();
@@ -14,20 +20,31 @@ export default function Navbar({ onToggleSidebar }) {
       <div className="left">
         <button className="hamburger-button" onClick={onToggleSidebar}>
           <img className="hamburger-icon" src="/images/dehaze_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="menu" />
-          <div className="tooltip">Menu</div>
+          <div className="tooltip">{t('app.title')}</div>
+          
         </button>
       </div>
       <div className="middle">
-        <p className="title">Lekha</p>
+        <p className="title">{t('app.title')}</p>
       </div>
       <div className="right">
+        <select
+          className="lang-switcher"
+          value={i18n.language}
+          onChange={changeLanguage}
+        >
+          <option value="en">EN</option>
+          <option value="hi">हि</option>
+          <option value="bn">বা</option>
+          <option value="mr">म</option>
+        </select>
         <Link to={'/profile'}>
         <button className="profile-button">
           <img className="profile-icon" src="/images/Fa-Team-Fontawesome-FontAwesome-Circle-User.svg" alt="profile" />
-          <div className="tooltip">Profile</div>
+          <div className="tooltip">{t('profile.title')}</div>
         </button>
         </Link>
-        <button className="log" onClick={handleLogout}>Log Out</button>
+        <button className="log" onClick={handleLogout}>{t('landing.logout')}</button>
       </div>
     </div>
   );

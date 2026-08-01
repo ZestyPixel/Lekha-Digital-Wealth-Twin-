@@ -8,34 +8,6 @@ import Warning from '../../components/warning/Warning';
 import TransactionOtpVerify from '../../components/transactionOtp/TransactionOtpVerify';
 import "./LumpForm.css"
 
-const validate = values => {
-    const errors = {};
-
-    if (!values.amount || values.amount <= 0) {
-        errors.amount = 'Enter a valid amount';
-    }
-
-    if (!values.assetType) {
-        errors.assetType = 'Required';
-    }
-
-    if (!values.fundName) {
-        errors.fundName = 'Required';
-    } else if (values.fundName.length > 100) {
-        errors.fundName = 'Must be 100 characters or less';
-    }
-
-    if (!values.purchaseDate) {
-        errors.purchaseDate = 'Required';
-    }
-
-    if (!values.pin) {
-        errors.pin = 'Required';
-    }
-
-    return errors;
-};
-
 function Result({ decision, reasons }) {
 
     if (decision === "ALLOW") {
@@ -62,6 +34,35 @@ function Result({ decision, reasons }) {
 }
 
 export default function LumpsumInvestment() {
+
+    const validate = (values) => {
+      const errors = {};
+
+      if (!values.amount || values.amount <= 0) {
+        errors.amount = "Enter a valid amount";
+      }
+
+      if (!values.assetType) {
+        errors.assetType = "Required";
+      }
+
+      if (!values.fundName) {
+        errors.fundName = "Required";
+      } else if (values.fundName.length > 100) {
+        errors.fundName = "Must be 100 characters or less";
+      }
+
+      if (!values.purchaseDate) {
+        errors.purchaseDate = "Required";
+      }
+
+      if (!values.pin) {
+        errors.pin = "Required";
+      }
+
+      return errors;
+    };
+
     const { requestWithAuth } = useAuth();
     const [resultComponent, setResultComponent] = useState(null);
     const [asked, setAsked] = useState(false);

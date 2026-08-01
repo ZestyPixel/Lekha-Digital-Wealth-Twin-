@@ -4,23 +4,24 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
 import { useEffect } from "react";
 
-const validate = values => {
-    const errors = {};
-
-    if (!values.description) {
-        errors.description = 'Required';
-    } else if (values.description.length > 50) {
-        errors.description = 'Must be 50 characters or less';
-    }
-
-    if (!values.amount) {
-        errors.amount = 'Required';
-    }
-
-    return errors;
-};
-
 export default function MonthlyExpenses() {
+
+    const validate = (values) => {
+      const errors = {};
+
+      if (!values.description) {
+        errors.description = "Required";
+      } else if (values.description.length > 50) {
+        errors.description = "Must be 50 characters or less";
+      }
+
+      if (!values.amount) {
+        errors.amount = "Required";
+      }
+
+      return errors;
+    };
+
     const navigate = useNavigate();
     const { requestWithAuth } = useAuth();
 

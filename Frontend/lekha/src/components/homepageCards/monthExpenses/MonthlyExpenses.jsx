@@ -81,10 +81,10 @@ export default function MonthlyExpenses({Data = []}){
                     const { cx, cy } = viewBox;
                     return (
                     <>
-                        <text x={cx+31} y={cy + 3} textAnchor="middle" fill="white" fontSize={15} fontWeight={600}>
+                        <text x={cx+1} y={cy + 0} textAnchor="middle" fill="white" fontSize={17.1} fontWeight={600}>
                         Total Expenses:
                         </text>
-                        <text x={cx+29} y={cy + 27} textAnchor="middle" fill="white" fontSize={18} fontWeight={700}>
+                        <text x={cx+1} y={cy + 23} textAnchor="middle" fill="white" fontSize={18} fontWeight={700}>
                         {formatCurrency(totalWorth)}
                         </text>
                     </>

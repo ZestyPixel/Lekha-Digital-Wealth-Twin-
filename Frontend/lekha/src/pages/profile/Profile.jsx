@@ -4,25 +4,26 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/useAuth";
 import { useEffect } from "react";
 
-const validate = values => {
-    const errors = {};
-
-    if (!values.monthlyIncome) {
-        errors.monthlyIncome = 'Required';
-    }
-    if (!values.bills) errors.bills = 'Required';
-    if (!values.food) errors.food = 'Required';
-    if (!values.health) errors.health = 'Required';
-    if (!values.lifestyle) errors.lifestyle = 'Required';
-    if (!values.misc) errors.misc = 'Required';
-    if (!values.obligations) errors.obligations = 'Required';
-    if (!values.savings) errors.savings = 'Required';
-    if (!values.transport) errors.transport = 'Required';
-
-    return errors;
-};
-
 export default function Profile() {
+
+    const validate = (values) => {
+      const errors = {};
+
+      if (!values.monthlyIncome) {
+        errors.monthlyIncome = "Required";
+      }
+      if (!values.bills) errors.bills = "Required";
+      if (!values.food) errors.food = "Required";
+      if (!values.health) errors.health = "Required";
+      if (!values.lifestyle) errors.lifestyle = "Required";
+      if (!values.misc) errors.misc = "Required";
+      if (!values.obligations) errors.obligations = "Required";
+      if (!values.savings) errors.savings = "Required";
+      if (!values.transport) errors.transport = "Required";
+
+      return errors;
+    };
+
     useEffect(()=>{
             window.scroll({
                 top: '110',

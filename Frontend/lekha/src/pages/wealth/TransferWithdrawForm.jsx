@@ -8,50 +8,6 @@ import Warning from '../../components/warning/Warning';
 import TransactionOtpVerify from '../../components/transactionOtp/TransactionOtpVerify';
 import "./TransferWithdrawForm.css"
 
-const validate = values => {
-    const errors = {};
-    
-    if (!values.transactionType) {
-        errors.transactionType = 'Required';
-    }
-
-    if (!values.amount || values.amount <= 0) {
-        errors.amount = 'Enter a valid amount';
-    }
-
-    if (values.transactionType === 'Redeem' && !values.assetType) {
-        errors.assetType = 'Required';
-    }
-
-    if (values.transactionType === 'Transfer') {
-        if (!values.destinationType) {
-            errors.destinationType = 'Required for transfers';
-        }
-
-        if (values.destinationType === 'BankAccount') {
-            if (!values.destAccountNumber) errors.destAccountNumber = 'Required';
-            if (!values.destIfsc) errors.destIfsc = 'Required';
-            if (!values.destBankName) errors.destBankName = 'Required';
-        }
-
-        if (values.destinationType === 'MutualFund') {
-            if (!values.destFundName) errors.destFundName = 'Required';
-        }
-
-        if (values.destinationType === 'Gold') {
-            if (!values.destGoldGrams || values.destGoldGrams <= 0) errors.destGoldGrams = 'Enter valid grams';
-            if (!values.destGoldPurity) errors.destGoldPurity = 'Required';
-        }
-
-    }
-
-    if (!values.transactionDate) {
-        errors.transactionDate = 'Required';
-    }
-
-    return errors;
-};
-
 function Result({ decision, reasons }) {
 
     if (decision === "ALLOW") {
@@ -211,6 +167,51 @@ export default function TransferWithdraw() {
     const [asked, setAsked] = useState(false);
     const [answer, setAnswer] = useState('');
     const [otpContext, setOtpContext] = useState(null);
+
+    const validate = (values) => {
+      const errors = {};
+
+      if (!values.transactionType) {
+        errors.transactionType = "Required";
+      }
+
+      if (!values.amount || values.amount <= 0) {
+        errors.amount = "Enter a valid amount";
+      }
+
+      if (values.transactionType === "Redeem" && !values.assetType) {
+        errors.assetType = "Required";
+      }
+
+      if (values.transactionType === "Transfer") {
+        if (!values.destinationType) {
+          errors.destinationType = "Required for transfers";
+        }
+
+        if (values.destinationType === "BankAccount") {
+          if (!values.destAccountNumber) errors.destAccountNumber = "Required";
+          if (!values.destIfsc) errors.destIfsc = "Required";
+          if (!values.destBankName) errors.destBankName = "Required";
+        }
+
+        if (values.destinationType === "MutualFund") {
+          if (!values.destFundName) errors.destFundName = "Required";
+        }
+
+        if (values.destinationType === "Gold") {
+          if (!values.destGoldGrams || values.destGoldGrams <= 0)
+            errors.destGoldGrams = "Enter valid grams";
+          if (!values.destGoldPurity) errors.destGoldPurity = "Required";
+        }
+      }
+
+      if (!values.transactionDate) {
+        errors.transactionDate = "Required";
+      }
+
+      return errors;
+    };
+
 
     useEffect(()=>{
         window.scrollTo({

@@ -5,39 +5,40 @@ import { useAuth } from "../../context/useAuth";
 import { useEffect } from "react";
 import GoalCard from "../../components/goalCard/GoalCard";
 
-const validate = values => {
-    const errors = {};
-
-    if (!values.goalName) {
-        errors.goalName = 'Required';
-    } else if (values.goalName.length > 50) {
-        errors.goalName = 'Must be 50 characters or less';
-    }
-
-    if (!values.targetAmount) {
-        errors.targetAmount = 'Required';
-    } else if (values.targetAmount <= 0) {
-        errors.targetAmount = 'Amount must be greater than 0';
-    }
-
-    if (values.currentProgress === '' || values.currentProgress === null) {
-        errors.currentProgress = 'Required';
-    } else if (values.currentProgress < 0) {
-        errors.currentProgress = 'Cannot be negative';
-    }
-
-    if (!values.targetDate) {
-        errors.targetDate = 'Required';
-    }
-
-    if (!values.priority) {
-        errors.priority = 'Required';
-    }
-
-    return errors;
-};
-
 export default function SetGoal() {
+
+    const validate = (values) => {
+      const errors = {};
+
+      if (!values.goalName) {
+        errors.goalName = "Required";
+      } else if (values.goalName.length > 50) {
+        errors.goalName = "Must be 50 characters or less";
+      }
+
+      if (!values.targetAmount) {
+        errors.targetAmount = "Required";
+      } else if (values.targetAmount <= 0) {
+        errors.targetAmount = "Amount must be greater than 0";
+      }
+
+      if (values.currentProgress === "" || values.currentProgress === null) {
+        errors.currentProgress = "Required";
+      } else if (values.currentProgress < 0) {
+        errors.currentProgress = "Cannot be negative";
+      }
+
+      if (!values.targetDate) {
+        errors.targetDate = "Required";
+      }
+
+      if (!values.priority) {
+        errors.priority = "Required";
+      }
+
+      return errors;
+    };
+
     useEffect(()=>{
         window.scroll({
             top: '0',

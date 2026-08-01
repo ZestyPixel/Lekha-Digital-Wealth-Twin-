@@ -1,0 +1,315 @@
+{
+  "app": {
+    "title": "লেখা",
+    "pageNotFound": "পৃষ্ঠা পাওয়া যায়নি",
+    "loading": "লোড হচ্ছে..."
+  },
+
+  "landing": {
+    "welcome": "লেখায় আপনাকে স্বাগতম !",
+    "logout": "লগ আউট",
+    "demoAccount": "ডেমো অ্যাকাউন্ট ব্যবহার করুন",
+    "signUp": "সাইন আপ"
+  },
+
+  "login": {
+    "title": "লগইন",
+    "email": "ইমেইল:",
+    "password": "পাসওয়ার্ড:",
+    "emailPlaceholder": "ইমেইল লিখুন",
+    "passwordPlaceholder": "পাসওয়ার্ড লিখুন",
+    "showPassword": "পাসওয়ার্ড দেখুন",
+    "forgotCredentials": "ইউজারনেম / পাসওয়ার্ড ভুলে গেছেন?",
+    "noAccount": "অ্যাকাউন্ট নেই?",
+    "signUpLink": "সাইন আপ",
+    "submitButton": "সাইন ইন করুন",
+    "otp": {
+      "title": "আপনার পরিচয় যাচাই করুন",
+      "message": "আমরা একটি কোড ইমেইল করেছি",
+      "label": "যাচাইকরণ কোড:",
+      "placeholder": "৬-সংখ্যার কোড",
+      "verifyButton": "যাচাই করুন",
+      "verifying": "যাচাই হচ্ছে...",
+      "backToLogin": "লগইনে ফিরে যান"
+    }
+  },
+
+  "signup": {
+    "title": "সাইন আপ",
+    "name": "নাম:",
+    "email": "ইমেইল:",
+    "password": "পাসওয়ার্ড:",
+    "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন:",
+    "namePlaceholder": "নাম লিখুন",
+    "emailPlaceholder": "ইমেইল লিখুন",
+    "passwordPlaceholder": "পাসওয়ার্ড লিখুন",
+    "confirmPasswordPlaceholder": "পাসওয়ার্ড নিশ্চিত করুন",
+    "rememberMe": "আমাকে মনে রাখুন",
+    "hasAccount": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
+    "loginLink": "লগইন",
+    "submitButton": "সাইন আপ করুন"
+  },
+
+  "validation": {
+    "required": "আবশ্যক",
+    "invalidEmail": "অবৈধ ইমেইল ঠিকানা",
+    "maxChars20": "২০ অক্ষর বা তার কম হতে হবে",
+    "maxChars50": "৫০ অক্ষর বা তার কম হতে হবে",
+    "maxChars100": "১০০ অক্ষর বা তার কম হতে হবে",
+    "passwordsMustMatch": "পাসওয়ার্ড মিলতে হবে",
+    "enterValidAmount": "সঠিক পরিমাণ লিখুন",
+    "enterValidMonthlyAmount": "সঠিক মাসিক পরিমাণ লিখুন",
+    "amountGreaterThanZero": "পরিমাণ ০-এর বেশি হতে হবে",
+    "cannotBeNegative": "ঋণাত্মক হতে পারে না",
+    "cannotExceedTotal": "মোট পরিমাণের বেশি হতে পারে না",
+    "emiGreaterThanZero": "EMI ০-এর বেশি হতে হবে",
+    "requiredForTransfers": "ট্রান্সফারের জন্য আবশ্যক",
+    "enterValidGrams": "সঠিক গ্রাম লিখুন"
+  },
+
+  "dashboard": {
+    "financialHealthScore": "আর্থিক স্বাস্থ্য স্কোর",
+    "manageWealth": "সম্পদ পরিচালনা",
+    "lastTransaction": "শেষ লেনদেন"
+  },
+
+  "netWorth": {
+    "title": "সম্পদ যোগ করুন",
+    "assetType": "সম্পদের ধরন:",
+    "assetValue": "সম্পদের মূল্য:",
+    "holdingInstitution": "ধারক প্রতিষ্ঠান:",
+    "assetTypePlaceholder": "সম্পদের ধরন লিখুন (যেমন- সোনা, টাকা, ইত্যাদি)",
+    "assetValuePlaceholder": "সম্পদের মূল্য লিখুন (যেমন- ২০০০০)",
+    "holdingPlaceholder": "ধারক লিখুন (যেমন- ব্যাংক, ব্যক্তিগত, ইত্যাদি)",
+    "submitButton": "সম্পদ যোগ করুন"
+  },
+
+  "monthlyExpenses": {
+    "title": "খরচ ট্র্যাক করুন",
+    "amount": "পরিমাণ:",
+    "description": "বিবরণ:",
+    "category": "খরচের বিভাগ:",
+    "amountPlaceholder": "পরিমাণ লিখুন (যেমন- ২০০০০)",
+    "descriptionPlaceholder": "যেমন: চা গরম, মল",
+    "categoryDefault": "একটি বিভাগ নির্বাচন করুন",
+    "categories": {
+      "housing": "আবাসন ও ইউটিলিটি",
+      "food": "খাবার ও ডাইনিং",
+      "transportation": "পরিবহন",
+      "lifestyle": "জীবনধারা ও বিনোদন",
+      "health": "স্বাস্থ্য ও সুস্থতা",
+      "financial": "আর্থিক দায়বদ্ধতা",
+      "savings": "সঞ্চয় ও বিনিয়োগ",
+      "misc": "বিবিধ"
+    },
+    "submitButton": "খরচ ট্র্যাক করুন"
+  },
+
+  "wealth": {
+    "lumpsum": "একমাস বিনিয়োগ",
+    "sip": "পদ্ধতিগত বিনিয়োগ পরিকল্পনা (SIP)",
+    "transferWithdraw": "ট্রান্সফার/উত্তোলন",
+    "assetTypes": {
+      "selectAssetType": "সম্পদের ধরন নির্বাচন করুন",
+      "mutualFund": "মিউচুয়াল ফান্ড",
+      "stocks": "স্টক",
+      "gold": "সোনা",
+      "goldDigital": "সোনা (ডিজিটাল)"
+    },
+    "common": {
+      "assetType": "সম্পদের ধরন:",
+      "fundName": "ফান্ড / সম্পদের নাম:",
+      "reason": "কারণ:",
+      "pin": "পিন:",
+      "reasonPlaceholder": "কারণ লিখুন",
+      "transactionSuccessful": "লেনদেন সফল",
+      "tryAgain": "১ মিনিট পর আবার চেষ্টা করুন",
+      "transactionBlocked": "লেনদেন অবরুদ্ধ",
+      "transactionBlockedLower": "লেনদেন অবরুদ্ধ"
+    },
+    "hisaab": {
+      "askBefore": "লেনদেনের আগে হিসাবকে জিজ্ঞাসা করুন !",
+      "reviewing": "হিসাব আপনার লেনদেন পর্যালোচনা করছে",
+      "decision": "সিদ্ধান্ত:",
+      "risk": "ঝুঁকি:",
+      "reason": "কারণ:",
+      "alternative": "বিকল্প:"
+    },
+    "lumpsumForm": {
+      "title": "একমাস বিনিয়োগ",
+      "amount": "বিনিয়োগের পরিমাণ (₹):",
+      "purchaseDate": "ক্রয়ের তারিখ:",
+      "amountPlaceholder": "পরিমাণ লিখুন (যেমন: ৫০০০০)",
+      "fundNamePlaceholder": "যেমন: অ্যাক্সিস ব্লুচিপ ফান্ড, রিলায়েন্স, SGB",
+      "submitButton": "একমাস বিনিয়োগ করুন"
+    },
+    "sipForm": {
+      "title": "SIP সেটআপ করুন",
+      "monthlyAmount": "মাসিক SIP পরিমাণ (₹):",
+      "debitDate": "মাসিক SIP ডেবিট তারিখ:",
+      "amountPlaceholder": "মাসিক পরিমাণ লিখুন (যেমন: ৫০০০)",
+      "fundNamePlaceholder": "যেমন: মিরায়ে অ্যাসেট লার্জ ক্যাপ ফান্ড",
+      "selectDate": "মাসের তারিখ নির্বাচন করুন",
+      "dateSuffixSt": "তারিখ প্রতি মাসে",
+      "dateSuffixNd": "তারিখ প্রতি মাসে",
+      "dateSuffixRd": "তারিখ প্রতি মাসে",
+      "dateSuffixTh": "তারিখ প্রতি মাসে",
+      "submitButton": "SIP শুরু করুন"
+    },
+    "transferForm": {
+      "title": "ট্রান্সফার / উত্তোলন",
+      "transactionType": "লেনদেনের ধরন:",
+      "selectType": "লেনদেনের ধরন নির্বাচন করুন",
+      "transfer": "ট্রান্সফার",
+      "redeem": "রিডিম (মিউচুয়াল ফান্ড / সোনা / স্টক)",
+      "amount": "পরিমাণ (₹):",
+      "amountPlaceholder": "পরিমাণ লিখুন (যেমন: ১০০০০)",
+      "redeemFrom": "কোথা থেকে রিডিম করবেন:",
+      "redeemFromDefault": "আপনি কী রিডিম করছেন?",
+      "destinationType": "গন্তব্যের ধরন:",
+      "destinationDefault": "টাকা কোথায় যাবে?",
+      "bankAccount": "ব্যাংক অ্যাকাউন্ট",
+      "accountNumber": "অ্যাকাউন্ট নম্বর:",
+      "accountNumberPlaceholder": "অ্যাকাউন্ট নম্বর লিখুন",
+      "ifscCode": "IFSC কোড:",
+      "ifscPlaceholder": "যেমন: SBIN0001234",
+      "bankName": "ব্যাংকের নাম:",
+      "bankNamePlaceholder": "যেমন: স্টেট ব্যাংক অফ ইন্ডিয়া",
+      "fundName": "ফান্ডের নাম:",
+      "fundNamePlaceholder": "যেমন: অ্যাক্সিস ব্লুচিপ ফান্ড",
+      "weight": "ওজন (গ্রাম):",
+      "weightPlaceholder": "যেমন: ৫.৫",
+      "purity": "বিশুদ্ধতা:",
+      "selectPurity": "বিশুদ্ধতা নির্বাচন করুন",
+      "purity24k": "২৪K (৯৯.৯% বিশুদ্ধ)",
+      "purity22k": "২২K (৯১.৬% বিশুদ্ধ)",
+      "purity18k": "১৮K (৭৫% বিশুদ্ধ)",
+      "assetName": "সম্পদের নাম:",
+      "assetNamePlaceholder": "ফান্ডের নাম লিখুন",
+      "transactionDate": "লেনদেনের তারিখ:",
+      "transferButton": "ট্রান্সফার করুন",
+      "redeemButton": "সম্পদ রিডিম করুন",
+      "submitButton": "জমা দিন"
+    }
+  },
+
+  "debt": {
+    "title": "ঋণ যোগ করুন",
+    "debtName": "ঋণের নাম:",
+    "totalAmount": "মোট পরিমাণ:",
+    "remainingBalance": "অবশিষ্ট ব্যালেন্স:",
+    "monthlyEmi": "মাসিক EMI:",
+    "debtNamePlaceholder": "যেমন: হোম লোন, গাড়ির লোন, ক্রেডিট কার্ড",
+    "totalAmountPlaceholder": "যেমন: ৫০০০০০",
+    "remainingPlaceholder": "যেমন: ৩৫০০০০",
+    "emiPlaceholder": "যেমন: ১৫০০০",
+    "submitButton": "ঋণ যোগ করুন"
+  },
+
+  "goals": {
+    "title": "আর্থিক লক্ষ্য নির্ধারণ করুন",
+    "goalName": "লক্ষ্যের নাম:",
+    "targetAmount": "লক্ষ্য পরিমাণ:",
+    "currentSaved": "বর্তমান সঞ্চয়:",
+    "targetDate": "লক্ষ্য তারিখ:",
+    "priorityLevel": "অগ্রাধিকার স্তর:",
+    "goalNamePlaceholder": "যেমন: জরুরি তহবিল, গাড়ির ডাউনপেমেন্ট",
+    "targetAmountPlaceholder": "যেমন: ৫০০০০",
+    "currentSavedPlaceholder": "যেমন: ৫০০০",
+    "priorities": {
+      "high": "উচ্চ",
+      "medium": "মধ্যম",
+      "low": "নিম্ন"
+    },
+    "submitButton": "লক্ষ্য নির্ধারণ করুন"
+  },
+
+  "profile": {
+    "title": "মাসিক বাজেট নির্ধারণ করুন",
+    "monthlyIncome": "মাসিক আয়:",
+    "monthlyIncomePlaceholder": "আপনার মাসিক আয় লিখুন",
+    "number": "নম্বর:",
+    "numberPlaceholder": "আপনার নম্বর লিখুন",
+    "emergencyEmail": "জরুরি ইমেইল:",
+    "emergencyEmailPlaceholder": "আপনার জরুরি ইমেইল লিখুন",
+    "emergencyNumber": "জরুরি নম্বর:",
+    "emergencyNumberPlaceholder": "আপনার জরুরি নম্বর লিখুন",
+    "age": "বয়স:",
+    "agePlaceholder": "আপনার বয়স লিখুন",
+    "riskProfile": "ঝুঁকি প্রোফাইল:",
+    "riskProfiles": {
+      "selectType": "ধরন নির্বাচন করুন",
+      "aggressive": "আক্রমণাত্মক",
+      "balanced": "ভারসাম্যপূর্ণ",
+      "conservative": "রক্ষণশীল"
+    },
+    "budgets": {
+      "bills": "বিল বাজেট:",
+      "billsPlaceholder": "বিলের বাজেট লিখুন",
+      "food": "খাবার বাজেট:",
+      "foodPlaceholder": "খাবারের বাজেট লিখুন",
+      "health": "স্বাস্থ্য বাজেট:",
+      "healthPlaceholder": "স্বাস্থ্যের বাজেট লিখুন",
+      "lifestyle": "জীবনধারা বাজেট:",
+      "lifestylePlaceholder": "জীবনধারার বাজেট লিখুন",
+      "obligations": "দায়বদ্ধতা বাজেট:",
+      "obligationsPlaceholder": "দায়বদ্ধতার বাজেট লিখুন",
+      "savings": "সঞ্চয়/বিনিয়োগ বাজেট:",
+      "savingsPlaceholder": "সঞ্চয়/বিনিয়োগের বাজেট লিখুন",
+      "transport": "পরিবহন বাজেট:",
+      "transportPlaceholder": "পরিবহনের বাজেট লিখুন",
+      "misc": "বিবিধ বাজেট:",
+      "miscPlaceholder": "বিবিধ বাজেট লিখুন"
+    },
+    "submitButton": "সংরক্ষণ করুন"
+  },
+
+  "chatbot": {
+    "askHisaab": "হিসাবকে জিজ্ঞাসা করুন",
+    "subtitle": "আপনার আর্থিক সহায়ক",
+    "greeting": "👋 নমস্কার! আজ আমি আপনাকে কীভাবে সাহায্য করতে পারি?",
+    "typing": "টাইপ করছে...",
+    "inputPlaceholder": "একটি বার্তা লিখুন...",
+    "error": "⚠️ সার্ভারের সাথে সংযোগে ত্রুটি।",
+    "menu": {
+      "financialHealth": "💰 আর্থিক স্বাস্থ্য",
+      "financialHealthPrompt": "আমার আর্থিক স্বাস্থ্য বিশ্লেষণ করুন।",
+      "goals": "📈 আমার লক্ষ্য",
+      "goalsPrompt": "আমার বর্তমান লক্ষ্য এবং আর্থিক অগ্রগতি পরীক্ষা করুন।",
+      "investments": "💳 আমার বিনিয়োগ",
+      "investmentsPrompt": "আমার বিনিয়োগ বিশ্লেষণ করুন।"
+    }
+  },
+
+  "transactionOtp": {
+    "title": "চালিয়ে যেতে যাচাই করুন",
+    "message": "এই লেনদেন নিশ্চিত করতে আমরা একটি যাচাইকরণ কোড ইমেইল করেছি।",
+    "placeholder": "৬-সংখ্যার কোড",
+    "verifying": "যাচাই হচ্ছে...",
+    "verifyButton": "যাচাই করুন",
+    "cancelButton": "বাতিল করুন"
+  },
+
+  "cards": {
+    "asset": {
+      "value": "মূল্য :",
+      "heldBy": "ধারক :"
+    },
+    "debt": {
+      "totalAmount": "মোট পরিমাণ:",
+      "remainingBalance": "অবশিষ্ট ব্যালেন্স:",
+      "monthlyEmi": "মাসিক EMI:",
+      "paidOff": "পরিশোধিত: "
+    },
+    "goal": {
+      "targetAmount": "লক্ষ্য পরিমাণ :",
+      "deadline": "সময়সীমা :",
+      "progress": "অগ্রগতি :",
+      "priority": "অগ্রাধিকার :"
+    },
+    "transaction": {
+      "amount": "পরিমাণ :",
+      "date": "তারিখ :"
+    }
+  }
+}

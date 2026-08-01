@@ -33,10 +33,6 @@ async function storeOtp({ userId, plainCode, purpose, pendingAction = null }) {
 async function verifyOtp({ userId, purpose, submittedCode }) {
     const session = await Session.findOne({ userId });
 
-    if (!session || !session.otpCode || session.otpPurpose !== purpose) {
-        return { valid: false, reason: 'No active OTP for this action. Request a new one.' };
-    }
-
     if (session.otpExpiresAt < new Date()) {
         await clearOtp(userId);
         return { valid: false, reason: 'Code expired. Request a new one.' };
