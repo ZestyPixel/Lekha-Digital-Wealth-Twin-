@@ -871,7 +871,17 @@ app.get("/getFinancialScore", authMiddleware, async (req, res) => {
 });
 
 app.post("/chatbot", authMiddleware, async (req, res) => {
-  const { message, history } = req.body;
+
+  const languageNames = {
+    en: "English",
+    hi: "Hindi",
+    bn: "Bengali",
+    mr: "Marathi",
+  };
+
+  const { message, history, language } = req.body;
+  const targetLanguage = languageNames[language] || "English";
+
   const data = await Finances.findOne({ userId: req.userId });
   const assets = await Asset.find({
     userId: req.userId,
@@ -894,7 +904,7 @@ app.post("/chatbot", authMiddleware, async (req, res) => {
   const content = `
 
         You are a financial advisor chatbot.
-
+        Respond strictly in the following language: ${targetLanguage}.
         Rules:
         - Answer the user's latest message.
         - Use the financial data provided below.
@@ -945,7 +955,17 @@ app.post("/chatbot", authMiddleware, async (req, res) => {
 });
 
 app.post("/askHisaab", authMiddleware, async (req, res) => {
-  const { query } = req.body;
+  const { query, language } = req.body;
+
+  const languageNames = {
+    en: "English",
+    hi: "Hindi",
+    bn: "Bengali",
+    mr: "Marathi",
+  };
+
+  const targetLanguage = languageNames[language] || "English";
+
   console.log(query);
   const { assetType, fundName } = query;
 
@@ -1123,6 +1143,8 @@ app.post("/askHisaab", authMiddleware, async (req, res) => {
 
   const content = `
 You are Hisaab, a strict, numbers-first personal finance advisor for a retail investor in India. All monetary values are in INR. Every claim you make must trace back to a specific number or fact given below — no vague reassurance, no generic encouragement.
+
+Respond strictly in the following language: ${targetLanguage}.
 
 ## Transaction Requested
 ${JSON.stringify(query, null, 2)}

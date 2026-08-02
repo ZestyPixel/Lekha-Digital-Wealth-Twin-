@@ -10,16 +10,18 @@ import "./SipForm.css";
 
 function Result({ decision, reasons }) {
   if (decision === "ALLOW") {
-    return <Success message={`Transaction Successful`} />;
+    return <Success message="Transaction Successful" />;
   }
 
   if (decision === "WARN") {
-    return <Warning message={`Try again after 1 minute`} reasons={reasons} />;
+    return <Warning message="Try again after 1 minute" reasons={reasons} />;
   }
 
   if (decision === "BLOCK") {
-    return <Failure message={`Transaction blocked`} reasons={reasons} />;
+    return <Failure message="Transaction blocked" reasons={reasons} />;
   }
+
+  return null;
 }
 
 export default function SIPInvestment() {
@@ -50,6 +52,10 @@ export default function SIPInvestment() {
       errors.sipDate = "Required";
     }
 
+    if (!values.pin) {
+      errors.pin = "Required";
+    }
+
     return errors;
   };
 
@@ -60,7 +66,29 @@ export default function SIPInvestment() {
     });
   }, []);
 
- 
+  async function askHisaab() {
+    setAsked(true);
+    setAnswer("");
+    const { amount, assetType, fundName, reason } = formik.values;
+    const query = {
+      action: "start sip",
+      amount,
+      assetType,
+      fundName,
+      reason,
+    };
+    try {
+      const response = await requestWithAuth("/askHisaab", {
+        method: "POST",
+        body: JSON.stringify({ query }),
+      });
+      const message = await response.json();
+      const advice = message.finalData;
+      setAnswer(advice);
+    } catch (error) {
+      console.error("Ask Hisaab failed:", error);
+    }
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -94,16 +122,15 @@ export default function SIPInvestment() {
         if (response.ok) {
           setResultComponent(
             <Result
-              decision={result.security.decision}
-              reasons={result.security.reasons}
-              riskScore={result.security.riskScore}
+              decision={result.security?.decision || "ALLOW"}
+              reasons={result.security?.reasons}
             />,
           );
         }
 
         setTimeout(() => {
-          setResultComponent(null); // Reset to show form again
-        }, 5000); // Show result for 5 seconds
+          setResultComponent(null);
+        }, 5000);
       } catch (error) {
         console.error("SIP setup failed:", error);
         alert("SIP setup failed");
@@ -114,7 +141,6 @@ export default function SIPInvestment() {
   });
 
   if (formik.isSubmitting) {
-    // Show loading while waiting for response
     return <Loading />;
   }
 
@@ -130,7 +156,6 @@ export default function SIPInvestment() {
               <Result
                 decision={data.security.decision}
                 reasons={data.security.reasons}
-                riskScore={data.security.riskScore}
               />,
             );
           } else {
@@ -143,8 +168,7 @@ export default function SIPInvestment() {
     );
   }
 
-  if (resultComponent) return resultComponent; //We render it. This will get rendered and the form will not cause a react component can only return one thing
-  // at a time so when this is truthy, the code will never reach the form's return below.
+  if (resultComponent) return resultComponent;
 
   return (
     <div className="form-container">
@@ -282,12 +306,12 @@ export default function SIPInvestment() {
               Start SIP
             </button>
             <button className="ask-hisaab" onClick={askHisaab} type="button">
-              {" "}
-              Ask Hisaab before transaction !{" "}
+              Ask Hisaab before transaction !
             </button>
           </div>
         </form>
       </div>
+
       {asked && !answer && (
         <div className="hisaab-loader">
           <p>Hisaab is reviewing your transaction</p>

@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { MessageSquare, X, Send } from "lucide-react";
 import "./ChatBot.css";
 import { useAuth } from "../../context/useAuth";
+import { useTranslation } from "react-i18next";
 
 const chatMenus = {
   main: [
@@ -16,6 +17,7 @@ const chatMenus = {
 };
 
 export default function ChatBot() {
+  const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -44,19 +46,19 @@ export default function ChatBot() {
     if (!text.trim()) return;
 
     const userMessage = { role: "user", text };
-
     const nextHistory = [...chatHistory, userMessage];
     setChatHistory(nextHistory);
 
     setLoadingStatus(true);
     setQuestion("");
-
+    const currentLanguage = i18n.language || "en";
     try {
       const response = await requestWithAuth("/chatbot", {
         method: "POST",
         body: JSON.stringify({
           message: text,
           history: nextHistory.slice(-10), // last 10 messages only
+          language: currentLanguage,
         }),
       });
 
