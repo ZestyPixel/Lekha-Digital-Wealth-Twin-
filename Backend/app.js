@@ -982,7 +982,9 @@ app.post("/askHisaab", authMiddleware, async (req, res) => {
     // Fetch AMFI's official NAV file and fuzzy-match by fund name to get the ISIN directly
     // Format: SchemeCode;ISIN Growth;ISIN Reinvestment;Scheme Name;NAV;Date
     try {
-      const amfiRes = await fetch("https://www.amfiindia.com/spages/NAVAll.txt");
+      const amfiRes = await fetch(
+        "https://www.amfiindia.com/spages/NAVAll.txt",
+      );
       const amfiText = await amfiRes.text();
       const lines = amfiText.split("\n");
 
@@ -1001,7 +1003,9 @@ app.post("/askHisaab", authMiddleware, async (req, res) => {
 
         // Score: count how many words from the user's search appear in the scheme name
         const searchWords = searchName.split(/\s+/);
-        const matchCount = searchWords.filter(w => schemeName.includes(w)).length;
+        const matchCount = searchWords.filter((w) =>
+          schemeName.includes(w),
+        ).length;
         const score = matchCount / searchWords.length;
 
         if (score > bestScore) {
@@ -1011,7 +1015,9 @@ app.post("/askHisaab", authMiddleware, async (req, res) => {
       }
 
       if (bestMatch && bestScore >= 0.5) {
-        const isin = (bestMatch[1] || bestMatch[2] || "").trim().replace(/-/g, "");
+        const isin = (bestMatch[1] || bestMatch[2] || "")
+          .trim()
+          .replace(/-/g, "");
         if (isin && /^[A-Z0-9]{12}$/.test(isin)) {
           const url = `https://mf.captnemo.in/kuvera/${isin}`;
           try {
@@ -1041,49 +1047,49 @@ app.post("/askHisaab", authMiddleware, async (req, res) => {
     }
   }
   if (mf && fund) {
-      ({
-        returns: {
-          year_1: return1Y,
-          year_3: return3Y,
-          year_5: return5Y,
-          inception: returnInception,
-          date: returnsDate,
-        } = {},
-        volatility,
-        fund_rating: fundRating,
-        fund_rating_date: fundRatingDate,
-      } = fund);
+    ({
+      returns: {
+        year_1: return1Y,
+        year_3: return3Y,
+        year_5: return5Y,
+        inception: returnInception,
+        date: returnsDate,
+      } = {},
+      volatility,
+      fund_rating: fundRating,
+      fund_rating_date: fundRatingDate,
+    } = fund);
 
-      ({
-        crisil_rating: crisilRating,
-        investment_objective: investmentObjective,
-        portfolio_turnover: portfolioTurnover,
-        aum,
-      } = fund);
+    ({
+      crisil_rating: crisilRating,
+      investment_objective: investmentObjective,
+      portfolio_turnover: portfolioTurnover,
+      aum,
+    } = fund);
 
-      const comparison = fund.comparison ?? [];
-      comparisonCount = comparison.length;
-      fundTags = fund.tags ?? [];
+    const comparison = fund.comparison ?? [];
+    comparisonCount = comparison.length;
+    fundTags = fund.tags ?? [];
 
-      const categoryAvg = (key) => {
-        const valid = comparison.filter((f) => f[key]);
-        const total = valid.reduce((sum, f) => sum + f[key], 0);
-        const average = total / valid.length;
-        return average.toFixed(2);
-      };
+    const categoryAvg = (key) => {
+      const valid = comparison.filter((f) => f[key]);
+      const total = valid.reduce((sum, f) => sum + f[key], 0);
+      const average = total / valid.length;
+      return average.toFixed(2);
+    };
 
-      categoryAvg1Y = categoryAvg("1y");
-      categoryAvg3Y = categoryAvg("3y");
-      categoryAvg5Y = categoryAvg("5y");
-      categoryAvgVolatility = categoryAvg("volatility");
-      categoryAvgExpenseRatio = categoryAvg("expense_ratio");
+    categoryAvg1Y = categoryAvg("1y");
+    categoryAvg3Y = categoryAvg("3y");
+    categoryAvg5Y = categoryAvg("5y");
+    categoryAvgVolatility = categoryAvg("volatility");
+    categoryAvgExpenseRatio = categoryAvg("expense_ratio");
 
-      bestPeer1Y = [...comparison].sort((a, b) => b["1y"] - a["1y"])[0];
-      bestPeer3Y = [...comparison].sort((a, b) => b["3y"] - a["3y"])[0];
-      bestPeer5Y = [...comparison].sort((a, b) => b["5y"] - a["5y"])[0];
-      lowestVolatilityPeer = [...comparison].sort(
-        (a, b) => a["volatility"] - b["volatility"],
-      )[0];
+    bestPeer1Y = [...comparison].sort((a, b) => b["1y"] - a["1y"])[0];
+    bestPeer3Y = [...comparison].sort((a, b) => b["3y"] - a["3y"])[0];
+    bestPeer5Y = [...comparison].sort((a, b) => b["5y"] - a["5y"])[0];
+    lowestVolatilityPeer = [...comparison].sort(
+      (a, b) => a["volatility"] - b["volatility"],
+    )[0];
   }
 
   let detes;
@@ -1116,149 +1122,173 @@ app.post("/askHisaab", authMiddleware, async (req, res) => {
   const cleanedProfile = cleanProfile(profile);
 
   const content = `
+You are Hisaab, a strict, numbers-first personal finance advisor for a retail investor in India. All monetary values are in INR. Every claim you make must trace back to a specific number or fact given below — no vague reassurance, no generic encouragement.
 
-    You are Hisaab, a strict, numbers-first personal finance advisor for a user in India. All monetary values below are in INR.
+## Transaction Requested
+${JSON.stringify(query, null, 2)}
 
-    Transaction requested:
-    ${JSON.stringify(query, null, 2)}
+## User's Financial Snapshot
+When reading the JSON below, pay particular attention to: current bank balance, total net worth, total invested assets, savings rate, total monthly EMI/debt obligations, and each goal's priority level and target date. These are the figures Steps 1 and 2 ask you to reason about.
 
-    User's current financial snapshot:
+Finances:
+${JSON.stringify(cleanedFinances, null, 2)}
 
-    Finances:
-    ${JSON.stringify(cleanedFinances, null, 2)}
+Assets:
+${JSON.stringify(cleanedAssets, null, 2)}
 
-    Assets:
-    ${JSON.stringify(cleanedAssets, null, 2)}
+Goals:
+${JSON.stringify(cleanedGoals, null, 2)}
 
-    Goals:
-    ${JSON.stringify(cleanedGoals, null, 2)}
+Debts:
+${JSON.stringify(cleanedDebts, null, 2)}
 
-    Debts:
-    ${JSON.stringify(cleanedDebts, null, 2)}
+Monthly Profile:
+${JSON.stringify(cleanedProfile, null, 2)}
 
-    Monthly Profile:
-    ${JSON.stringify(cleanedProfile, null, 2)}
+${
+  mf
+    ? `
+## Mutual Fund Details
+Applies only because assetType is "MutualFund". Use the 1Y/3Y/5Y returns, volatility, category comparison, fund rating, and platform signals below as your evidence. Never cite AUM or portfolio turnover in "reason" — background only. Expense ratio is background UNLESS it exceeds category average by more than 0.5%, in which case it becomes a valid factor.
 
-    ${
-      mf
-        ? `
-    Mutual Fund Details (present only when assetType is "MutualFund". Use the 1Y/3Y/5Y returns, volatility, category comparison, fund rating, and platform signals below for your decision and citation. AUM and portfolio turnover are background context ONLY — never cite them in "reason". Expense ratio is background context UNLESS it is more than 0.5% above category average, since that is the only case where fund cost materially changes the outcome):
-    Name:               ${fund.name}
-    Category:           ${fund.fund_category} (${fund.fund_type})
-    AUM:                ₹${aum} Lakhs
-    Expense Ratio:      ${fund.expense_ratio}%
-    Portfolio Turnover: ${portfolioTurnover}
-    Investment Objective: ${investmentObjective}
+If any figure below reads "NaN", "undefined", "N/A", or is otherwise not a real number, treat that specific metric as unavailable — do not reference it, and do not treat a missing figure as zero or as evidence of underperformance.
 
-    Performance (as of ${returnsDate}):
-        1-Year Return:   ${return1Y}%
-        3-Year Return:   ${return3Y}%
-        5-Year Return:   ${return5Y}%
-        Since Inception: ${returnInception}%
+Name: ${fund.name}
+Category: ${fund.fund_category} (${fund.fund_type})
+AUM: ₹${aum} Lakhs
+Expense Ratio: ${fund.expense_ratio}%
+Portfolio Turnover: ${portfolioTurnover}
+Investment Objective: ${investmentObjective}
 
-    Risk & Rating:
-        Volatility:    ${volatility}%
-        CRISIL Rating: ${crisilRating}
-        Fund Rating:   ${fundRating}/5 (as of ${fundRatingDate}) — this is an independent quality signal, not derived from the returns above. A rating of 4 or 5 is meaningful positive evidence and should be weighed against a small category-average gap, not ignored.
+Performance (as of ${returnsDate}):
+  1-Year Return: ${return1Y}%
+  3-Year Return: ${return3Y}%
+  5-Year Return: ${return5Y}%
+  Since Inception: ${returnInception}%
 
-    Platform Signals: ${fundTags.length > 0 ? fundTags.join(", ") : "none available"}
-        Treat "top_rated" and "top_bought" as mild independent positive evidence, particularly when return-based numbers are mixed or only marginally below average.
+Risk & Rating:
+  Volatility: ${volatility}%
+  CRISIL Rating: ${crisilRating}
+  Fund Rating: ${fundRating}/5 (as of ${fundRatingDate}) — an independent quality signal, not derived from the returns above. A 4 or 5 rating is meaningful positive evidence; weigh it against a small category-average gap rather than ignoring it.
 
-    Category Comparison (${fund.fund_category} peers, averaged across ${comparisonCount} peer fund${comparisonCount === 1 ? "" : "s"} — a small peer count means this average is a rougher benchmark, not a market-wide figure):
-        Metric            This Fund     Category Avg  
-        1Y Return         ${return1Y}%       ${categoryAvg1Y}%
-        3Y Return         ${return3Y}%      ${categoryAvg3Y}%
-        5Y Return         ${return5Y}%      ${categoryAvg5Y}%
-        Volatility        ${volatility}%    ${categoryAvgVolatility}%
-        Expense Ratio     ${fund.expense_ratio}%      ${categoryAvgExpenseRatio}%
+Platform Signals: ${fundTags.length > 0 ? fundTags.join(", ") : "none available"}
+  Treat "top_rated" and "top_bought" as mild independent positive evidence, particularly when return-based numbers are mixed or only marginally below average.
 
-    Standout peers (background context only — do not cite unless the chosen fund is a clear outlier vs. one of these):
-        Best 1Y return:       ${bestPeer1Y?.short_name} at ${bestPeer1Y?.["1y"]}%
-        Best 3Y return:       ${bestPeer3Y?.short_name} at ${bestPeer3Y?.["3y"]}%
-        Best 5Y return:       ${bestPeer5Y?.short_name} at ${bestPeer5Y?.["5y"]}%
-        Lowest volatility:    ${lowestVolatilityPeer?.short_name} at ${lowestVolatilityPeer?.volatility}%
-    `
-        : ""
-    }
+Category Comparison (${fund.fund_category} peers, averaged across ${comparisonCount} fund${comparisonCount === 1 ? "" : "s"}):
+${
+  comparisonCount > 0
+    ? `  Metric        This Fund   Category Avg
+  1Y Return     ${return1Y}%        ${categoryAvg1Y}%
+  3Y Return     ${return3Y}%        ${categoryAvg3Y}%
+  5Y Return     ${return5Y}%        ${categoryAvg5Y}%
+  Volatility    ${volatility}%      ${categoryAvgVolatility}%
+  Expense Ratio ${fund.expense_ratio}%   ${categoryAvgExpenseRatio}%
 
-    ${
-      detes
-        ? `
-    Stock Details (present only when assetType is "Stocks". Use ONLY current price vs. 52-week range, analyst consensus mean score, and today's/YTD % change for your decision and citation. Market cap and industry are background context ONLY — never cite them in "reason"):
-    Company:         ${detes.companyName} (${detes.industry})
-    Current Price:   ₹${detes.currentPrice.NSE} (NSE) / ₹${detes.currentPrice.BSE} (BSE)
-    Day Change:      ${detes.percentChange}%
-    52-Week Range:   ₹${detes.yearLow} – ₹${detes.yearHigh}
-    YTD Change:      ${detes.ytdChange}%
-    Market Cap:      ₹${detes.marketCap} Cr
-    Risk Profile:    ${detes.risk}
+Standout peers (background only — do not cite unless the chosen fund is a clear outlier against one of these):
+  Best 1Y: ${bestPeer1Y?.short_name ?? "n/a"} at ${bestPeer1Y?.["1y"] ?? "n/a"}%
+  Best 3Y: ${bestPeer3Y?.short_name ?? "n/a"} at ${bestPeer3Y?.["3y"] ?? "n/a"}%
+  Best 5Y: ${bestPeer5Y?.short_name ?? "n/a"} at ${bestPeer5Y?.["5y"] ?? "n/a"}%
+  Lowest volatility: ${lowestVolatilityPeer?.short_name ?? "n/a"} at ${lowestVolatilityPeer?.volatility ?? "n/a"}%`
+    : `  No peer funds are available in this category — there is no benchmark to compare against. Evaluate this fund only on its own returns, volatility, and fund rating.`
+}
+`
+    : ""
+}
 
-    Analyst Consensus (${detes.analystConsensus.noOfRecommendations} analysts):
-        Rating:      ${detes.analystConsensus.averageRating}
-        Mean Score:  ${detes.analystConsensus.meanValue.toFixed(2)} / 5 (1 = Strong Buy, 5 = Strong Sell)
+${
+  detes
+    ? `
+## Stock Details
+Applies only because assetType is "Stocks". Use ONLY current price vs. 52-week range, analyst consensus mean score, and today's/YTD % change as evidence. Market cap and industry are background only — never cite them in "reason".
 
-    Recent News (cite the single most decision-relevant headline only if it directly affects feasibility or risk — do not cite news just because it exists):
-    ${detes.recentNews
-      .map(
-        (n, i) => `
-        ${i + 1}. ${n.headline} (${new Date(n.date).toDateString()})`,
-      )
-      .join("\n")}
-    `
-        : ""
-    }
+Company: ${detes.companyName} (${detes.industry})
+Current Price: ₹${detes.currentPrice.NSE} (NSE) / ₹${detes.currentPrice.BSE} (BSE)
+Day Change: ${detes.percentChange}%
+52-Week Range: ₹${detes.yearLow} – ₹${detes.yearHigh}
+YTD Change: ${detes.ytdChange}%
+Market Cap: ₹${detes.marketCap} Cr
+Risk Profile: ${detes.risk} (the stock's own inherent volatility category — not the same as the transaction "risk" you output in Step 3, though it is one input to it)
 
-    ${
-      !mf && !detes
-        ? `
-    Note: assetType is "${assetType}". No fund-specific or stock-specific performance, volatility, or risk-profile data exists for this transaction — none was provided because none applies (or, for MutualFund, because lookup failed). Do NOT invent, estimate, or reference performance/volatility/risk-profile figures. Evaluate this transaction purely on bankBalance, netWorth impact, and progress toward Goals/Debts in the financial snapshot above.
-    `
-        : ""
-    }
+Analyst Consensus (${detes.analystConsensus.noOfRecommendations} analysts):
+  Rating: ${detes.analystConsensus.averageRating}
+  Mean Score: ${detes.analystConsensus.meanValue.toFixed(2)} / 5 (1 = Strong Buy, 5 = Strong Sell)
 
-    Work through this internally. Do not show these steps in your output.
+Materiality rule for this stock:
+  - Mean score ≤ 2.0: treat analyst sentiment as a positive factor.
+  - Mean score 2.0–3.5: neutral/mixed — do not let this alone drive a NO.
+  - Mean score > 3.5: treat as a negative factor worth citing.
+  - Today's ${detes.percentChange}% move is noise, not signal, unless it exceeds ±5%, in which case it becomes feasibility-relevant.
 
-    Step 1 - Feasibility (the gate: check this first, and if it fails, stop here):
-    Check if the transaction is possible (bank balance, existing holdings, lock-in periods, etc.).
-    ${mf ? `For this mutual fund: 1Y return is ${return1Y}% vs category avg of ${categoryAvg1Y}%, volatility is ${volatility}% vs category avg of ${categoryAvgVolatility}%.` : ""}
-    ${detes ? `For this stock: current price is ₹${detes.currentPrice.NSE}, sitting in a 52-week range of ₹${detes.yearLow}–₹${detes.yearHigh}. Risk profile is ${detes.risk}. Check if the user has sufficient bank balance for this purchase.` : ""}
-    ${!mf && !detes ? `For this asset type: check only bank balance sufficiency and any relevant holdings. There is no fund/stock performance data to weigh here.` : ""}
+Recent News (cite the single most decision-relevant headline only if it directly affects feasibility or risk — do not cite news just because it exists):
+${detes.recentNews
+  .map(
+    (n, i) => `  ${i + 1}. ${n.headline} (${new Date(n.date).toDateString()})`,
+  )
+  .join("\n")}
+`
+    : ""
+}
 
-    Step 2 - Impact (only if Step 1 passes):
-    Estimate netWorth, investedAssets, bankBalance, and savingsRate after this transaction.
-    Weigh the opportunity cost.
-    Check the effect on progress toward Goals, especially high-priority goals with near deadlines.
-    Check Debts and totalMonthlyEMI for any effect on debt servicing or the emergency fund.
-    If query.reason is a non-empty string AND describes discretionary/consumption spending, prefer wealth creation over consumption unless the amount is small relative to discretionary capacity in Monthly Profile. If query.reason is empty, missing, or purely descriptive (e.g. "SIP", "investment"), skip this check entirely — do not treat an empty reason as evidence of discretionary intent.
-    ${
-      mf
-        ? `For this fund: its 3Y return of ${return3Y}% is ${(return3Y - categoryAvg3Y).toFixed(2)}% ${return3Y >= categoryAvg3Y ? "above" : "below"} the category avg (${categoryAvg3Y}%). Its volatility of ${volatility}% is ${(volatility - categoryAvgVolatility).toFixed(2)}% ${volatility <= categoryAvgVolatility ? "below" : "above"} category avg (${categoryAvgVolatility}%). 
-    Factor this into your risk and return assessment. Give more priority to 5 year returns.
-    Materiality rule: a 5Y-return gap vs. category average of LESS THAN 2 percentage points is NOT on its own sufficient grounds for NO — treat it as roughly comparable performance, especially if fund_rating is 4 or 5, or platform signals include "top_rated"/"top_bought". In that case let bank balance, goal timeline, and risk profile carry the decision instead of the return gap. Only treat 5Y underperformance as the primary rejection reason when the gap is 2 points or more, or when 1Y/3Y/5Y all underperform in the same direction (as opposed to a single window lagging while others are competitive).`
-        : ""
-    }
-    ${detes ? `For this stock: analyst consensus is "${detes.analystConsensus.averageRating}" with a mean score of ${detes.analystConsensus.meanValue.toFixed(2)}/5 across ${detes.analystConsensus.noOfRecommendations} analysts. The stock is ${detes.percentChange}% today and ${detes.ytdChange}% YTD. Factor recent news sentiment and the ${detes.risk} risk profile into your opportunity cost assessment.` : ""}
+${
+  !mf && !detes
+    ? `
+## Note
+assetType is "${assetType}". No fund-specific or stock-specific performance, volatility, or risk data exists for this transaction — either none applies, or (for MutualFund) the lookup failed. Do not invent, estimate, or reference performance/volatility/risk figures that were not given to you. Evaluate this transaction purely on bank balance, net worth impact, and progress toward Goals/Debts in the snapshot above.
+`
+    : ""
+}
 
-    Step 3 - Identify the deciding factor:
-    Before writing your output, identify internally the SINGLE factor that most influenced your decision — either the Step 1 feasibility number (if feasibility was genuinely at risk) or the single most decisive Step 2 number (if feasibility was clearly fine). Do not combine a Step 1 number and a Step 2 number in the same "reason". Background-context fields marked above (AUM, portfolio turnover, market cap, "Standout peers" unless the fund is an outlier, comparisonCount, expense ratio unless flagged) must never be the deciding factor and must never appear in "reason". fund_rating and platform tags may be the deciding factor ONLY when they are what tipped a close call (per the materiality rule in Step 2) — if so, cite the rating or tag by name instead of a return-gap number.
+## How to Decide
+Work through the three steps below internally. Do not show your steps, reasoning, or working in the output — only the final JSON.
 
-    Output rules:
-    Return ONLY a valid JSON object. No markdown, no code fences, nothing outside the JSON. Output must start with { and end with }.
-    "reason" must state the deciding factor identified in Step 3, plus the one number/name that proves it. No generic advice, and no second number from a different step.
-    Be decisive: choose "YES" or "NO" with no hedging.
-    "reason": maximum 25 words.
-    "alternative": maximum 20 words.
+**Step 1 — Feasibility (a hard gate).**
+Can this transaction actually happen — bank balance, existing holdings, lock-in periods? If it clearly cannot, stop here: decision is NO, risk is HIGH, and "reason" cites the specific feasibility number that fails.
+${mf ? `Fund check: 1Y return ${return1Y}% vs category avg ${categoryAvg1Y}%; volatility ${volatility}% vs category avg ${categoryAvgVolatility}%.` : ""}
+${detes ? `Stock check: current price ₹${detes.currentPrice.NSE} within a 52-week range of ₹${detes.yearLow}–₹${detes.yearHigh}; risk profile ${detes.risk}. Confirm bank balance covers the purchase.` : ""}
+${!mf && !detes ? `Check only bank balance sufficiency and any relevant existing holdings — there is no fund/stock performance data to weigh here.` : ""}
 
-    {
-    "decision": "YES" | "NO",
-    "risk": "LOW" | "MEDIUM" | "HIGH",
-    "reason": "...",
-    "alternative": "..."
-    }
+**Step 2 — Impact (only if Step 1 passes).**
+Estimate net worth, invested assets, bank balance, and savings rate after this transaction. Weigh the opportunity cost. Check the effect on progress toward Goals — especially high-priority goals with near deadlines — and on Debts/total monthly EMI, including the emergency fund.
 
-    `;
+If query.reason is a non-empty string that clearly describes discretionary/consumption spending, prefer wealth-building over consumption unless the amount is small relative to discretionary capacity in the Monthly Profile. If query.reason is empty, missing, or purely descriptive (e.g. "SIP", "investment"), skip this check — an empty reason is not evidence of discretionary intent.
 
-    console.log(content);
+${
+  mf
+    ? comparisonCount > 0
+      ? `Fund-specific: 3Y return of ${return3Y}% is ${(return3Y - categoryAvg3Y).toFixed(2)}% ${return3Y >= categoryAvg3Y ? "above" : "below"} category avg (${categoryAvg3Y}%). Volatility of ${volatility}% is ${(volatility - categoryAvgVolatility).toFixed(2)}% ${volatility <= categoryAvgVolatility ? "below" : "above"} category avg (${categoryAvgVolatility}%). Weight the 5-year return most heavily of the three horizons — treat 1Y and 3Y as secondary confirmation, not primary evidence.
+
+Materiality rule: a 5Y-return gap under 2 percentage points is NOT on its own grounds for NO — treat it as roughly comparable performance, especially if fund_rating is 4-5 or platform signals include "top_rated"/"top_bought". In that case, let bank balance, goal timeline, and risk profile carry the decision instead. Only treat 5Y underperformance as the primary rejection reason when the gap is 2+ points, or when 1Y, 3Y, and 5Y all underperform in the same direction — not when a single window lags while the others are competitive.`
+      : `Fund-specific: no category benchmark exists for this fund, so base your view on its own 5-year return of ${return5Y}%, volatility of ${volatility}%, and fund rating of ${fundRating}/5 rather than a peer comparison.`
+    : ""
+}
+${detes ? `Stock-specific: analyst consensus is "${detes.analystConsensus.averageRating}" (mean ${detes.analystConsensus.meanValue.toFixed(2)}/5 across ${detes.analystConsensus.noOfRecommendations} analysts) — apply the materiality rule above. Factor in recent news sentiment and the ${detes.risk} risk profile.` : ""}
+
+**Step 3 — Deciding factor and risk rating.**
+Identify the single factor that most influenced your decision: either the Step 1 feasibility number (if feasibility was genuinely at risk) or the single most decisive Step 2 number (if feasibility was clearly fine). Never combine a Step 1 number and a Step 2 number in "reason". AUM, portfolio turnover, market cap, comparisonCount, Standout peers (unless the fund is a clear outlier), and expense ratio (unless flagged above) must never be the deciding factor or appear in "reason". fund_rating and platform tags may be the deciding factor only when they tip a close call under the materiality rule above — if so, name the rating or tag directly instead of a return-gap number.
+
+Set "risk" using this rubric (risk to the user's financial position from this transaction — not the same as any asset-level Risk Profile label above, though that label is one input):
+  - HIGH: Step 1 failed, OR the transaction meaningfully strains the emergency fund/debt servicing, OR pushes a near-deadline high-priority goal off track.
+  - MEDIUM: feasible with a real but recoverable dent in savings rate or buffer, or the fund/stock evidence is genuinely mixed.
+  - LOW: comfortably affordable with minimal effect on goals, debt servicing, or emergency fund, and the fund/stock evidence is neutral-to-positive.
+
+"alternative" must be one concrete, actionable adjustment — a smaller amount, a different fund/asset, or a timing change — never generic advice like "consult a financial advisor" or "do more research".
+
+## Output Format
+Respond with nothing but a single valid JSON object. No markdown, no code fences, no <think> tags, no reasoning, no preamble, no text before { or after }. Your entire response must start with { and end with }.
+
+"reason" states the Step 3 deciding factor plus the one number or name that proves it — max 25 words, no generic advice, no second number from a different step.
+"alternative" follows the rule above — max 20 words.
+Be decisive: choose "YES" or "NO" with no hedging.
+
+{
+  "decision": "<YES or NO>",
+  "risk": "<LOW, MEDIUM, or HIGH>",
+  "reason": "<max 25 words, states the Step 3 deciding factor and its number>",
+  "alternative": "<max 20 words, one concrete adjustment>"
+}
+`;
+
+  console.log(content);
   const response = await axios.post("http://localhost:11434/api/generate", {
     model: "qwen3:8b",
     prompt: content,
