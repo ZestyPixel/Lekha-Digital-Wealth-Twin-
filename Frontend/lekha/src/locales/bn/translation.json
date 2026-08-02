@@ -70,7 +70,50 @@
   "dashboard": {
     "financialHealthScore": "আর্থিক স্বাস্থ্য স্কোর",
     "manageWealth": "সম্পদ পরিচালনা",
-    "lastTransaction": "শেষ লেনদেন"
+    "lastTransaction": "শেষ লেনদেন",
+    "excellent": "চমৎকার",
+    "good": "ভালো",
+    "fair": "মাঝারি",
+    "poor": "খারাপ",
+    "netWorth": "সম্পদ",
+    "total": "মোট:",
+    "totalExpenses": "মোট খরচ:",
+    "type": "ধরন:",
+    "amount": "পরিমাণ:",
+    "Mutual Funds": "মিউচুয়াল ফান্ড",
+    "Real Estate": "রিয়েল এস্টেট",
+    "Stocks": "স্টক",
+    "Bank Account": "ব্যাংক অ্যাকাউন্ট",
+    "bills": "বিল",
+    "food": "খাবার",
+    "health": "স্বাস্থ্য",
+    "lifestyle": "জীবনধারা",
+    "misc": "বিবিধ",
+    "obligations": "দায়বদ্ধতা",
+    "savingsInvestments": "সঞ্চয়/বিনিয়োগ",
+    "transport": "পরিবহন",
+    "Bills": "বিল",
+    "Food": "খাবার",
+    "Health": "স্বাস্থ্য",
+    "Lifestyle": "জীবনধারা",
+    "Miscellaneous": "বিবিধ",
+    "Obligations": "দায়বদ্ধতা",
+    "Savings": "সঞ্চয়/বিনিয়োগ",
+    "Transportation": "পরিবহন",
+    "footer": {
+      "usefulLinks": "দরকারী লিঙ্ক",
+      "about": "আমাদের সম্পর্কে",
+      "services": "সেবাসমূহ",
+      "contact": "যোগাযোগ",
+      "blog": "ব্লগ",
+      "contactUs": "যোগাযোগ করুন",
+      "address": "২২১বি বেকার স্ট্রিট, লন্ডন, এনডব্লিউ১",
+      "policy": "নীতি",
+      "cookiePolicy": "কুকি নীতি",
+      "returnPolicy": "ফেরত নীতি",
+      "securityPolicy": "নিরাপত্তা নীতি",
+      "copyright": "©কপিরাইট সর্বস্বত্ব সংরক্ষিত"
+    }
   },
 
   "netWorth": {
@@ -203,7 +246,8 @@
     "totalAmountPlaceholder": "যেমন: ৫০০০০০",
     "remainingPlaceholder": "যেমন: ৩৫০০০০",
     "emiPlaceholder": "যেমন: ১৫০০০",
-    "submitButton": "ঋণ যোগ করুন"
+    "submitButton": "ঋণ যোগ করুন",
+    "paidOff": "পরিশোধিত: "
   },
 
   "goals": {

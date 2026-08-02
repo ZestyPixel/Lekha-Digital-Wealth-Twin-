@@ -1,52 +1,55 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const profileSchema = new mongoose.Schema({
+const profileSchema = new mongoose.Schema(
+  {
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     age: {
-        type: Number,
+      type: Number,
     },
     riskProfile: {
-        type: String,
+      type: String,
     },
     monthlyIncome: {
-        type: Number,
+      type: Number,
     },
     bills: {
-        type: Number,
+      type: Number,
     },
     food: {
-        type: Number,
+      type: Number,
     },
     health: {
-        type: Number,
+      type: Number,
     },
     lifestyle: {
-        type: Number,
+      type: Number,
     },
     misc: {
-        type: Number,
+      type: Number,
     },
     obligations: {
-        type: Number,
+      type: Number,
     },
     savings: {
-        type: Number,
+      type: Number,
     },
     transport: {
-        type: Number,
+      type: Number,
     },
     number: {
-        type: Number,
+      type: Number,
     },
     emergencyEmail: {
-        type: String,
+      type: String,
     },
     emergencyNumber: {
-        type: Number,
+      type: Number,
     },
-}, { timestamps: true });
+  },
+  { timestamps: true },
+);
 
-module.exports = mongoose.model('Profile', profileSchema);
+module.exports = mongoose.model("Profile", profileSchema);

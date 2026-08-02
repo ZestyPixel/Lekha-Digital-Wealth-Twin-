@@ -70,7 +70,50 @@
   "dashboard": {
     "financialHealthScore": "Financial Health Score",
     "manageWealth": "Manage Wealth",
-    "lastTransaction": "Last Transaction"
+    "lastTransaction": "Last Transaction",
+    "excellent": "Excellent",
+    "good": "Good",
+    "fair": "Fair",
+    "poor": "Poor",
+    "netWorth": "Assets",
+    "total": "Total:",
+    "totalExpenses": "Total Expenses:",
+    "type": "Type:",
+    "amount": "Amount:",
+    "Mutual Funds": "Mutual Funds",
+    "Real Estate": "Real Estate",
+    "Stocks": "Stocks",
+    "Bank Account": "Bank Account",
+    "bills": "Bills",
+    "food": "Food",
+    "health": "Health",
+    "lifestyle": "Lifestyle",
+    "misc": "Misc",
+    "obligations": "Obligations",
+    "savingsInvestments": "Savings/Investments",
+    "transport": "Transport",
+    "Bills": "Bills",
+    "Food": "Food",
+    "Health": "Health",
+    "Lifestyle": "Lifestyle",
+    "Miscellaneous": "Miscellaneous",
+    "Obligations": "Obligations",
+    "Savings": "Savings/Investments",
+    "Transportation": "Transport",
+    "footer": {
+      "usefulLinks": "Useful Links",
+      "about": "About",
+      "services": "Services",
+      "contact": "Contact",
+      "blog": "Blog",
+      "contactUs": "Contact Us",
+      "address": "221B Baker Street, London, NW1",
+      "policy": "Policy",
+      "cookiePolicy": "Cookie Policy",
+      "returnPolicy": "Return Policy",
+      "securityPolicy": "Security Policy",
+      "copyright": "©Copyright All rights reserved"
+    }
   },
 
   "netWorth": {
@@ -203,7 +246,8 @@
     "totalAmountPlaceholder": "Ex: 500000",
     "remainingPlaceholder": "Ex: 350000",
     "emiPlaceholder": "Ex: 15000",
-    "submitButton": "Add Debt"
+    "submitButton": "Add Debt",
+    "paidOff": "Paid Off:"
   },
 
   "goals": {

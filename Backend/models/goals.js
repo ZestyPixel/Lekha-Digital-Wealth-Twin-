@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const goalsSchema = new mongoose.Schema(
   {
@@ -25,10 +25,10 @@ const goalsSchema = new mongoose.Schema(
 
     priority: {
       type: String,
-      enum: ['Low', 'Medium', 'High'],
+      enum: ["Low", "Medium", "High"],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Goals", goalsSchema);

@@ -1,7 +1,7 @@
 import "./HealthScore.css";
 
 export default function HealthScore() {
-  const raw = sessionStorage.getItem('score');
+  const raw = sessionStorage.getItem("score");
   if (!raw) return null; // or a loading/empty state
 
   const data = JSON.parse(raw);
@@ -15,7 +15,11 @@ export default function HealthScore() {
           if (el.startsWith("+")) type = "green";
           else if (el.startsWith("~")) type = "orange";
           else if (el.startsWith("-")) type = "red";
-          return <li key={i} className={`reason ${type}`}>{el}</li>;
+          return (
+            <li key={i} className={`reason ${type}`}>
+              {el}
+            </li>
+          );
         })}
       </ul>
     </div>

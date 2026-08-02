@@ -1,0 +1,154 @@
+.wealth-summary-wide {
+  width: 95%;
+  max-width: 1140px;
+  margin: 1rem auto 3.5rem auto;
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+  padding: 18px 24px;
+  box-sizing: border-box;
+}
+
+/* Row 1: Ribbon */
+.summary-ribbon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid #f1f5f9;
+}
+
+.ribbon-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ribbon-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ribbon-val {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.hero-item .ribbon-val {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.ribbon-separator {
+  width: 1px;
+  height: 36px;
+  background-color: #e2e8f0;
+}
+
+/* Row 2: 3-Column Compact Grid */
+.summary-columns-compact {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding-top: 14px;
+}
+
+.compact-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.header-hint {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.compact-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+  max-height: 90px;
+  overflow-y: auto;
+}
+
+.compact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #475569;
+}
+
+.compact-row span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.item-name {
+  color: #1e293b;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+/* Colors */
+.text-primary {
+  color: #0f172a !important;
+}
+
+.text-blue {
+  color: #0040ff !important;
+}
+
+.text-green {
+  color: #16a34a !important;
+}
+
+.text-red {
+  color: #dc2626 !important;
+}
+
+.text-muted {
+  color: #94a3b8 !important;
+}
+
+.text-sm {
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .summary-ribbon {
+    gap: 12px;
+  }
+  .ribbon-separator {
+    display: none;
+  }
+  .summary-columns-compact {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

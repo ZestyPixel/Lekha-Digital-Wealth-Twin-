@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { AuthContext } from './AuthContext';
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { AuthContext } from "./AuthContext";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [accessToken, setAccessToken] = useState('');
+  const [accessToken, setAccessToken] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const accessTokenRef = useRef('');
+  const accessTokenRef = useRef("");
 
   const setTokens = useCallback((token) => {
     accessTokenRef.current = token;
@@ -18,24 +18,30 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (accessTokenRef.current) {
-        refreshAccessToken();
-      }
-    }, 14 * 60 * 1000);
+    const intervalId = setInterval(
+      () => {
+        if (accessTokenRef.current) {
+          refreshAccessToken();
+        }
+      },
+      14 * 60 * 1000,
+    );
 
     return () => clearInterval(intervalId);
-  }, []); 
+  }, []);
 
   const checkAuth = useCallback(async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/refresh_token`, {
-        method: 'POST',
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/refresh_token`,
+        {
+          method: "POST",
+          credentials: "include",
+        },
+      );
 
       if (!response.ok) {
-        throw new Error('Auth check failed');
+        throw new Error("Auth check failed");
       }
 
       const data = await response.json();
@@ -44,17 +50,17 @@ export const AuthProvider = ({ children }) => {
         setTokens(data.accessToken);
         setUser({
           email: data.email,
-          name: data.name || '',
+          name: data.name || "",
           userId: data.userId,
         });
       } else {
         setUser(null);
-        setTokens('');
+        setTokens("");
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error("Auth check failed:", error);
       setUser(null);
-      setTokens('');
+      setTokens("");
     } finally {
       setLoading(false);
     }
@@ -62,13 +68,16 @@ export const AuthProvider = ({ children }) => {
 
   const refreshAccessToken = useCallback(async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/refresh_token`, {
-        method: 'POST',
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/refresh_token`,
+        {
+          method: "POST",
+          credentials: "include",
+        },
+      );
 
       if (!response.ok) {
-        throw new Error('Token refresh failed');
+        throw new Error("Token refresh failed");
       }
 
       const data = await response.json();
@@ -77,110 +86,119 @@ export const AuthProvider = ({ children }) => {
         setTokens(data.accessToken);
         setUser({
           email: data.email,
-          name: data.name || '',
+          name: data.name || "",
           userId: data.userId,
         });
         return data.accessToken;
       } else {
         setUser(null);
-        setTokens('');
+        setTokens("");
         return null;
       }
     } catch (error) {
-      console.error('Token refresh failed:', error);
+      console.error("Token refresh failed:", error);
       setUser(null);
-      setTokens('');
+      setTokens("");
       return null;
     }
   }, [setTokens]);
 
-  const login = useCallback(async (email, password) => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
+  const login = useCallback(
+    async (email, password) => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email, password }),
+        });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Login failed');
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Login failed");
+        }
+
+        const data = await response.json();
+
+        if (data.otpRequired) {
+          return { success: false, otpRequired: true, email: data.email };
+        }
+
+        if (!data.accessToken) {
+          throw new Error("Unexpected response from server");
+        }
+
+        setTokens(data.accessToken);
+        setUser({
+          email: data.email,
+          name: data.name || "",
+          userId: data.userId,
+        });
+
+        return { success: true };
+      } catch (error) {
+        console.error("Login error:", error);
+        return { success: false, error: error.message };
       }
+    },
+    [setTokens],
+  );
 
-      const data = await response.json();
+  const verifyLoginOtp = useCallback(
+    async (email, otp) => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/verify-otp-login`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ email, otp }),
+          },
+        );
 
-      if (data.otpRequired) {
-        return { success: false, otpRequired: true, email: data.email };
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Verification failed");
+        }
+
+        if (!data.accessToken) {
+          throw new Error("Unexpected response from server");
+        }
+
+        setTokens(data.accessToken);
+        setUser({
+          email: data.email,
+          name: data.name || "",
+          userId: data.userId,
+        });
+
+        return { success: true };
+      } catch (error) {
+        console.error("OTP verification error:", error);
+        return { success: false, error: error.message };
       }
-
-      if (!data.accessToken) {
-        throw new Error('Unexpected response from server');
-      }
-
-      setTokens(data.accessToken);
-      setUser({
-        email: data.email,
-        name: data.name || '',
-        userId: data.userId,
-      });
-
-      return { success: true };
-    } catch (error) {
-      console.error('Login error:', error);
-      return { success: false, error: error.message };
-    }
-  }, [setTokens]);
-
-  const verifyLoginOtp = useCallback(async (email, otp) => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/verify-otp-login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, otp }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Verification failed');
-      }
-
-      if (!data.accessToken) {
-        throw new Error('Unexpected response from server');
-      }
-
-      setTokens(data.accessToken);
-      setUser({
-        email: data.email,
-        name: data.name || '',
-        userId: data.userId,
-      });
-
-      return { success: true };
-    } catch (error) {
-      console.error('OTP verification error:', error);
-      return { success: false, error: error.message };
-    }
-  }, [setTokens]);
+    },
+    [setTokens],
+  );
 
   const register = useCallback(async (name, email, password) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Registration failed');
+        throw new Error(error.error || "Registration failed");
       }
 
       return { success: true };
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       return { success: false, error: error.message };
     }
   }, []);
@@ -188,89 +206,109 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(async () => {
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/logout`, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
-      setTokens('');
+      setTokens("");
       setUser(null);
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
       }
     }
   }, [setTokens]);
 
-  const requestWithAuth = useCallback(async (url, options = {}) => {
-    let currentToken = accessTokenRef.current;
+  const requestWithAuth = useCallback(
+    async (url, options = {}) => {
+      let currentToken = accessTokenRef.current;
 
-    if (!currentToken) {
-      currentToken = await refreshAccessToken();
-    }
-
-    const fullUrl = url.startsWith('http')
-      ? url
-      : `${import.meta.env.VITE_API_URL}${url}`;
-
-    const headers = {
-      'Content-Type': 'application/json',
-      ...options.headers,
-      ...(currentToken && { Authorization: `Bearer ${currentToken}` }),
-    };
-
-    const response = await fetch(fullUrl, {
-      ...options,
-      headers,
-      credentials: 'include',
-    });
-
-    if (response.status === 401 && currentToken) {
-      const newToken = await refreshAccessToken();
-      if (newToken) {
-        return fetch(fullUrl, {
-          ...options,
-          headers: { ...headers, Authorization: `Bearer ${newToken}` },
-          credentials: 'include',
-        });
+      if (!currentToken) {
+        currentToken = await refreshAccessToken();
       }
-    }
 
-    return response;
-  }, [refreshAccessToken]);
+      const fullUrl = url.startsWith("http")
+        ? url
+        : `${import.meta.env.VITE_API_URL}${url}`;
 
-  const verifyTransactionOtp = useCallback(async (otp) => {
-    try {
-      const response = await requestWithAuth('/verify-otp-transaction', {
-        method: 'POST',
-        body: JSON.stringify({ otp }),
+      const headers = {
+        "Content-Type": "application/json",
+        ...options.headers,
+        ...(currentToken && { Authorization: `Bearer ${currentToken}` }),
+      };
+
+      const response = await fetch(fullUrl, {
+        ...options,
+        headers,
+        credentials: "include",
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        return { success: false, error: data.error || 'Verification failed' };
+      if (response.status === 401 && currentToken) {
+        const newToken = await refreshAccessToken();
+        if (newToken) {
+          return fetch(fullUrl, {
+            ...options,
+            headers: { ...headers, Authorization: `Bearer ${newToken}` },
+            credentials: "include",
+          });
+        }
       }
 
-      return { success: true, data };
-    } catch (error) {
-      console.error('Transaction OTP verification error:', error);
-      return { success: false, error: error.message };
-    }
-  }, [requestWithAuth]);
+      return response;
+    },
+    [refreshAccessToken],
+  );
 
-  const value = useMemo(() => ({
-    user,
-    accessToken,
-    loading,
-    login,
-    verifyLoginOtp,
-    register,
-    logout,
-    refreshAccessToken,
-    requestWithAuth,
-    verifyTransactionOtp,
-  }), [user, accessToken, loading, login, verifyLoginOtp, register, logout, refreshAccessToken, requestWithAuth, verifyTransactionOtp]);
+  const verifyTransactionOtp = useCallback(
+    async (otp) => {
+      try {
+        const response = await requestWithAuth("/verify-otp-transaction", {
+          method: "POST",
+          body: JSON.stringify({ otp }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          return { success: false, error: data.error || "Verification failed" };
+        }
+
+        return { success: true, data };
+      } catch (error) {
+        console.error("Transaction OTP verification error:", error);
+        return { success: false, error: error.message };
+      }
+    },
+    [requestWithAuth],
+  );
+
+  const value = useMemo(
+    () => ({
+      user,
+      accessToken,
+      loading,
+      login,
+      verifyLoginOtp,
+      register,
+      logout,
+      refreshAccessToken,
+      requestWithAuth,
+      verifyTransactionOtp,
+    }),
+    [
+      user,
+      accessToken,
+      loading,
+      login,
+      verifyLoginOtp,
+      register,
+      logout,
+      refreshAccessToken,
+      requestWithAuth,
+      verifyTransactionOtp,
+    ],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

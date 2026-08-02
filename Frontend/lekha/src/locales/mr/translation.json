@@ -68,9 +68,52 @@
   },
 
   "dashboard": {
-    "financialHealthScore": "आर्थिक आरोग्य स्कोअर",
+    "financialHealthScore": "आर्थिक आरोग्य गुण",
     "manageWealth": "संपत्ती व्यवस्थापन",
-    "lastTransaction": "शेवटचा व्यवहार"
+    "lastTransaction": "शेवटचा व्यवहार",
+    "excellent": "उत्कृष्ट",
+    "good": "चांगले",
+    "fair": "मध्यम",
+    "poor": "खराब",
+    "netWorth": "मालमत्ता",
+    "total": "एकूण:",
+    "totalExpenses": "एकूण खर्च:",
+    "type": "प्रकार:",
+    "amount": "रक्कम:",
+    "Mutual Funds": "म्युच्युअल फंड",
+    "Real Estate": "स्थावर मालमत्ता",
+    "Stocks": "समभाग",
+    "Bank Account": "बँक खाते",
+    "bills": "बिले",
+    "food": "अन्न",
+    "health": "आरोग्य",
+    "lifestyle": "जीवनशैली",
+    "misc": "विविध",
+    "obligations": "जबाबदाऱ्या",
+    "savingsInvestments": "बचत/गुंतवणूक",
+    "transport": "वाहतूक",
+    "Bills": "बिले",
+    "Food": "अन्न",
+    "Health": "आरोग्य",
+    "Lifestyle": "जीवनशैली",
+    "Miscellaneous": "विविध",
+    "Obligations": "जबाबदाऱ्या",
+    "Savings": "बचत/गुंतवणूक",
+    "Transportation": "वाहतूक",
+    "footer": {
+      "usefulLinks": "उपयुक्त दुवे",
+      "about": "आमच्याबद्दल",
+      "services": "सेवा",
+      "contact": "संपर्क",
+      "blog": "ब्लॉग",
+      "contactUs": "आमच्याशी संपर्क साधा",
+      "address": "२२१बी बेकर स्ट्रीट, लंडन, NW1",
+      "policy": "धोरण",
+      "cookiePolicy": "कुकी धोरण",
+      "returnPolicy": "परतावा धोरण",
+      "securityPolicy": "सुरक्षा धोरण",
+      "copyright": "©कॉपीराइट सर्व हक्क राखीव"
+    }
   },
 
   "netWorth": {
@@ -203,7 +246,8 @@
     "totalAmountPlaceholder": "उदा: ५०००००",
     "remainingPlaceholder": "उदा: ३५००००",
     "emiPlaceholder": "उदा: १५०००",
-    "submitButton": "कर्ज जोडा"
+    "submitButton": "कर्ज जोडा",
+    "paidOff": "फेडले: "
   },
 
   "goals": {
@@ -294,12 +338,6 @@
     "asset": {
       "value": "मूल्य :",
       "heldBy": "धारक :"
-    },
-    "debt": {
-      "totalAmount": "एकूण रक्कम:",
-      "remainingBalance": "उर्वरित शिल्लक:",
-      "monthlyEmi": "मासिक EMI:",
-      "paidOff": "फेडले: "
     },
     "goal": {
       "targetAmount": "लक्ष्य रक्कम :",

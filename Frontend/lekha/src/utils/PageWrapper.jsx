@@ -1,5 +1,5 @@
 //Wrapper component for all pages to add page transition animations using framer-motion.
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 export default function PageWrapper({ children }) {
   return (
@@ -9,7 +9,7 @@ export default function PageWrapper({ children }) {
       exit={{ opacity: 0, scale: 0.98, filter: "blur(2px)" }}
       transition={{
         duration: 0.2,
-        ease: "easeOut"
+        ease: "easeOut",
       }}
       style={{ height: "100%" }}
     >

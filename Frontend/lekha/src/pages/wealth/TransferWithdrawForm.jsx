@@ -1,521 +1,573 @@
-import { useFormik } from 'formik';
-import { useState, useEffect } from 'react';
+import { useFormik } from "formik";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../context/useAuth";
-import Loading from '../../components/loading/Loading';
-import Success from '../../components/success/Success';
-import Failure from '../../components/failure/Failure';
-import Warning from '../../components/warning/Warning';
-import TransactionOtpVerify from '../../components/transactionOtp/TransactionOtpVerify';
-import "./TransferWithdrawForm.css"
+import Loading from "../../components/loading/Loading";
+import Success from "../../components/success/Success";
+import Failure from "../../components/failure/Failure";
+import Warning from "../../components/warning/Warning";
+import TransactionOtpVerify from "../../components/transactionOtp/TransactionOtpVerify";
+import "./TransferWithdrawForm.css";
 
 function Result({ decision, reasons }) {
+  if (decision === "ALLOW") {
+    return <Success message={`Transaction Successful`} />;
+  }
 
-    if (decision === "ALLOW") {
-        return <Success message={`Transaction Successful`} />;
-    }
+  if (decision === "WARN") {
+    return <Warning message={`Try again after 1 minute`} reasons={reasons} />;
+  }
 
-    if (decision === "WARN") {
-        return (
-            <Warning 
-                message={`Try again after 1 minute`}
-                reasons={reasons}
-            />
-        );
-    }
-
-    if (decision === "BLOCK") {
-        return (
-            <Failure 
-                message={`Transaction blocked`}
-                reasons={reasons}
-            />
-        );
-    }
+  if (decision === "BLOCK") {
+    return <Failure message={`Transaction blocked`} reasons={reasons} />;
+  }
 }
 
 function BankAccountFields({ formik }) {
-    return (
-        <>
-            <div className="form-group">
-                <label htmlFor="destAccountNumber" className="email-and-password">Account Number:</label>
-                <input
-                    id="destAccountNumber"
-                    name="destAccountNumber"
-                    className="email-bar"
-                    type="text"
-                    placeholder="Enter account number"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.destAccountNumber}
-                />
-                {formik.touched.destAccountNumber && formik.errors.destAccountNumber && (
-                    <div className="error">{formik.errors.destAccountNumber}</div>
-                )}
-            </div>
-            <div className="form-group">
-                <label htmlFor="destIfsc" className="email-and-password">IFSC Code:</label>
-                <input
-                    id="destIfsc"
-                    name="destIfsc"
-                    className="email-bar"
-                    type="text"
-                    placeholder="e.g. SBIN0001234"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.destIfsc}
-                />
-                {formik.touched.destIfsc && formik.errors.destIfsc && (
-                    <div className="error">{formik.errors.destIfsc}</div>
-                )}
-            </div>
-            <div className="form-group">
-                <label htmlFor="destBankName" className="email-and-password">Bank Name:</label>
-                <input
-                    id="destBankName"
-                    name="destBankName"
-                    className="email-bar"
-                    type="text"
-                    placeholder="e.g. State Bank of India"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.destBankName}
-                />
-                {formik.touched.destBankName && formik.errors.destBankName && (
-                    <div className="error">{formik.errors.destBankName}</div>
-                )}
-            </div>
-        </>
-    );
+  return (
+    <>
+      <div className="form-group">
+        <label htmlFor="destAccountNumber" className="email-and-password">
+          Account Number:
+        </label>
+        <input
+          id="destAccountNumber"
+          name="destAccountNumber"
+          className="email-bar"
+          type="text"
+          placeholder="Enter account number"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.destAccountNumber}
+        />
+        {formik.touched.destAccountNumber &&
+          formik.errors.destAccountNumber && (
+            <div className="error">{formik.errors.destAccountNumber}</div>
+          )}
+      </div>
+      <div className="form-group">
+        <label htmlFor="destIfsc" className="email-and-password">
+          IFSC Code:
+        </label>
+        <input
+          id="destIfsc"
+          name="destIfsc"
+          className="email-bar"
+          type="text"
+          placeholder="e.g. SBIN0001234"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.destIfsc}
+        />
+        {formik.touched.destIfsc && formik.errors.destIfsc && (
+          <div className="error">{formik.errors.destIfsc}</div>
+        )}
+      </div>
+      <div className="form-group">
+        <label htmlFor="destBankName" className="email-and-password">
+          Bank Name:
+        </label>
+        <input
+          id="destBankName"
+          name="destBankName"
+          className="email-bar"
+          type="text"
+          placeholder="e.g. State Bank of India"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.destBankName}
+        />
+        {formik.touched.destBankName && formik.errors.destBankName && (
+          <div className="error">{formik.errors.destBankName}</div>
+        )}
+      </div>
+    </>
+  );
 }
 
 function MutualFundFields({ formik }) {
-    return (
-        <div className="form-group">
-            <label htmlFor="destFundName" className="email-and-password">Fund Name:</label>
-            <input
-                id="destFundName"
-                name="destFundName"
-                className="email-bar"
-                type="text"
-                placeholder="e.g. Axis Bluechip Fund"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.destFundName}
-            />
-            {formik.touched.destFundName && formik.errors.destFundName && (
-                <div className="error">{formik.errors.destFundName}</div>
-            )}
-        </div>
-    );
+  return (
+    <div className="form-group">
+      <label htmlFor="destFundName" className="email-and-password">
+        Fund Name:
+      </label>
+      <input
+        id="destFundName"
+        name="destFundName"
+        className="email-bar"
+        type="text"
+        placeholder="e.g. Axis Bluechip Fund"
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        value={formik.values.destFundName}
+      />
+      {formik.touched.destFundName && formik.errors.destFundName && (
+        <div className="error">{formik.errors.destFundName}</div>
+      )}
+    </div>
+  );
 }
 
 function GoldFields({ formik }) {
-    return (
-        <>
-            <div className="form-group">
-                <label htmlFor="destGoldGrams" className="email-and-password">Weight (grams):</label>
-                <input
-                    id="destGoldGrams"
-                    name="destGoldGrams"
-                    className="email-bar"
-                    type="number"
-                    placeholder="e.g. 5.5"
-                    step="0.01"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.destGoldGrams}
-                />
-                {formik.touched.destGoldGrams && formik.errors.destGoldGrams && (
-                    <div className="error">{formik.errors.destGoldGrams}</div>
-                )}
-            </div>
-            <div className="form-group">
-                <label htmlFor="destGoldPurity" className="email-and-password">Purity:</label>
-                <select
-                    id="destGoldPurity"
-                    name="destGoldPurity"
-                    className="email-bar"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.destGoldPurity}
-                >
-                    <option value="" disabled>Select purity</option>
-                    <option value="24K">24K (99.9% Pure)</option>
-                    <option value="22K">22K (91.6% Pure)</option>
-                    <option value="18K">18K (75% Pure)</option>
-                </select>
-                {formik.touched.destGoldPurity && formik.errors.destGoldPurity && (
-                    <div className="error">{formik.errors.destGoldPurity}</div>
-                )}
-            </div>
-        </>
-    );
+  return (
+    <>
+      <div className="form-group">
+        <label htmlFor="destGoldGrams" className="email-and-password">
+          Weight (grams):
+        </label>
+        <input
+          id="destGoldGrams"
+          name="destGoldGrams"
+          className="email-bar"
+          type="number"
+          placeholder="e.g. 5.5"
+          step="0.01"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.destGoldGrams}
+        />
+        {formik.touched.destGoldGrams && formik.errors.destGoldGrams && (
+          <div className="error">{formik.errors.destGoldGrams}</div>
+        )}
+      </div>
+      <div className="form-group">
+        <label htmlFor="destGoldPurity" className="email-and-password">
+          Purity:
+        </label>
+        <select
+          id="destGoldPurity"
+          name="destGoldPurity"
+          className="email-bar"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.destGoldPurity}
+        >
+          <option value="" disabled>
+            Select purity
+          </option>
+          <option value="24K">24K (99.9% Pure)</option>
+          <option value="22K">22K (91.6% Pure)</option>
+          <option value="18K">18K (75% Pure)</option>
+        </select>
+        {formik.touched.destGoldPurity && formik.errors.destGoldPurity && (
+          <div className="error">{formik.errors.destGoldPurity}</div>
+        )}
+      </div>
+    </>
+  );
 }
 
 function DestinationDetailFields({ destinationType, formik }) {
-    switch (destinationType) {
-        case 'BankAccount': return <BankAccountFields formik={formik} />;
-        case 'MutualFund':  return <MutualFundFields formik={formik} />;
-        case 'Gold':        return <GoldFields formik={formik} />;
-        default:            return null;
-    }
+  switch (destinationType) {
+    case "BankAccount":
+      return <BankAccountFields formik={formik} />;
+    case "MutualFund":
+      return <MutualFundFields formik={formik} />;
+    case "Gold":
+      return <GoldFields formik={formik} />;
+    default:
+      return null;
+  }
 }
 
 export default function TransferWithdraw() {
-    const [resultComponent, setResultComponent] = useState(null);
-    const { requestWithAuth } = useAuth();
-    const [asked, setAsked] = useState(false);
-    const [answer, setAnswer] = useState('');
-    const [otpContext, setOtpContext] = useState(null);
+  const [resultComponent, setResultComponent] = useState(null);
+  const { requestWithAuth } = useAuth();
+  const [asked, setAsked] = useState(false);
+  const [answer, setAnswer] = useState("");
+  const [otpContext, setOtpContext] = useState(null);
 
-    const validate = (values) => {
-      const errors = {};
+  const validate = (values) => {
+    const errors = {};
 
-      if (!values.transactionType) {
-        errors.transactionType = "Required";
+    if (!values.transactionType) {
+      errors.transactionType = "Required";
+    }
+
+    if (!values.amount || values.amount <= 0) {
+      errors.amount = "Enter a valid amount";
+    }
+
+    if (values.transactionType === "Redeem" && !values.assetType) {
+      errors.assetType = "Required";
+    }
+
+    if (values.transactionType === "Transfer") {
+      if (!values.destinationType) {
+        errors.destinationType = "Required for transfers";
       }
 
-      if (!values.amount || values.amount <= 0) {
-        errors.amount = "Enter a valid amount";
+      if (values.destinationType === "BankAccount") {
+        if (!values.destAccountNumber) errors.destAccountNumber = "Required";
+        if (!values.destIfsc) errors.destIfsc = "Required";
+        if (!values.destBankName) errors.destBankName = "Required";
       }
 
-      if (values.transactionType === "Redeem" && !values.assetType) {
-        errors.assetType = "Required";
+      if (values.destinationType === "MutualFund") {
+        if (!values.destFundName) errors.destFundName = "Required";
       }
 
-      if (values.transactionType === "Transfer") {
-        if (!values.destinationType) {
-          errors.destinationType = "Required for transfers";
-        }
-
-        if (values.destinationType === "BankAccount") {
-          if (!values.destAccountNumber) errors.destAccountNumber = "Required";
-          if (!values.destIfsc) errors.destIfsc = "Required";
-          if (!values.destBankName) errors.destBankName = "Required";
-        }
-
-        if (values.destinationType === "MutualFund") {
-          if (!values.destFundName) errors.destFundName = "Required";
-        }
-
-        if (values.destinationType === "Gold") {
-          if (!values.destGoldGrams || values.destGoldGrams <= 0)
-            errors.destGoldGrams = "Enter valid grams";
-          if (!values.destGoldPurity) errors.destGoldPurity = "Required";
-        }
+      if (values.destinationType === "Gold") {
+        if (!values.destGoldGrams || values.destGoldGrams <= 0)
+          errors.destGoldGrams = "Enter valid grams";
+        if (!values.destGoldPurity) errors.destGoldPurity = "Required";
       }
+    }
 
-      if (!values.transactionDate) {
-        errors.transactionDate = "Required";
-      }
+    if (!values.transactionDate) {
+      errors.transactionDate = "Required";
+    }
 
-      return errors;
+    return errors;
+  };
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 100,
+      behavior: "smooth",
+    });
+  }, []);
+
+  async function askHisaab() {
+    setAsked(true);
+    setAnswer("");
+    const { amount, assetType, reason, fundName, transactionType } = formik.values;
+    let action;
+    if (transactionType == "Redeem"){
+      action = "redeem"
+    } else{
+      action = "transfer"
+    }
+    const query = {
+      action,
+      amount,
+      assetType,
+      reason,
+      fundName,
     };
 
-
-    useEffect(()=>{
-        window.scrollTo({
-            top: 100,
-            behavior: 'smooth',
-        });
-    },[]);
-
-    async function askHisaab(){
-        setAsked(true);  
-        setAnswer('');
-        const { amount, assetType, reason, fundName } = formik.values;
-        const query = {
-            action: "redeem",
-            amount,
-            assetType,
-            reason,
-            fundName,
-        };
-
-        const response = await requestWithAuth('/askHisaab', {
-            method: 'POST',
-            body: JSON.stringify({query})
-        })
-        const message = await response.json();
-        const advice = message.finalData;
-        setAnswer(advice);
-    }
-
-    const formik = useFormik({
-        initialValues: {
-            transactionType: '',
-            amount: '',
-            assetType: '',
-            destinationType: '',
-            destAccountNumber: '',
-            destIfsc: '',
-            destBankName: '',
-            transactionDate: '',
-            reason: '',
-            fundName: '',
-            pin: '',
-        },
-        validate,
-        onSubmit: async (values, {setSubmitting}) => {
-            try {
-                const response = await requestWithAuth('/transferwithdraw', {
-                    method: 'POST',
-                    body: JSON.stringify(values),
-                });
-
-                const result = await response.json();
-
-                if (result.otpRequired) {
-                    setOtpContext({
-                        message: result.message,
-                        reasons: result.security?.reasons ?? [],
-                    });
-                    setSubmitting(false);
-                    return;
-                }
-
-                if (response.ok) {
-                    setResultComponent(
-                        <Result 
-                            decision={result.security.decision} 
-                            reasons={result.security.reasons} 
-                            riskScore={result.security.riskScore}
-                        />
-                    );
-                } 
-
-                setTimeout(() => {
-                    setResultComponent(null); // Reset to show form again
-                }, 5000); // Show result for 5 seconds
-
-            } catch (error) {
-                console.error("Transaction failed:", error);
-                alert("Transaction failed");
-            }
-
-            setSubmitting(false);
-        },
+    const response = await requestWithAuth("/askHisaab", {
+      method: "POST",
+      body: JSON.stringify({ query }),
     });
+    const message = await response.json();
+    const advice = message.finalData;
+    setAnswer(advice);
+  }
 
-    const isTransfer = formik.values.transactionType === 'Transfer';
-    const isRedeem = formik.values.transactionType === 'Redeem';
+  const formik = useFormik({
+    initialValues: {
+      transactionType: "",
+      amount: "",
+      assetType: "",
+      destinationType: "",
+      destAccountNumber: "",
+      destIfsc: "",
+      destBankName: "",
+      transactionDate: "",
+      reason: "",
+      fundName: "",
+      pin: "",
+    },
+    validate,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const response = await requestWithAuth("/transferwithdraw", {
+          method: "POST",
+          body: JSON.stringify(values),
+        });
 
-    if(formik.isSubmitting) { // Show loading while waiting for response
-        return <Loading/>
-    }
+        const result = await response.json();
 
-    if (otpContext) {
-        return (
-            <TransactionOtpVerify
-                message={otpContext.message}
-                reasons={otpContext.reasons}
-                onVerified={(data) => {
-                    setOtpContext(null);
-                    if (data.security) {
-                        setResultComponent(
-                            <Result
-                                decision={data.security.decision}
-                                reasons={data.security.reasons}
-                                riskScore={data.security.riskScore}
-                            />
-                        );
-                    } else {
-                        setResultComponent(<Success message="Transaction Successful" />);
-                    }
-                    setTimeout(() => setResultComponent(null), 5000);
-                }}
-                onCancel={() => setOtpContext(null)}
-            />
-        );
-    }
+        if (result.otpRequired) {
+          setOtpContext({
+            message: result.message,
+            reasons: result.security?.reasons ?? [],
+          });
+          setSubmitting(false);
+          return;
+        }
 
-    if (resultComponent) return resultComponent; //We render it. This will get rendered and the form will not cause a react component can only return one thing
-    // at a time so when this is truthy, the code will never reach the form's return below.  
+        if (response.ok) {
+          setResultComponent(
+            <Result
+              decision={result.security.decision}
+              reasons={result.security.reasons}
+              riskScore={result.security.riskScore}
+            />,
+          );
+        }
 
+        setTimeout(() => {
+          setResultComponent(null); // Reset to show form again
+        }, 5000); // Show result for 5 seconds
+      } catch (error) {
+        console.error("Transaction failed:", error);
+        alert("Transaction failed");
+      }
+
+      setSubmitting(false);
+    },
+  });
+
+  const isTransfer = formik.values.transactionType === "Transfer";
+  const isRedeem = formik.values.transactionType === "Redeem";
+
+  if (formik.isSubmitting) {
+    // Show loading while waiting for response
+    return <Loading />;
+  }
+
+  if (otpContext) {
     return (
-        <div className='form-container'>
-            <div className="box">
-                <div className="login-title">Transfer / Withdraw</div>
-                <form className="login-box" onSubmit={formik.handleSubmit}>
-
-                    <div className="form-group">
-                        <label htmlFor="transactionType" className="email-and-password">Transaction Type:</label>
-                        <select
-                            id="transactionType"
-                            name="transactionType"
-                            className="email-bar"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.transactionType}
-                        >
-                            <option value="" disabled>Select transaction type</option>
-                            <option value="Transfer">Transfer</option>
-                            <option value="Redeem">Redeem (Mutual Fund / Gold / Stocks)</option>
-                        </select>
-                        {formik.touched.transactionType && formik.errors.transactionType && (
-                            <div className="error">{formik.errors.transactionType}</div>
-                        )}
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="amount" className="email-and-password">Amount (₹):</label>
-                        <input
-                            id="amount"
-                            name="amount"
-                            className="email-bar"
-                            type="number"
-                            placeholder="Enter amount (Ex: 10000)"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.amount}
-                        />
-                        {formik.touched.amount && formik.errors.amount && (
-                            <div className="error">{formik.errors.amount}</div>
-                        )}
-                    </div>
-
-                    {isRedeem && (
-                        <div className="form-group">
-                            <label htmlFor="assetType" className="email-and-password">Redeem From:</label>
-                            <select
-                                id="assetType"
-                                name="assetType"
-                                className="email-bar"
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                value={formik.values.assetType}
-                            >
-                                <option value="" disabled>What are you redeeming?</option>
-                                <option value="MutualFund">Mutual Fund</option>
-                                <option value="Gold">Gold</option>
-                                <option value="Stocks">Stocks</option>
-                            </select>
-                            {formik.touched.assetType && formik.errors.assetType && (
-                                <div className="error">{formik.errors.assetType}</div>
-                            )}
-                        </div>
-
-                    )}
-
-                    {isTransfer && (
-                        <>
-                            <div className="form-group">
-                                <label htmlFor="destinationType" className="email-and-password">Destination Type:</label>
-                                <select
-                                    id="destinationType"
-                                    name="destinationType"
-                                    className="email-bar"
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    value={formik.values.destinationType}
-                                >
-                                    <option value="" disabled>Where is the money going to?</option>
-                                    <option value="BankAccount">Bank Account</option>
-                                </select>
-                                {formik.touched.destinationType && formik.errors.destinationType && (
-                                    <div className="error">{formik.errors.destinationType}</div>
-                                )}
-                            </div>
-
-                            <DestinationDetailFields
-                                destinationType={formik.values.destinationType}
-                                formik={formik}
-                            />
-                        </>
-                    )}
-
-                    <div className="form-group">
-                        <label htmlFor="fundName" className="email-and-password">Asset Name:</label>
-                        <input
-                            id="fundName"
-                            name="fundName"
-                            className="email-bar"
-                            type="text"
-                            placeholder="Enter fund name"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.fundName}
-                        />
-                        {formik.touched.fundName && formik.errors.fundName && (
-                            <div className="error">{formik.errors.fundName}</div>
-                        )}
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="reason" className="email-and-password">Reason:</label>
-                        <input
-                            id="reason"
-                            name="reason"
-                            className="email-bar"
-                            placeholder="Enter reason"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.reason}
-                        />
-                        {formik.touched.reason && formik.errors.reason && (
-                            <div className="error">{formik.errors.reason}</div>
-                        )}
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="transactionDate" className="email-and-password">Transaction Date:</label>
-                        <input
-                            id="transactionDate"
-                            name="transactionDate"
-                            className="email-bar"
-                            type="date"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.transactionDate}
-                        />
-                        {formik.touched.transactionDate && formik.errors.transactionDate && (
-                            <div className="error">{formik.errors.transactionDate}</div>
-                        )}
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="pin" className="email-and-password">Pin:</label>
-                        <input
-                            id="pin"
-                            name="pin"
-                            className="email-bar"
-                            type="password"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.pin}
-                        />
-                        {formik.touched.pin && formik.errors.pin && (
-                            <div className="error">{formik.errors.pin}</div>
-                        )}
-                    </div>
-
-                    <div className="sign">
-                        <button type="submit" className="sign-in">
-                            {isTransfer ? 'Transfer Funds'
-                            : isRedeem ? 'Redeem Asset'
-                            : 'Submit'}
-                        </button>
-                        { isRedeem && <button className="ask-hisaab" type="button" onClick={askHisaab}> Ask Hisaab before transaction ! </button>}
-                    </div>
-                </form>
-            </div>
-
-            {asked && !answer && (
-                <div className="hisaab-loader">
-                    <p>Hisaab is reviewing your transaction</p>
-                    <div className="hisaab-line"></div>
-                </div>
-            )}
-
-            {asked && answer && (
-                <div className='text'>
-                    <p><strong>Decision:</strong> {answer.decision}</p>
-                    <p><strong>Risk:</strong> {answer.risk}</p>
-                    <p><strong>Reason:</strong> {answer.reason}</p>
-                    <p><strong>Alternative:</strong> {answer.alternative}</p>
-                </div>
-            )}
-
-        </div>
+      <TransactionOtpVerify
+        message={otpContext.message}
+        reasons={otpContext.reasons}
+        onVerified={(data) => {
+          setOtpContext(null);
+          if (data.security) {
+            setResultComponent(
+              <Result
+                decision={data.security.decision}
+                reasons={data.security.reasons}
+                riskScore={data.security.riskScore}
+              />,
+            );
+          } else {
+            setResultComponent(<Success message="Transaction Successful" />);
+          }
+          setTimeout(() => setResultComponent(null), 5000);
+        }}
+        onCancel={() => setOtpContext(null)}
+      />
     );
+  }
+
+  if (resultComponent) return resultComponent; //We render it. This will get rendered and the form will not cause a react component can only return one thing
+  // at a time so when this is truthy, the code will never reach the form's return below.
+
+  return (
+    <div className="form-container">
+      <div className="box">
+        <div className="login-title">Transfer / Withdraw</div>
+        <form className="login-box" onSubmit={formik.handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="transactionType" className="email-and-password">
+              Transaction Type:
+            </label>
+            <select
+              id="transactionType"
+              name="transactionType"
+              className="email-bar"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.transactionType}
+            >
+              <option value="" disabled>
+                Select transaction type
+              </option>
+              <option value="Transfer">Transfer</option>
+              <option value="Redeem">
+                Redeem (Mutual Fund / Gold / Stocks)
+              </option>
+            </select>
+            {formik.touched.transactionType &&
+              formik.errors.transactionType && (
+                <div className="error">{formik.errors.transactionType}</div>
+              )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="amount" className="email-and-password">
+              Amount (₹):
+            </label>
+            <input
+              id="amount"
+              name="amount"
+              className="email-bar"
+              type="number"
+              placeholder="Enter amount (Ex: 10000)"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.amount}
+            />
+            {formik.touched.amount && formik.errors.amount && (
+              <div className="error">{formik.errors.amount}</div>
+            )}
+          </div>
+
+          {isRedeem && (
+            <div className="form-group">
+              <label htmlFor="assetType" className="email-and-password">
+                Redeem From:
+              </label>
+              <select
+                id="assetType"
+                name="assetType"
+                className="email-bar"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.assetType}
+              >
+                <option value="" disabled>
+                  What are you redeeming?
+                </option>
+                <option value="MutualFund">Mutual Fund</option>
+                <option value="Gold">Gold</option>
+                <option value="Stocks">Stocks</option>
+              </select>
+              {formik.touched.assetType && formik.errors.assetType && (
+                <div className="error">{formik.errors.assetType}</div>
+              )}
+            </div>
+          )}
+
+          {isTransfer && (
+            <>
+              <div className="form-group">
+                <label htmlFor="destinationType" className="email-and-password">
+                  Destination Type:
+                </label>
+                <select
+                  id="destinationType"
+                  name="destinationType"
+                  className="email-bar"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.destinationType}
+                >
+                  <option value="" disabled>
+                    Where is the money going to?
+                  </option>
+                  <option value="BankAccount">Bank Account</option>
+                </select>
+                {formik.touched.destinationType &&
+                  formik.errors.destinationType && (
+                    <div className="error">{formik.errors.destinationType}</div>
+                  )}
+              </div>
+
+              <DestinationDetailFields
+                destinationType={formik.values.destinationType}
+                formik={formik}
+              />
+            </>
+          )}
+
+          <div className="form-group">
+            <label htmlFor="fundName" className="email-and-password">
+              Asset Name:
+            </label>
+            <input
+              id="fundName"
+              name="fundName"
+              className="email-bar"
+              type="text"
+              placeholder="Enter fund name"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.fundName}
+            />
+            {formik.touched.fundName && formik.errors.fundName && (
+              <div className="error">{formik.errors.fundName}</div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="reason" className="email-and-password">
+              Reason:
+            </label>
+            <input
+              id="reason"
+              name="reason"
+              className="email-bar"
+              placeholder="Enter reason"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.reason}
+            />
+            {formik.touched.reason && formik.errors.reason && (
+              <div className="error">{formik.errors.reason}</div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="transactionDate" className="email-and-password">
+              Transaction Date:
+            </label>
+            <input
+              id="transactionDate"
+              name="transactionDate"
+              className="email-bar"
+              type="date"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.transactionDate}
+            />
+            {formik.touched.transactionDate &&
+              formik.errors.transactionDate && (
+                <div className="error">{formik.errors.transactionDate}</div>
+              )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="pin" className="email-and-password">
+              Pin:
+            </label>
+            <input
+              id="pin"
+              name="pin"
+              className="email-bar"
+              type="password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.pin}
+            />
+            {formik.touched.pin && formik.errors.pin && (
+              <div className="error">{formik.errors.pin}</div>
+            )}
+          </div>
+
+          <div className="sign">
+            <button type="submit" className="sign-in">
+              {isTransfer
+                ? "Transfer Funds"
+                : isRedeem
+                  ? "Redeem Asset"
+                  : "Submit"}
+            </button>
+            {isRedeem && (
+              <button className="ask-hisaab" type="button" onClick={askHisaab}>
+                {" "}
+                Ask Hisaab before transaction !{" "}
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      {asked && !answer && (
+        <div className="hisaab-loader">
+          <p>Hisaab is reviewing your transaction</p>
+          <div className="hisaab-line"></div>
+        </div>
+      )}
+
+      {asked && answer && (
+        <div className="text">
+          <p>
+            <strong>Decision:</strong> {answer.decision}
+          </p>
+          <p>
+            <strong>Risk:</strong> {answer.risk}
+          </p>
+          <p>
+            <strong>Reason:</strong> {answer.reason}
+          </p>
+          <p>
+            <strong>Alternative:</strong> {answer.alternative}
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }

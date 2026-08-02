@@ -6,195 +6,203 @@ import { useEffect, useState } from "react";
 
 export default function LoginForm() {
 
-    const validate = (values) => {
-      const errors = {};
-      if (!values.email) {
-        errors.email = "Required";
-      } else if (
-        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-      ) {
-        errors.email = "Invalid email address";
-      }
+  const validate = (values) => {
+    const errors = {};
+    if (!values.email) {
+      errors.email = "Required";
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+    ) {
+      errors.email = "Invalid email address";
+    }
 
-      if (!values.password) {
-        errors.password = "Required";
-      } else if (values.password.length > 20) {
-        errors.password = "Must be 20 characters or less";
-      }
+    if (!values.password) {
+      errors.password = "Required";
+    } else if (values.password.length > 20) {
+      errors.password = "Must be 20 characters or less";
+    }
 
-      return errors;
-    };
+    return errors;
+  };
 
-    useEffect(() => {
-        window.scroll({
-        top: "40",
-        behavior: "smooth",
-        });
-    }, []);
-    const navigate = useNavigate();
-    const { login, verifyLoginOtp } = useAuth();
-
-    const [otpEmail, setOtpEmail] = useState(null);
-    const [otp, setOtp] = useState('');
-    const [otpError, setOtpError] = useState('');
-    const [verifying, setVerifying] = useState(false);
-
-    const formik = useFormik({
-        initialValues: {
-        email: "",
-        password: "",
-        },
-        validate,
-        onSubmit: async (values) => {
-            try {
-                const result = await login(values.email, values.password);
-                if (result.otpRequired) {
-                    setOtpEmail(result.email);
-                    return;
-                }
-                if (result.success) {
-                    console.log("Login successful");
-                    navigate("/homepage");
-                } else {
-                    alert(result.error);
-                }
-            } catch (err) {
-                console.log(err);
-                alert("Login failed");
-            }
-        },
+  useEffect(() => {
+    window.scroll({
+      top: "40",
+      behavior: "smooth",
     });
+  }, []);
+  const navigate = useNavigate();
+  const { login, verifyLoginOtp } = useAuth();
 
-    async function handleVerifyOtp(e) {
-        e.preventDefault();
-        setOtpError('');
-        setVerifying(true);
-        try {
-            const result = await verifyLoginOtp(otpEmail, otp);
-            if (result.success) {
-                navigate("/homepage");
-            } else {
-                setOtpError(result.error || 'Verification failed');
-            }
-        } finally {
-            setVerifying(false);
+  const [otpEmail, setOtpEmail] = useState(null);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [verifying, setVerifying] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validate,
+    onSubmit: async (values) => {
+      try {
+        const result = await login(values.email, values.password);
+        if (result.otpRequired) {
+          setOtpEmail(result.email);
+          return;
         }
-    }
-
-    function showPass() {
-        //Show pass function
-        const x = document.getElementById("password");
-        if (x.type === "password") {
-            x.type = "text";
+        if (result.success) {
+          console.log("Login successful");
+          navigate("/homepage");
         } else {
-            x.type = "password";
+          alert(result.error);
         }
-    }
+      } catch (err) {
+        console.log(err);
+        alert("Login failed");
+      }
+    },
+  });
 
-    if (otpEmail) {
-        return (
-            <div className="box">
-                <div className="login-title">Verify It's You</div>
-                <form className="login-box" onSubmit={handleVerifyOtp}>
-                    <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                        We've emailed a code to <b>{otpEmail}</b>
-                    </p>
-                    <div className="form-group">
-                        <label htmlFor="otp" className="email-and-password">
-                            Verification Code:
-                        </label>
-                        <input
-                            id="otp"
-                            name="otp"
-                            className="email-bar"
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={6}
-                            placeholder="6-digit code"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                            autoFocus
-                        />
-                        {otpError ? <div className="error">{otpError}</div> : null}
-                    </div>
-                    <button className="sign-in-in" type="submit" disabled={verifying || otp.length !== 6}>
-                        {verifying ? 'Verifying...' : 'VERIFY'}
-                    </button>
-                    <div className="forgot">
-                        <p>
-                            <span
-                                className="user-pass"
-                                style={{ cursor: 'pointer' }}
-                                onClick={() => { setOtpEmail(null); setOtp(''); setOtpError(''); }}
-                            >
-                                Back to login
-                            </span>
-                        </p>
-                    </div>
-                </form>
-            </div>
-        );
+  async function handleVerifyOtp(e) {
+    e.preventDefault();
+    setOtpError("");
+    setVerifying(true);
+    try {
+      const result = await verifyLoginOtp(otpEmail, otp);
+      if (result.success) {
+        navigate("/homepage");
+      } else {
+        setOtpError(result.error || "Verification failed");
+      }
+    } finally {
+      setVerifying(false);
     }
+  }
 
+  function showPass() {
+    //Show pass function
+    const x = document.getElementById("password");
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }
+  }
+
+  if (otpEmail) {
     return (
-    <div className="box">
-        <div className="login-title">Login</div>
-        <form className="login-box" onSubmit={formik.handleSubmit}>
-            <div className="form-group">
-                <label htmlFor="email" className="email-and-password">
-                    Email:
-                </label>
-                <input
-                id="email"
-                name="email"
-                className="email-bar"
-                type="text"
-                placeholder="Enter email"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.email}
-                />
-                {formik.errors.email ? (
-                    <div className="error">{formik.errors.email}</div>
-                ) : null}
-            </div>
-            
-            <div className="form-group">
-                <label htmlFor="password" className="email-and-password">
-                    Password:
-                </label>
-                <input
-                id="password"
-                name="password"
-                className="email-bar"
-                type="password"
-                placeholder="Enter password"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.password}
-                />
-                {formik.errors.password ? (
-                    <div className="error">{formik.errors.password}</div>
-                ) : null}
-            </div>
-            <div className="show-password">
-                <input type="checkbox" id="show-pass" onClick={showPass} />
-                <label htmlFor="show-pass"> Show Password</label>
-            </div>
-            <button className="sign-in-in">SIGN IN</button>
-            <div className="forgot">
-                <p>
-                    Forgot <span className="user-pass">Username / Password</span>?
-                </p>
-                <Link to="/">
-                {" "}
-                <p>
-                    Don't have an account?{" "}
-                    <span className="sign-up-link">Sign Up</span>
-                </p>{" "}
-                </Link>
-            </div>
+      <div className="box">
+        <div className="login-title">Verify It's You</div>
+        <form className="login-box" onSubmit={handleVerifyOtp}>
+          <p style={{ textAlign: "center", marginBottom: "1rem" }}>
+            We've emailed a code to <b>{otpEmail}</b>
+          </p>
+          <div className="form-group">
+            <label htmlFor="otp" className="email-and-password">
+              Verification Code:
+            </label>
+            <input
+              id="otp"
+              name="otp"
+              className="email-bar"
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="6-digit code"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+              autoFocus
+            />
+            {otpError ? <div className="error">{otpError}</div> : null}
+          </div>
+          <button
+            className="sign-in-in"
+            type="submit"
+            disabled={verifying || otp.length !== 6}
+          >
+            {verifying ? "Verifying..." : "VERIFY"}
+          </button>
+          <div className="forgot">
+            <p>
+              <span
+                className="user-pass"
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  setOtpEmail(null);
+                  setOtp("");
+                  setOtpError("");
+                }}
+              >
+                Back to login
+              </span>
+            </p>
+          </div>
         </form>
-    </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="box">
+      <div className="login-title">Login</div>
+      <form className="login-box" onSubmit={formik.handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="email" className="email-and-password">
+            Email:
+          </label>
+          <input
+            id="email"
+            name="email"
+            className="email-bar"
+            type="text"
+            placeholder="Enter email"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.email}
+          />
+          {formik.errors.email ? (
+            <div className="error">{formik.errors.email}</div>
+          ) : null}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="password" className="email-and-password">
+            Password:
+          </label>
+          <input
+            id="password"
+            name="password"
+            className="email-bar"
+            type="password"
+            placeholder="Enter password"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.password}
+          />
+          {formik.errors.password ? (
+            <div className="error">{formik.errors.password}</div>
+          ) : null}
+        </div>
+        <div className="show-password">
+          <input type="checkbox" id="show-pass" onClick={showPass} />
+          <label htmlFor="show-pass"> Show Password</label>
+        </div>
+        <button className="sign-in-in">SIGN IN</button>
+        <div className="forgot">
+          <p>
+            Forgot <span className="user-pass">Username / Password</span>?
+          </p>
+          <Link to="/">
+            {" "}
+            <p>
+              Don't have an account?{" "}
+              <span className="sign-up-link">Sign Up</span>
+            </p>{" "}
+          </Link>
+        </div>
+      </form>
+    </div>
+  );
 }

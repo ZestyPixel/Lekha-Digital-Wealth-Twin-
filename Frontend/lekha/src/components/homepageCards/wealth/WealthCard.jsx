@@ -1,15 +1,13 @@
-import "./WealthCard.css"
+import "./WealthCard.css";
+import { useTranslation } from "react-i18next";
 
+export default function WealthCard({ Advice }) {
+  const { t } = useTranslation("translation", { keyPrefix: "dashboard" });
 
-export default function WealthCard({Title, Advice}){
-    return(
-        <div className="Total-expenses-wealth card">
-            <div className="heading">
-                {Title}
-            </div>
-            <p className="Total-expense-amount-wealth ">
-                {Advice}
-            </p>
-        </div>
-    );
+  return (
+    <div className="Total-expenses-wealth card">
+      <div className="heading">{t("manageWealth")}</div>
+      <p className="Total-expense-amount-wealth ">{Advice}</p>
+    </div>
+  );
 }

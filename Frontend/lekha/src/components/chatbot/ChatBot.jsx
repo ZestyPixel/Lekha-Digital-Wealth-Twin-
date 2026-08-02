@@ -7,168 +7,149 @@ import { useAuth } from "../../context/useAuth";
 const chatMenus = {
   main: [
     { label: "💰 Financial Health", action: "Analyze my financial health." },
-    { label: "📈 My Goals", action: "Check my current goals and progress with regards to finances." },
-    { label: "💳 My Investments", action: "Analyze my investments." }
+    {
+      label: "📈 My Goals",
+      action: "Check my current goals and progress with regards to finances.",
+    },
+    { label: "💳 My Investments", action: "Analyze my investments." },
   ],
 };
 
-export default function ChatBot(){
+export default function ChatBot() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [question, setQuestion] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
+  const [loadingStatus, setLoadingStatus] = useState(false);
+  const [currentMenu, setCurrentMenu] = useState("main");
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [question, setQuestion] = useState("");
-    const [chatHistory, setChatHistory] = useState([]);
-    const [loadingStatus, setLoadingStatus] = useState(false);
-    const [currentMenu, setCurrentMenu] = useState("main");
+  const chatEndRef = useRef(null);
+  const { requestWithAuth } = useAuth();
 
-    const chatEndRef = useRef(null);
-    const { requestWithAuth } = useAuth();
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatHistory, isOpen, currentMenu]);
 
-    useEffect(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [chatHistory, isOpen, currentMenu]);
+  const handleMenuOption = (option) => {
+    if (option.nextMenu) {
+      setCurrentMenu(option.nextMenu);
+      return;
+    }
 
-    const handleMenuOption = (option) => {
-        if (option.nextMenu) {
-            setCurrentMenu(option.nextMenu);
-            return;
-        }
+    if (option.action) {
+      handleSend(option.action);
+    }
+  };
 
-        if (option.action) {
-            handleSend(option.action);
-        }
-    };
+  const handleSend = async (text) => {
+    if (!text.trim()) return;
 
-    const handleSend = async (text) => {
-        if (!text.trim()) return;
+    const userMessage = { role: "user", text };
 
-        const userMessage = { role: "user", text };
+    const nextHistory = [...chatHistory, userMessage];
+    setChatHistory(nextHistory);
 
-        const nextHistory = [...chatHistory, userMessage];
-        setChatHistory(nextHistory);
+    setLoadingStatus(true);
+    setQuestion("");
 
-        setLoadingStatus(true);
-        setQuestion("");
+    try {
+      const response = await requestWithAuth("/chatbot", {
+        method: "POST",
+        body: JSON.stringify({
+          message: text,
+          history: nextHistory.slice(-10), // last 10 messages only
+        }),
+      });
 
-        try {
-            const response = await requestWithAuth('/chatbot', {
-                method: 'POST',
-                body: JSON.stringify({
-                    message: text,
-                    history: nextHistory.slice(-10) // last 10 messages only
-                }),
-            });
+      const data = await response.json();
+      const botMessage = { role: "model", text: data.finalData };
 
-            const data = await response.json();
-            const botMessage = { role: "model", text: data.finalData };
+      setChatHistory((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error(error);
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "model",
+          text: "⚠️ Error connecting to server.",
+        },
+      ]);
+    } finally {
+      setLoadingStatus(false);
+    }
+  };
 
-            setChatHistory(prev => [...prev, botMessage]);
+  const onFormSubmit = (e) => {
+    e.preventDefault();
+    handleSend(question);
+  };
 
-        } catch (error) {
-            console.error(error);
-            setChatHistory(prev => [...prev, {
-                role: "model",
-                text: "⚠️ Error connecting to server."
-            }]);
-        } finally {
-            setLoadingStatus(false);
-        }
-    };
+  return (
+    <div className="chatbot-container">
+      {isOpen && (
+        <div className="chat-window">
+          <div className="chat-header">
+            <div>
+              <h3>Ask Hisaab</h3>
+              <p>Your Financial Assistant</p>
+            </div>
 
-    const onFormSubmit = (e) => {
-        e.preventDefault();
-        handleSend(question);
-    };
+            <button className="close-btn" onClick={() => setIsOpen(false)}>
+              <X size={20} />
+            </button>
+          </div>
 
-    return (
-        <div className="chatbot-container">
-
-            {isOpen && (
-                <div className="chat-window">
-
-                    <div className="chat-header">
-                        <div>
-                            <h3>Ask Hisaab</h3>
-                            <p>Your Financial Assistant</p>
-                        </div>
-
-                        <button
-                            className="close-btn"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <X size={20}/>
-                        </button>
-                    </div>
-
-                    <div className="chat-history">
-
-                        {chatHistory.length === 0 && (
-                            <div className="welcome-msg">
-                                👋 Hi! How can I help you today?
-                            </div>
-                        )}
-
-                        {chatHistory.map((msg, index) => (
-                            <div
-                                key={index}
-                                className={`message-row ${msg.role}`}
-                            >
-                                <div className="message-bubble">
-                                    <ReactMarkdown>{msg.text}</ReactMarkdown>
-                                </div>
-                            </div>
-                        ))}
-
-                        {loadingStatus &&
-                            <div className="typing">Typing...</div>
-                        }
-
-                        {!loadingStatus && (
-                            <div className="menu-options">
-                                {chatMenus[currentMenu].map((option, index) => (
-                                    <button
-                                        key={index}
-                                        className="menu-btn"
-                                        onClick={() => handleMenuOption(option)}
-                                    >
-                                        {option.label}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        <div ref={chatEndRef}></div>
-
-                    </div>
-
-                    <form
-                        className="chat-input-area"
-                        onSubmit={onFormSubmit}
-                    >
-                        <input
-                            type="text"
-                            value={question}
-                            onChange={(e)=>setQuestion(e.target.value)}
-                            placeholder="Type a message..."
-                        />
-
-                        <button
-                            type="submit"
-                            disabled={loadingStatus}
-                        >
-                            <Send size={18}/>
-                        </button>
-                    </form>
-
-                </div>
+          <div className="chat-history">
+            {chatHistory.length === 0 && (
+              <div className="welcome-msg">
+                👋 Hi! How can I help you today?
+              </div>
             )}
 
-            <button
-                className="floating-btn"
-                onClick={()=>setIsOpen(!isOpen)}
-            >
-                {isOpen ? <X size={28}/> : <MessageSquare size={28}/>}
-            </button>
+            {chatHistory.map((msg, index) => (
+              <div key={index} className={`message-row ${msg.role}`}>
+                <div className="message-bubble">
+                  <ReactMarkdown>{msg.text}</ReactMarkdown>
+                </div>
+              </div>
+            ))}
 
+            {loadingStatus && <div className="typing">Typing...</div>}
+
+            {!loadingStatus && (
+              <div className="menu-options">
+                {chatMenus[currentMenu].map((option, index) => (
+                  <button
+                    key={index}
+                    className="menu-btn"
+                    onClick={() => handleMenuOption(option)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div ref={chatEndRef}></div>
+          </div>
+
+          <form className="chat-input-area" onSubmit={onFormSubmit}>
+            <input
+              type="text"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="Type a message..."
+            />
+
+            <button type="submit" disabled={loadingStatus}>
+              <Send size={18} />
+            </button>
+          </form>
         </div>
-    );
+      )}
+
+      <button className="floating-btn" onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? <X size={28} /> : <MessageSquare size={28} />}
+      </button>
+    </div>
+  );
 }

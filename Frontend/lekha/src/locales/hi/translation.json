@@ -70,7 +70,50 @@
   "dashboard": {
     "financialHealthScore": "वित्तीय स्वास्थ्य स्कोर",
     "manageWealth": "संपत्ति प्रबंधन",
-    "lastTransaction": "अंतिम लेन-देन"
+    "lastTransaction": "अंतिम लेनदेन",
+    "excellent": "उत्कृष्ट",
+    "good": "अच्छा",
+    "fair": "औसत",
+    "poor": "खराब",
+    "netWorth": "संपत्ति",
+    "total": "कुल:",
+    "totalExpenses": "कुल खर्च:",
+    "type": "प्रकार:",
+    "amount": "राशि:",
+    "Mutual Funds": "म्यूचुअल फंड",
+    "Real Estate": "रियल एस्टेट",
+    "Stocks": "स्टॉक",
+    "Bank Account": "बैंक खाता",
+    "bills": "बिल",
+    "food": "भोजन",
+    "health": "स्वास्थ्य",
+    "lifestyle": "जीवनशैली",
+    "misc": "विविध",
+    "obligations": "दायित्व",
+    "savingsInvestments": "बचत/निवेश",
+    "transport": "परिवहन",
+    "Bills": "बिल",
+    "Food": "भोजन",
+    "Health": "स्वास्थ्य",
+    "Lifestyle": "जीवनशैली",
+    "Miscellaneous": "विविध",
+    "Obligations": "दायित्व",
+    "Savings": "बचत/निवेश",
+    "Transportation": "परिवहन",
+    "footer": {
+      "usefulLinks": "उपयोगी लिंक",
+      "about": "हमारे बारे में",
+      "services": "सेवाएं",
+      "contact": "संपर्क करें",
+      "blog": "ब्लॉग",
+      "contactUs": "संपर्क करें",
+      "address": "221B बेकर स्ट्रीट, लंदन, NW1",
+      "policy": "नीति",
+      "cookiePolicy": "कुकी नीति",
+      "returnPolicy": "वापसी नीति",
+      "securityPolicy": "सुरक्षा नीति",
+      "copyright": "©कॉपीराइट सर्वाधिकार सुरक्षित"
+    }
   },
 
   "netWorth": {
@@ -203,7 +246,8 @@
     "totalAmountPlaceholder": "जैसे: 500000",
     "remainingPlaceholder": "जैसे: 350000",
     "emiPlaceholder": "जैसे: 15000",
-    "submitButton": "ऋण जोड़ें"
+    "submitButton": "ऋण जोड़ें",
+    "paidOff": "चुकाया गया: "
   },
 
   "goals": {
