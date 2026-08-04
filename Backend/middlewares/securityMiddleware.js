@@ -46,7 +46,7 @@ async function securityMiddleware(req, res, next) {
 
     if (!device) {
       //user.behaviouralBaseline.trustedDevices.includes(device)
-      riskScore += 10;
+      riskScore += 20;
       reasons.push("New device detected");
     }
 
@@ -57,7 +57,7 @@ async function securityMiddleware(req, res, next) {
     }
 
     if (amount > 2 * user.behavioralBaseline.averageTransactionAmount) {
-      riskScore += 25;
+      riskScore += 20;  
       reasons.push("Unusual transaction amount");
     }
 
@@ -67,7 +67,7 @@ async function securityMiddleware(req, res, next) {
     // }
 
     if (amount % 10000 === 0) {
-      riskScore += 10;
+      riskScore += 20;
       reasons.push("Round number transaction pattern");
     }
 

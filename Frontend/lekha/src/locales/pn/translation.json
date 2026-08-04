@@ -1,0 +1,359 @@
+{
+  "app": {
+    "title": "ਲੇਖਾ",
+    "pageNotFound": "ਪੰਨਾ ਨਹੀਂ ਮਿਲਿਆ",
+    "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ..."
+  },
+
+  "landing": {
+    "welcome": "ਲੇਖਾ ਵਿੱਚ ਜੀ ਆਇਆਂ ਨੂੰ!",
+    "logout": "ਲੌਗ ਆਊਟ",
+    "demoAccount": "ਡੈਮੋ ਖਾਤਾ ਵਰਤੋ",
+    "signUp": "ਸਾਈਨ ਅੱਪ"
+  },
+
+  "login": {
+    "title": "ਲੌਗਇਨ",
+    "email": "ਈਮੇਲ:",
+    "password": "ਪਾਸਵਰਡ:",
+    "emailPlaceholder": "ਈਮੇਲ ਦਰਜ ਕਰੋ",
+    "passwordPlaceholder": "ਪਾਸਵਰਡ ਦਰਜ ਕਰੋ",
+    "showPassword": "ਪਾਸਵਰਡ ਵਿਖਾਓ",
+    "forgotCredentials": "ਯੂਜ਼ਰਨੇਮ / ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?",
+    "noAccount": "ਖਾਤਾ ਨਹੀਂ ਹੈ?",
+    "signUpLink": "ਸਾਈਨ ਅੱਪ",
+    "submitButton": "ਸਾਈਨ ਇਨ",
+    "otp": {
+      "title": "ਤਸਦੀਕ ਕਰੋ ਕਿ ਤੁਸੀਂ ਹੋ",
+      "message": "ਅਸੀਂ ਇੱਕ ਕੋਡ ਈਮੇਲ ਕੀਤਾ ਹੈ",
+      "label": "ਤਸਦੀਕ ਕੋਡ:",
+      "placeholder": "6-ਅੰਕ ਦਾ ਕੋਡ",
+      "verifyButton": "ਤਸਦੀਕ ਕਰੋ",
+      "verifying": "ਤਸਦੀਕ ਹੋ ਰਿਹਾ ਹੈ...",
+      "backToLogin": "ਲੌਗਇਨ ਤੇ ਵਾਪਸ ਜਾਓ"
+    }
+  },
+
+  "signup": {
+    "title": "ਸਾਈਨ ਅੱਪ",
+    "name": "ਨਾਮ:",
+    "email": "ਈਮੇਲ:",
+    "password": "ਪਾਸਵਰਡ:",
+    "confirmPassword": "ਪਾਸਵਰਡ ਪੱਕਾ ਕਰੋ:",
+    "namePlaceholder": "ਨਾਮ ਦਰਜ ਕਰੋ",
+    "emailPlaceholder": "ਈਮੇਲ ਦਰਜ ਕਰੋ",
+    "passwordPlaceholder": "ਪਾਸਵਰਡ ਦਰਜ ਕਰੋ",
+    "confirmPasswordPlaceholder": "ਪਾਸਵਰਡ ਪੱਕਾ ਕਰੋ",
+    "rememberMe": "ਮੈਨੂੰ ਯਾਦ ਰੱਖੋ",
+    "hasAccount": "ਪਹਿਲਾਂ ਹੀ ਖਾਤਾ ਹੈ?",
+    "loginLink": "ਲੌਗਇਨ",
+    "submitButton": "ਸਾਈਨ ਅੱਪ"
+  },
+
+  "validation": {
+    "required": "ਜ਼ਰੂਰੀ ਹੈ",
+    "invalidEmail": "ਗਲਤ ਈਮੇਲ ਪਤਾ",
+    "maxChars20": "20 ਅੱਖਰਾਂ ਤੋਂ ਘੱਟ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ",
+    "maxChars50": "50 ਅੱਖਰਾਂ ਤੋਂ ਘੱਟ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ",
+    "maxChars100": "100 ਅੱਖਰਾਂ ਤੋਂ ਘੱਟ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ",
+    "passwordsMustMatch": "ਪਾਸਵਰਡ ਮੇਲ ਖਾਣੇ ਚਾਹੀਦੇ ਹਨ",
+    "enterValidAmount": "ਸਹੀ ਰਕਮ ਦਰਜ ਕਰੋ",
+    "enterValidMonthlyAmount": "ਸਹੀ ਮਹੀਨਾਵਾਰ ਰਕਮ ਦਰਜ ਕਰੋ",
+    "amountGreaterThanZero": "ਰਕਮ 0 ਤੋਂ ਵੱਧ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ",
+    "cannotBeNegative": "ਨੈਗੇਟਿਵ ਨਹੀਂ ਹੋ ਸਕਦੀ",
+    "cannotExceedTotal": "ਕੁੱਲ ਰਕਮ ਤੋਂ ਵੱਧ ਨਹੀਂ ਹੋ ਸਕਦੀ",
+    "emiGreaterThanZero": "EMI 0 ਤੋਂ ਵੱਧ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ",
+    "requiredForTransfers": "ਟ੍ਰਾਂਸਫਰ ਲਈ ਜ਼ਰੂਰੀ ਹੈ",
+    "enterValidGrams": "ਸਹੀ ਗ੍ਰਾਮ ਦਰਜ ਕਰੋ"
+  },
+
+  "dashboard": {
+    "financialHealthScore": "ਵਿੱਤੀ ਸਿਹਤ ਸਕੋਰ",
+    "manageWealth": "ਦੌਲਤ ਸੰਭਾਲੋ",
+    "lastTransaction": "ਆਖਰੀ ਲੈਣ-ਦੇਣ",
+    "excellent": "ਸ਼ਾਨਦਾਰ",
+    "good": "ਚੰਗਾ",
+    "fair": "ਠੀਕ-ਠਾਕ",
+    "poor": "ਮਾੜਾ",
+    "netWorth": "ਜਾਇਦਾਦ",
+    "total": "ਕੁੱਲ:",
+    "totalExpenses": "ਕੁੱਲ ਖਰਚੇ:",
+    "type": "ਕਿਸਮ:",
+    "amount": "ਰਕਮ:",
+    "Mutual Funds": "ਮਿਊਚੁਅਲ ਫੰਡ",
+    "Real Estate": "ਜ਼ਮੀਨ-ਜਾਇਦਾਦ",
+    "Stocks": "ਸਟਾਕ",
+    "Bank Account": "ਬੈਂਕ ਖਾਤਾ",
+    "bills": "ਬਿੱਲ",
+    "food": "ਖਾਣਾ",
+    "health": "ਸਿਹਤ",
+    "lifestyle": "ਜੀਵਨ ਸ਼ੈਲੀ",
+    "misc": "ਹੋਰ",
+    "obligations": "ਜ਼ਿੰਮੇਵਾਰੀਆਂ",
+    "savingsInvestments": "ਬੱਚਤ/ਨਿਵੇਸ਼",
+    "transport": "ਆਵਾਜਾਈ",
+    "Bills": "ਬਿੱਲ",
+    "Food": "ਖਾਣਾ",
+    "Health": "ਸਿਹਤ",
+    "Lifestyle": "ਜੀਵਨ ਸ਼ੈਲੀ",
+    "Miscellaneous": "ਫੁਟਕਲ",
+    "Obligations": "ਜ਼ਿੰਮੇਵਾਰੀਆਂ",
+    "Savings": "ਬੱਚਤ/ਨਿਵੇਸ਼",
+    "Transportation": "ਆਵਾਜਾਈ",
+    "footer": {
+      "usefulLinks": "ਕੰਮ ਦੇ ਲਿੰਕ",
+      "about": "ਸਾਡੇ ਬਾਰੇ",
+      "services": "ਸੇਵਾਵਾਂ",
+      "contact": "ਸੰਪਰਕ",
+      "blog": "ਬਲੌਗ",
+      "contactUs": "ਸਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੋ",
+      "address": "221B ਬੇਕਰ ਸਟ੍ਰੀਟ, ਲੰਡਨ, NW1",
+      "policy": "ਨੀਤੀ",
+      "cookiePolicy": "ਕੁਕੀ ਨੀਤੀ",
+      "returnPolicy": "ਵਾਪਸੀ ਨੀਤੀ",
+      "securityPolicy": "ਸੁਰੱਖਿਆ ਨੀਤੀ",
+      "copyright": "©ਕਾਪੀਰਾਈਟ ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ"
+    }
+  },
+
+  "netWorth": {
+    "title": "ਜਾਇਦਾਦ ਸ਼ਾਮਲ ਕਰੋ",
+    "assetType": "ਜਾਇਦਾਦ ਦੀ ਕਿਸਮ:",
+    "assetValue": "ਜਾਇਦਾਦ ਦੀ ਕੀਮਤ:",
+    "holdingInstitution": "ਸੰਸਥਾ ਦਾ ਨਾਮ:",
+    "assetTypePlaceholder": "ਜਾਇਦਾਦ ਦੀ ਕਿਸਮ ਦਰਜ ਕਰੋ (ਜਿਵੇਂ- ਸੋਨਾ, ਪੈਸਾ, ਆਦਿ)",
+    "assetValuePlaceholder": "ਜਾਇਦਾਦ ਦੀ ਕੀਮਤ ਦਰਜ ਕਰੋ (ਜਿਵੇਂ- 20000)",
+    "holdingPlaceholder": "ਸੰਸਥਾ ਦਰਜ ਕਰੋ (ਜਿਵੇਂ- ਬੈਂਕ, ਨਿੱਜੀ, ਆਦਿ)",
+    "submitButton": "ਜਾਇਦਾਦ ਸ਼ਾਮਲ ਕਰੋ"
+  },
+
+  "monthlyExpenses": {
+    "title": "ਖਰਚਾ ਦਰਜ ਕਰੋ",
+    "amount": "ਰਕਮ:",
+    "description": "ਵੇਰਵਾ:",
+    "category": "ਖਰਚੇ ਦੀ ਸ਼੍ਰੇਣੀ:",
+    "amountPlaceholder": "ਰਕਮ ਦਰਜ ਕਰੋ (ਜਿਵੇਂ- 20000)",
+    "descriptionPlaceholder": "ਜਿਵੇਂ: ਚਾਹ, ਮਾਲ",
+    "categoryDefault": "ਸ਼੍ਰੇਣੀ ਚੁਣੋ",
+    "categories": {
+      "housing": "ਰਿਹਾਇਸ਼ ਅਤੇ ਬਿਜਲੀ-ਪਾਣੀ",
+      "food": "ਖਾਣਾ-ਪੀਣਾ",
+      "transportation": "ਆਵਾਜਾਈ",
+      "lifestyle": "ਜੀਵਨ ਸ਼ੈਲੀ ਅਤੇ ਮਨੋਰੰਜਨ",
+      "health": "ਸਿਹਤ ਅਤੇ ਤੰਦਰੁਸਤੀ",
+      "financial": "ਵਿੱਤੀ ਜ਼ਿੰਮੇਵਾਰੀਆਂ",
+      "savings": "ਬੱਚਤ ਅਤੇ ਨਿਵੇਸ਼",
+      "misc": "ਫੁਟਕਲ"
+    },
+    "submitButton": "ਖਰਚਾ ਦਰਜ ਕਰੋ"
+  },
+
+  "wealth": {
+    "lumpsum": "ਇੱਕਮੁਸ਼ਤ ਨਿਵੇਸ਼",
+    "sip": "ਯੋਜਨਾਬੱਧ ਨਿਵੇਸ਼ ਯੋਜਨਾ (SIP)",
+    "transferWithdraw": "ਟ੍ਰਾਂਸਫਰ/ਕਢਵਾਉਣਾ",
+    "assetTypes": {
+      "selectAssetType": "ਜਾਇਦਾਦ ਦੀ ਕਿਸਮ ਚੁਣੋ",
+      "mutualFund": "ਮਿਊਚੁਅਲ ਫੰਡ",
+      "stocks": "ਸਟਾਕ",
+      "gold": "ਸੋਨਾ",
+      "goldDigital": "ਸੋਨਾ (ਡਿਜੀਟਲ)"
+    },
+    "common": {
+      "assetType": "ਜਾਇਦਾਦ ਦੀ ਕਿਸਮ:",
+      "fundName": "ਫੰਡ / ਜਾਇਦਾਦ ਦਾ ਨਾਮ:",
+      "reason": "ਕਾਰਨ:",
+      "pin": "ਪਿੰਨ:",
+      "reasonPlaceholder": "ਕਾਰਨ ਦਰਜ ਕਰੋ",
+      "transactionSuccessful": "ਲੈਣ-ਦੇਣ ਸਫ਼ਲ",
+      "tryAgain": "1 ਮਿੰਟ ਬਾਅਦ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ",
+      "transactionBlocked": "ਲੈਣ-ਦੇਣ ਰੋਕਿਆ ਗਿਆ",
+      "transactionBlockedLower": "ਲੈਣ-ਦੇਣ ਰੋਕਿਆ ਗਿਆ"
+    },
+    "hisaab": {
+      "askBefore": "ਲੈਣ-ਦੇਣ ਤੋਂ ਪਹਿਲਾਂ ਹਿਸਾਬ ਤੋਂ ਪੁੱਛੋ!",
+      "reviewing": "ਹਿਸਾਬ ਤੁਹਾਡੇ ਲੈਣ-ਦੇਣ ਦੀ ਸਮੀਖਿਆ ਕਰ ਰਿਹਾ ਹੈ",
+      "decision": "ਫ਼ੈਸਲਾ:",
+      "risk": "ਖ਼ਤਰਾ:",
+      "reason": "ਕਾਰਨ:",
+      "alternative": "ਬਦਲ:"
+    },
+    "lumpsumForm": {
+      "title": "ਇੱਕਮੁਸ਼ਤ ਨਿਵੇਸ਼",
+      "amount": "ਨਿਵੇਸ਼ ਰਕਮ (₹):",
+      "purchaseDate": "ਖਰੀਦ ਮਿਤੀ:",
+      "amountPlaceholder": "ਰਕਮ ਦਰਜ ਕਰੋ (ਜਿਵੇਂ: 50000)",
+      "fundNamePlaceholder": "ਜਿਵੇਂ: Axis Bluechip Fund, Reliance, SGB",
+      "submitButton": "ਇੱਕਮੁਸ਼ਤ ਨਿਵੇਸ਼ ਕਰੋ"
+    },
+    "sipForm": {
+      "title": "SIP ਸੈੱਟ ਕਰੋ",
+      "monthlyAmount": "ਮਹੀਨਾਵਾਰ SIP ਰਕਮ (₹):",
+      "debitDate": "ਮਹੀਨਾਵਾਰ SIP ਡੈਬਿਟ ਮਿਤੀ:",
+      "amountPlaceholder": "ਮਹੀਨਾਵਾਰ ਰਕਮ ਦਰਜ ਕਰੋ (ਜਿਵੇਂ: 5000)",
+      "fundNamePlaceholder": "ਜਿਵੇਂ: Mirae Asset Large Cap Fund",
+      "selectDate": "ਮਹੀਨੇ ਦੀ ਤਾਰੀਖ ਚੁਣੋ",
+      "dateSuffixSt": " ਨੂੰ ਹਰ ਮਹੀਨੇ",
+      "dateSuffixNd": " ਨੂੰ ਹਰ ਮਹੀਨੇ",
+      "dateSuffixRd": " ਨੂੰ ਹਰ ਮਹੀਨੇ",
+      "dateSuffixTh": " ਨੂੰ ਹਰ ਮਹੀਨੇ",
+      "submitButton": "SIP ਸ਼ੁਰੂ ਕਰੋ"
+    },
+    "transferForm": {
+      "title": "ਟ੍ਰਾਂਸਫਰ / ਕਢਵਾਉਣਾ",
+      "transactionType": "ਲੈਣ-ਦੇਣ ਦੀ ਕਿਸਮ:",
+      "selectType": "ਲੈਣ-ਦੇਣ ਦੀ ਕਿਸਮ ਚੁਣੋ",
+      "transfer": "ਟ੍ਰਾਂਸਫਰ",
+      "redeem": "ਵਾਪਸ ਲਓ (ਮਿਊਚੁਅਲ ਫੰਡ / ਸੋਨਾ / ਸਟਾਕ)",
+      "amount": "ਰਕਮ (₹):",
+      "amountPlaceholder": "ਰਕਮ ਦਰਜ ਕਰੋ (ਜਿਵੇਂ: 10000)",
+      "redeemFrom": "ਕਿੱਥੋਂ ਵਾਪਸ ਲੈਣਾ ਹੈ:",
+      "redeemFromDefault": "ਤੁਸੀਂ ਕੀ ਵਾਪਸ ਲੈ ਰਹੇ ਹੋ?",
+      "destinationType": "ਮੰਜ਼ਿਲ ਦੀ ਕਿਸਮ:",
+      "destinationDefault": "ਪੈਸੇ ਕਿੱਥੇ ਜਾਣੇ ਹਨ?",
+      "bankAccount": "ਬੈਂਕ ਖਾਤਾ",
+      "accountNumber": "ਖਾਤਾ ਨੰਬਰ:",
+      "accountNumberPlaceholder": "ਖਾਤਾ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+      "ifscCode": "IFSC ਕੋਡ:",
+      "ifscPlaceholder": "ਜਿਵੇਂ SBIN0001234",
+      "bankName": "ਬੈਂਕ ਦਾ ਨਾਮ:",
+      "bankNamePlaceholder": "ਜਿਵੇਂ State Bank of India",
+      "fundName": "ਫੰਡ ਦਾ ਨਾਮ:",
+      "fundNamePlaceholder": "ਜਿਵੇਂ Axis Bluechip Fund",
+      "weight": "ਭਾਰ (ਗ੍ਰਾਮ):",
+      "weightPlaceholder": "ਜਿਵੇਂ 5.5",
+      "purity": "ਸ਼ੁੱਧਤਾ:",
+      "selectPurity": "ਸ਼ੁੱਧਤਾ ਚੁਣੋ",
+      "purity24k": "24K (99.9% ਸ਼ੁੱਧ)",
+      "purity22k": "22K (91.6% ਸ਼ੁੱਧ)",
+      "purity18k": "18K (75% ਸ਼ੁੱਧ)",
+      "assetName": "ਜਾਇਦਾਦ ਦਾ ਨਾਮ:",
+      "assetNamePlaceholder": "ਫੰਡ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+      "transactionDate": "ਲੈਣ-ਦੇਣ ਦੀ ਮਿਤੀ:",
+      "transferButton": "ਫੰਡ ਟ੍ਰਾਂਸਫਰ ਕਰੋ",
+      "redeemButton": "ਜਾਇਦਾਦ ਵਾਪਸ ਲਓ",
+      "submitButton": "ਜਮ੍ਹਾਂ ਕਰੋ"
+    }
+  },
+
+  "debt": {
+    "title": "ਕਰਜ਼ਾ ਸ਼ਾਮਲ ਕਰੋ",
+    "debtName": "ਕਰਜ਼ੇ ਦਾ ਨਾਮ:",
+    "totalAmount": "ਕੁੱਲ ਰਕਮ:",
+    "remainingBalance": "ਬਾਕੀ ਰਕਮ:",
+    "monthlyEmi": "ਮਹੀਨਾਵਾਰ EMI:",
+    "debtNamePlaceholder": "ਜਿਵੇਂ: ਘਰ ਦਾ ਕਰਜ਼ਾ, ਕਾਰ ਦਾ ਕਰਜ਼ਾ, ਕ੍ਰੈਡਿਟ ਕਾਰਡ",
+    "totalAmountPlaceholder": "ਜਿਵੇਂ: 500000",
+    "remainingPlaceholder": "ਜਿਵੇਂ: 350000",
+    "emiPlaceholder": "ਜਿਵੇਂ: 15000",
+    "submitButton": "ਕਰਜ਼ਾ ਸ਼ਾਮਲ ਕਰੋ",
+    "paidOff": "ਚੁਕਾਇਆ ਗਿਆ:"
+  },
+
+  "goals": {
+    "title": "ਵਿੱਤੀ ਟੀਚਾ ਤੈਅ ਕਰੋ",
+    "goalName": "ਟੀਚੇ ਦਾ ਨਾਮ:",
+    "targetAmount": "ਟੀਚਾ ਰਕਮ:",
+    "currentSaved": "ਹੁਣ ਤੱਕ ਬਚਾਈ ਰਕਮ:",
+    "targetDate": "ਟੀਚੇ ਦੀ ਮਿਤੀ:",
+    "priorityLevel": "ਤਰਜੀਹ ਪੱਧਰ:",
+    "goalNamePlaceholder": "ਜਿਵੇਂ: ਐਮਰਜੈਂਸੀ ਫੰਡ, ਕਾਰ ਡਾਊਨ ਪੇਮੈਂਟ",
+    "targetAmountPlaceholder": "ਜਿਵੇਂ: 50000",
+    "currentSavedPlaceholder": "ਜਿਵੇਂ: 5000",
+    "priorities": {
+      "high": "ਉੱਚ",
+      "medium": "ਦਰਮਿਆਨੀ",
+      "low": "ਘੱਟ"
+    },
+    "submitButton": "ਟੀਚਾ ਤੈਅ ਕਰੋ"
+  },
+
+  "profile": {
+    "title": "ਮਹੀਨਾਵਾਰ ਬਜਟ ਤੈਅ ਕਰੋ",
+    "monthlyIncome": "ਮਹੀਨਾਵਾਰ ਆਮਦਨ:",
+    "monthlyIncomePlaceholder": "ਆਪਣੀ ਮਹੀਨਾਵਾਰ ਆਮਦਨ ਦਰਜ ਕਰੋ",
+    "number": "ਨੰਬਰ:",
+    "numberPlaceholder": "ਆਪਣਾ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+    "emergencyEmail": "ਐਮਰਜੈਂਸੀ ਈਮੇਲ:",
+    "emergencyEmailPlaceholder": "ਆਪਣੀ ਐਮਰਜੈਂਸੀ ਈਮੇਲ ਦਰਜ ਕਰੋ",
+    "emergencyNumber": "ਐਮਰਜੈਂਸੀ ਨੰਬਰ:",
+    "emergencyNumberPlaceholder": "ਆਪਣਾ ਐਮਰਜੈਂਸੀ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+    "age": "ਉਮਰ:",
+    "agePlaceholder": "ਆਪਣੀ ਉਮਰ ਦਰਜ ਕਰੋ",
+    "riskProfile": "ਜੋਖ਼ਮ ਪ੍ਰੋਫਾਈਲ:",
+    "riskProfiles": {
+      "selectType": "ਕਿਸਮ ਚੁਣੋ",
+      "aggressive": "ਹਮਲਾਵਰ",
+      "balanced": "ਸੰਤੁਲਿਤ",
+      "conservative": "ਸਾਵਧਾਨ"
+    },
+    "budgets": {
+      "bills": "ਬਿੱਲ ਬਜਟ:",
+      "billsPlaceholder": "ਬਿੱਲਾਂ ਲਈ ਬਜਟ ਦਰਜ ਕਰੋ",
+      "food": "ਖਾਣੇ ਦਾ ਬਜਟ:",
+      "foodPlaceholder": "ਖਾਣੇ ਲਈ ਬਜਟ ਦਰਜ ਕਰੋ",
+      "health": "ਸਿਹਤ ਬਜਟ:",
+      "healthPlaceholder": "ਸਿਹਤ ਲਈ ਬਜਟ ਦਰਜ ਕਰੋ",
+      "lifestyle": "ਜੀਵਨ ਸ਼ੈਲੀ ਬਜਟ:",
+      "lifestylePlaceholder": "ਜੀਵਨ ਸ਼ੈਲੀ ਲਈ ਬਜਟ ਦਰਜ ਕਰੋ",
+      "obligations": "ਜ਼ਿੰਮੇਵਾਰੀਆਂ ਦਾ ਬਜਟ:",
+      "obligationsPlaceholder": "ਜ਼ਿੰਮੇਵਾਰੀਆਂ ਲਈ ਬਜਟ ਦਰਜ ਕਰੋ",
+      "savings": "ਬੱਚਤ/ਨਿਵੇਸ਼ ਬਜਟ:",
+      "savingsPlaceholder": "ਬੱਚਤ/ਨਿਵੇਸ਼ ਲਈ ਬਜਟ ਦਰਜ ਕਰੋ",
+      "transport": "ਆਵਾਜਾਈ ਬਜਟ:",
+      "transportPlaceholder": "ਆਵਾਜਾਈ ਲਈ ਬਜਟ ਦਰਜ ਕਰੋ",
+      "misc": "ਹੋਰ ਬਜਟ:",
+      "miscPlaceholder": "ਹੋਰ ਲਈ ਬਜਟ ਦਰਜ ਕਰੋ"
+    },
+    "submitButton": "ਸੰਭਾਲੋ"
+  },
+
+  "chatbot": {
+    "askHisaab": "ਹਿਸਾਬ ਤੋਂ ਪੁੱਛੋ",
+    "subtitle": "ਤੁਹਾਡਾ ਵਿੱਤੀ ਸਹਾਇਕ",
+    "greeting": "👋 ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਅੱਜ ਮੈਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?",
+    "typing": "ਟਾਈਪ ਹੋ ਰਿਹਾ ਹੈ...",
+    "inputPlaceholder": "ਸੁਨੇਹਾ ਲਿਖੋ...",
+    "error": "⚠️ ਸਰਵਰ ਨਾਲ ਜੁੜਨ ਵਿੱਚ ਗਲਤੀ।",
+    "menu": {
+      "financialHealth": "💰 ਵਿੱਤੀ ਸਿਹਤ",
+      "financialHealthPrompt": "ਮੇਰੀ ਵਿੱਤੀ ਸਿਹਤ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ।",
+      "goals": "📈 ਮੇਰੇ ਟੀਚੇ",
+      "goalsPrompt": "ਮੇਰੇ ਮੌਜੂਦਾ ਟੀਚੇ ਅਤੇ ਵਿੱਤੀ ਤਰੱਕੀ ਦੱਸੋ।",
+      "investments": "💳 ਮੇਰੇ ਨਿਵੇਸ਼",
+      "investmentsPrompt": "ਮੇਰੇ ਨਿਵੇਸ਼ਾਂ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ।"
+    }
+  },
+
+  "transactionOtp": {
+    "title": "ਜਾਰੀ ਰੱਖਣ ਲਈ ਤਸਦੀਕ ਕਰੋ",
+    "message": "ਅਸੀਂ ਇਸ ਲੈਣ-ਦੇਣ ਦੀ ਪੁਸ਼ਟੀ ਲਈ ਇੱਕ ਤਸਦੀਕ ਕੋਡ ਈਮੇਲ ਕੀਤਾ ਹੈ।",
+    "placeholder": "6-ਅੰਕ ਦਾ ਕੋਡ",
+    "verifying": "ਤਸਦੀਕ ਹੋ ਰਿਹਾ ਹੈ...",
+    "verifyButton": "ਤਸਦੀਕ ਕਰੋ",
+    "cancelButton": "ਰੱਦ ਕਰੋ"
+  },
+
+  "cards": {
+    "asset": {
+      "value": "ਕੀਮਤ :",
+      "heldBy": "ਕੋਲ :"
+    },
+    "debt": {
+      "totalAmount": "ਕੁੱਲ ਰਕਮ:",
+      "remainingBalance": "ਬਾਕੀ ਰਕਮ:",
+      "monthlyEmi": "ਮਹੀਨਾਵਾਰ EMI:",
+      "paidOff": "ਚੁਕਾਇਆ ਗਿਆ: "
+    },
+    "goal": {
+      "targetAmount": "ਟੀਚਾ ਰਕਮ :",
+      "deadline": "ਆਖਰੀ ਮਿਤੀ :",
+      "progress": "ਤਰੱਕੀ :",
+      "priority": "ਤਰਜੀਹ :"
+    },
+    "transaction": {
+      "amount": "ਰਕਮ :",
+      "date": "ਮਿਤੀ :"
+    }
+  }
+}

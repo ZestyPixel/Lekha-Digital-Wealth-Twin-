@@ -563,6 +563,11 @@ export default function TransferWithdraw() {
           <p>
             <strong>Reason:</strong> {answer.reason}
           </p>
+          {answer.impact && (
+            <p>
+              <strong>Impact:</strong> {answer.impact}
+            </p>
+          )}
           <p>
             <strong>Alternative:</strong> {answer.alternative}
           </p>

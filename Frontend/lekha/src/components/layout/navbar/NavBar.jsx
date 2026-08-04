@@ -40,6 +40,8 @@ export default function Navbar({ onToggleSidebar }) {
           <option value="hi">हि</option>
           <option value="bn">বা</option>
           <option value="mr">म</option>
+          <option value="pn">ਪੰ</option>
+          <option value="ur">اُ</option>
         </select>
         <Link to={"/profile"}>
           <button className="profile-button">

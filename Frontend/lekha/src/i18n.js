@@ -6,6 +6,8 @@ import en from "./locales/en/translation.json";
 import hi from "./locales/hi/translation.json";
 import bn from "./locales/bn/translation.json";
 import mr from "./locales/mr/translation.json";
+import pn from "./locales/pn/translation.json";
+import ur from "./locales/ur/translation.json";
 
 i18n
   .use(LanguageDetector) // auto-detect browser language
@@ -16,6 +18,8 @@ i18n
       hi: { translation: hi },
       bn: { translation: bn },
       mr: { translation: mr },
+      pn: { translation: pn },
+      ur: { translation: ur },
     },
     fallbackLng: "en", // if detected language isn't available, use English
     interpolation: {

@@ -1,0 +1,359 @@
+{
+  "app": {
+    "title": "لیکھا",
+    "pageNotFound": "صفحہ نہیں ملا",
+    "loading": "لوڈ ہو رہا ہے..."
+  },
+
+  "landing": {
+    "welcome": "!لیکھا میں خوش آمدید",
+    "logout": "لاگ آؤٹ",
+    "demoAccount": "ڈیمو اکاؤنٹ استعمال کریں",
+    "signUp": "سائن اپ"
+  },
+
+  "login": {
+    "title": "لاگ ان",
+    "email": "ای میل:",
+    "password": "پاسورڈ:",
+    "emailPlaceholder": "ای میل درج کریں",
+    "passwordPlaceholder": "پاسورڈ درج کریں",
+    "showPassword": "پاسورڈ دکھائیں",
+    "forgotCredentials": "صارف نام / پاسورڈ بھول گئے؟",
+    "noAccount": "اکاؤنٹ نہیں ہے؟",
+    "signUpLink": "سائن اپ",
+    "submitButton": "سائن ان",
+    "otp": {
+      "title": "تصدیق کریں کہ یہ آپ ہیں",
+      "message": "ہم نے ایک کوڈ ای میل کیا ہے",
+      "label": "تصدیقی کوڈ:",
+      "placeholder": "6 ہندسوں کا کوڈ",
+      "verifyButton": "تصدیق کریں",
+      "verifying": "تصدیق ہو رہی ہے...",
+      "backToLogin": "لاگ ان پر واپس جائیں"
+    }
+  },
+
+  "signup": {
+    "title": "سائن اپ",
+    "name": "نام:",
+    "email": "ای میل:",
+    "password": "پاسورڈ:",
+    "confirmPassword": "پاسورڈ کی تصدیق:",
+    "namePlaceholder": "نام درج کریں",
+    "emailPlaceholder": "ای میل درج کریں",
+    "passwordPlaceholder": "پاسورڈ درج کریں",
+    "confirmPasswordPlaceholder": "پاسورڈ کی تصدیق کریں",
+    "rememberMe": "مجھے یاد رکھیں",
+    "hasAccount": "پہلے سے اکاؤنٹ ہے؟",
+    "loginLink": "لاگ ان",
+    "submitButton": "سائن اپ"
+  },
+
+  "validation": {
+    "required": "ضروری ہے",
+    "invalidEmail": "غلط ای میل پتہ",
+    "maxChars20": "20 حروف سے کم ہونا چاہیے",
+    "maxChars50": "50 حروف سے کم ہونا چاہیے",
+    "maxChars100": "100 حروف سے کم ہونا چاہیے",
+    "passwordsMustMatch": "پاسورڈ ایک جیسے ہونے چاہئیں",
+    "enterValidAmount": "درست رقم درج کریں",
+    "enterValidMonthlyAmount": "درست ماہانہ رقم درج کریں",
+    "amountGreaterThanZero": "رقم 0 سے زیادہ ہونی چاہیے",
+    "cannotBeNegative": "منفی نہیں ہو سکتی",
+    "cannotExceedTotal": "کل رقم سے زیادہ نہیں ہو سکتی",
+    "emiGreaterThanZero": "EMI 0 سے زیادہ ہونی چاہیے",
+    "requiredForTransfers": "ٹرانسفر کے لیے ضروری ہے",
+    "enterValidGrams": "درست گرام درج کریں"
+  },
+
+  "dashboard": {
+    "financialHealthScore": "مالی صحت سکور",
+    "manageWealth": "دولت کا انتظام",
+    "lastTransaction": "آخری لین دین",
+    "excellent": "بہترین",
+    "good": "اچھا",
+    "fair": "ٹھیک ٹھاک",
+    "poor": "کمزور",
+    "netWorth": "اثاثے",
+    "total": "کل:",
+    "totalExpenses": "کل اخراجات:",
+    "type": "قسم:",
+    "amount": "رقم:",
+    "Mutual Funds": "میوچوئل فنڈ",
+    "Real Estate": "جائیداد",
+    "Stocks": "اسٹاک",
+    "Bank Account": "بینک اکاؤنٹ",
+    "bills": "بل",
+    "food": "کھانا",
+    "health": "صحت",
+    "lifestyle": "طرزِ زندگی",
+    "misc": "متفرق",
+    "obligations": "ذمہ داریاں",
+    "savingsInvestments": "بچت/سرمایہ کاری",
+    "transport": "آمد و رفت",
+    "Bills": "بل",
+    "Food": "کھانا",
+    "Health": "صحت",
+    "Lifestyle": "طرزِ زندگی",
+    "Miscellaneous": "متفرق",
+    "Obligations": "ذمہ داریاں",
+    "Savings": "بچت/سرمایہ کاری",
+    "Transportation": "آمد و رفت",
+    "footer": {
+      "usefulLinks": "کارآمد لنکس",
+      "about": "ہمارے بارے میں",
+      "services": "خدمات",
+      "contact": "رابطہ",
+      "blog": "بلاگ",
+      "contactUs": "ہم سے رابطہ کریں",
+      "address": "221B بیکر اسٹریٹ، لندن، NW1",
+      "policy": "پالیسی",
+      "cookiePolicy": "کوکی پالیسی",
+      "returnPolicy": "واپسی پالیسی",
+      "securityPolicy": "سیکیورٹی پالیسی",
+      "copyright": "©کاپی رائٹ تمام حقوق محفوظ ہیں"
+    }
+  },
+
+  "netWorth": {
+    "title": "اثاثہ شامل کریں",
+    "assetType": "اثاثے کی قسم:",
+    "assetValue": "اثاثے کی قیمت:",
+    "holdingInstitution": "ادارے کا نام:",
+    "assetTypePlaceholder": "اثاثے کی قسم درج کریں (مثلاً سونا، رقم وغیرہ)",
+    "assetValuePlaceholder": "اثاثے کی قیمت درج کریں (مثلاً 20000)",
+    "holdingPlaceholder": "ادارہ درج کریں (مثلاً بینک، ذاتی وغیرہ)",
+    "submitButton": "اثاثہ شامل کریں"
+  },
+
+  "monthlyExpenses": {
+    "title": "خرچہ درج کریں",
+    "amount": "رقم:",
+    "description": "تفصیل:",
+    "category": "خرچے کی قسم:",
+    "amountPlaceholder": "رقم درج کریں (مثلاً 20000)",
+    "descriptionPlaceholder": "مثلاً: چائے، مال",
+    "categoryDefault": "قسم منتخب کریں",
+    "categories": {
+      "housing": "رہائش اور بجلی پانی",
+      "food": "کھانا پینا",
+      "transportation": "آمد و رفت",
+      "lifestyle": "طرزِ زندگی اور تفریح",
+      "health": "صحت اور تندرستی",
+      "financial": "مالی ذمہ داریاں",
+      "savings": "بچت اور سرمایہ کاری",
+      "misc": "متفرق"
+    },
+    "submitButton": "خرچہ درج کریں"
+  },
+
+  "wealth": {
+    "lumpsum": "یکمشت سرمایہ کاری",
+    "sip": "منظم سرمایہ کاری منصوبہ (SIP)",
+    "transferWithdraw": "ٹرانسفر/نکلوانا",
+    "assetTypes": {
+      "selectAssetType": "اثاثے کی قسم منتخب کریں",
+      "mutualFund": "میوچوئل فنڈ",
+      "stocks": "اسٹاک",
+      "gold": "سونا",
+      "goldDigital": "سونا (ڈیجیٹل)"
+    },
+    "common": {
+      "assetType": "اثاثے کی قسم:",
+      "fundName": "فنڈ / اثاثے کا نام:",
+      "reason": "وجہ:",
+      "pin": "پن:",
+      "reasonPlaceholder": "وجہ درج کریں",
+      "transactionSuccessful": "لین دین کامیاب",
+      "tryAgain": "1 منٹ بعد دوبارہ کوشش کریں",
+      "transactionBlocked": "لین دین روک دیا گیا",
+      "transactionBlockedLower": "لین دین روک دیا گیا"
+    },
+    "hisaab": {
+      "askBefore": "!لین دین سے پہلے حساب سے پوچھیں",
+      "reviewing": "حساب آپ کے لین دین کا جائزہ لے رہا ہے",
+      "decision": "فیصلہ:",
+      "risk": "خطرہ:",
+      "reason": "وجہ:",
+      "alternative": "متبادل:"
+    },
+    "lumpsumForm": {
+      "title": "یکمشت سرمایہ کاری",
+      "amount": "سرمایہ کاری کی رقم (₹):",
+      "purchaseDate": "خریداری کی تاریخ:",
+      "amountPlaceholder": "رقم درج کریں (مثلاً: 50000)",
+      "fundNamePlaceholder": "مثلاً: Axis Bluechip Fund, Reliance, SGB",
+      "submitButton": "یکمشت سرمایہ کاری کریں"
+    },
+    "sipForm": {
+      "title": "SIP ترتیب دیں",
+      "monthlyAmount": "ماہانہ SIP رقم (₹):",
+      "debitDate": "ماہانہ SIP ڈیبٹ تاریخ:",
+      "amountPlaceholder": "ماہانہ رقم درج کریں (مثلاً: 5000)",
+      "fundNamePlaceholder": "مثلاً: Mirae Asset Large Cap Fund",
+      "selectDate": "مہینے کی تاریخ منتخب کریں",
+      "dateSuffixSt": " کو ہر مہینے",
+      "dateSuffixNd": " کو ہر مہینے",
+      "dateSuffixRd": " کو ہر مہینے",
+      "dateSuffixTh": " کو ہر مہینے",
+      "submitButton": "SIP شروع کریں"
+    },
+    "transferForm": {
+      "title": "ٹرانسفر / نکلوانا",
+      "transactionType": "لین دین کی قسم:",
+      "selectType": "لین دین کی قسم منتخب کریں",
+      "transfer": "ٹرانسفر",
+      "redeem": "واپس لیں (میوچوئل فنڈ / سونا / اسٹاک)",
+      "amount": "رقم (₹):",
+      "amountPlaceholder": "رقم درج کریں (مثلاً: 10000)",
+      "redeemFrom": "کہاں سے واپس لینا ہے:",
+      "redeemFromDefault": "آپ کیا واپس لے رہے ہیں؟",
+      "destinationType": "منزل کی قسم:",
+      "destinationDefault": "رقم کہاں جانی ہے؟",
+      "bankAccount": "بینک اکاؤنٹ",
+      "accountNumber": "اکاؤنٹ نمبر:",
+      "accountNumberPlaceholder": "اکاؤنٹ نمبر درج کریں",
+      "ifscCode": "IFSC کوڈ:",
+      "ifscPlaceholder": "مثلاً SBIN0001234",
+      "bankName": "بینک کا نام:",
+      "bankNamePlaceholder": "مثلاً State Bank of India",
+      "fundName": "فنڈ کا نام:",
+      "fundNamePlaceholder": "مثلاً Axis Bluechip Fund",
+      "weight": "وزن (گرام):",
+      "weightPlaceholder": "مثلاً 5.5",
+      "purity": "خالصیت:",
+      "selectPurity": "خالصیت منتخب کریں",
+      "purity24k": "24K (99.9% خالص)",
+      "purity22k": "22K (91.6% خالص)",
+      "purity18k": "18K (75% خالص)",
+      "assetName": "اثاثے کا نام:",
+      "assetNamePlaceholder": "فنڈ کا نام درج کریں",
+      "transactionDate": "لین دین کی تاریخ:",
+      "transferButton": "فنڈ ٹرانسفر کریں",
+      "redeemButton": "اثاثہ واپس لیں",
+      "submitButton": "جمع کریں"
+    }
+  },
+
+  "debt": {
+    "title": "قرض شامل کریں",
+    "debtName": "قرض کا نام:",
+    "totalAmount": "کل رقم:",
+    "remainingBalance": "باقی رقم:",
+    "monthlyEmi": "ماہانہ EMI:",
+    "debtNamePlaceholder": "مثلاً: گھر کا قرض، گاڑی کا قرض، کریڈٹ کارڈ",
+    "totalAmountPlaceholder": "مثلاً: 500000",
+    "remainingPlaceholder": "مثلاً: 350000",
+    "emiPlaceholder": "مثلاً: 15000",
+    "submitButton": "قرض شامل کریں",
+    "paidOff": "ادا ہو گیا:"
+  },
+
+  "goals": {
+    "title": "مالی ہدف مقرر کریں",
+    "goalName": "ہدف کا نام:",
+    "targetAmount": "ہدف رقم:",
+    "currentSaved": "اب تک بچائی گئی رقم:",
+    "targetDate": "ہدف کی تاریخ:",
+    "priorityLevel": "ترجیحی سطح:",
+    "goalNamePlaceholder": "مثلاً: ایمرجنسی فنڈ، گاڑی کی ڈاؤن پیمنٹ",
+    "targetAmountPlaceholder": "مثلاً: 50000",
+    "currentSavedPlaceholder": "مثلاً: 5000",
+    "priorities": {
+      "high": "اعلیٰ",
+      "medium": "درمیانی",
+      "low": "کم"
+    },
+    "submitButton": "ہدف مقرر کریں"
+  },
+
+  "profile": {
+    "title": "ماہانہ بجٹ مقرر کریں",
+    "monthlyIncome": "ماہانہ آمدنی:",
+    "monthlyIncomePlaceholder": "اپنی ماہانہ آمدنی درج کریں",
+    "number": "نمبر:",
+    "numberPlaceholder": "اپنا نمبر درج کریں",
+    "emergencyEmail": "ایمرجنسی ای میل:",
+    "emergencyEmailPlaceholder": "اپنی ایمرجنسی ای میل درج کریں",
+    "emergencyNumber": "ایمرجنسی نمبر:",
+    "emergencyNumberPlaceholder": "اپنا ایمرجنسی نمبر درج کریں",
+    "age": "عمر:",
+    "agePlaceholder": "اپنی عمر درج کریں",
+    "riskProfile": "خطرے کی پروفائل:",
+    "riskProfiles": {
+      "selectType": "قسم منتخب کریں",
+      "aggressive": "جارحانہ",
+      "balanced": "متوازن",
+      "conservative": "محتاط"
+    },
+    "budgets": {
+      "bills": "بلوں کا بجٹ:",
+      "billsPlaceholder": "بلوں کا بجٹ درج کریں",
+      "food": "کھانے کا بجٹ:",
+      "foodPlaceholder": "کھانے کا بجٹ درج کریں",
+      "health": "صحت کا بجٹ:",
+      "healthPlaceholder": "صحت کا بجٹ درج کریں",
+      "lifestyle": "طرزِ زندگی کا بجٹ:",
+      "lifestylePlaceholder": "طرزِ زندگی کا بجٹ درج کریں",
+      "obligations": "ذمہ داریوں کا بجٹ:",
+      "obligationsPlaceholder": "ذمہ داریوں کا بجٹ درج کریں",
+      "savings": "بچت/سرمایہ کاری کا بجٹ:",
+      "savingsPlaceholder": "بچت/سرمایہ کاری کا بجٹ درج کریں",
+      "transport": "آمد و رفت کا بجٹ:",
+      "transportPlaceholder": "آمد و رفت کا بجٹ درج کریں",
+      "misc": "متفرق بجٹ:",
+      "miscPlaceholder": "متفرق بجٹ درج کریں"
+    },
+    "submitButton": "محفوظ کریں"
+  },
+
+  "chatbot": {
+    "askHisaab": "حساب سے پوچھیں",
+    "subtitle": "آپ کا مالی معاون",
+    "greeting": "👋 السلام علیکم! آج میں آپ کی کیسے مدد کر سکتا ہوں؟",
+    "typing": "ٹائپ ہو رہا ہے...",
+    "inputPlaceholder": "پیغام لکھیں...",
+    "error": "⚠️ سرور سے رابطے میں خرابی۔",
+    "menu": {
+      "financialHealth": "💰 مالی صحت",
+      "financialHealthPrompt": "میری مالی صحت کا تجزیہ کریں۔",
+      "goals": "📈 میرے اہداف",
+      "goalsPrompt": "میرے موجودہ اہداف اور مالی ترقی بتائیں۔",
+      "investments": "💳 میری سرمایہ کاری",
+      "investmentsPrompt": "میری سرمایہ کاری کا تجزیہ کریں۔"
+    }
+  },
+
+  "transactionOtp": {
+    "title": "جاری رکھنے کے لیے تصدیق کریں",
+    "message": "ہم نے اس لین دین کی تصدیق کے لیے ایک تصدیقی کوڈ ای میل کیا ہے۔",
+    "placeholder": "6 ہندسوں کا کوڈ",
+    "verifying": "تصدیق ہو رہی ہے...",
+    "verifyButton": "تصدیق کریں",
+    "cancelButton": "منسوخ کریں"
+  },
+
+  "cards": {
+    "asset": {
+      "value": "قیمت :",
+      "heldBy": "کے پاس :"
+    },
+    "debt": {
+      "totalAmount": "کل رقم:",
+      "remainingBalance": "باقی رقم:",
+      "monthlyEmi": "ماہانہ EMI:",
+      "paidOff": "ادا ہو گیا: "
+    },
+    "goal": {
+      "targetAmount": "ہدف رقم :",
+      "deadline": "آخری تاریخ :",
+      "progress": "پیش رفت :",
+      "priority": "ترجیح :"
+    },
+    "transaction": {
+      "amount": "رقم :",
+      "date": "تاریخ :"
+    }
+  }
+}
