@@ -8,12 +8,27 @@ const transactionSchema = new mongoose.Schema(
       index: true,
     },
 
+    type: {
+      type: String,
+      enum: ["Lumpsum", "SIP", "Transfer", "Withdraw"],
+    },
+
     amount: {
       type: Number,
       min: 0,
     },
 
     category: {
+      type: String,
+      trim: true,
+    },
+
+    fundName: {
+      type: String,
+      trim: true,
+    },
+
+    assetType: {
       type: String,
       trim: true,
     },
@@ -30,9 +45,11 @@ const transactionSchema = new mongoose.Schema(
       max: 100,
     },
 
-    riskReason: {
+    riskReasons: [{ type: String }],
+
+    securityDecision: {
       type: String,
-      trim: true,
+      enum: ["ALLOW", "WARN", "BLOCK", "OTP-Verified"],
     },
 
     isDuress: {

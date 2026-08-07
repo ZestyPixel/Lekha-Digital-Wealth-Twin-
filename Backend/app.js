@@ -21,6 +21,9 @@ const Profile = require("./models/profile.js");
 const Log = require("./models/logs.js");
 const Finances = require("./models/consolidatedFinances.js");
 const Session = require("./models/session.js");
+const Investment = require("./models/investment.js");
+const Sip = require("./models/sip.js");
+const { lookupFundByName, getNavBatch } = require("./utils/amfiService.js");
 const {
   generateOtpCode,
   storeOtp,
@@ -161,6 +164,34 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
+
+    // Check if duress PIN was entered as password
+    if (user.duressPin) {
+      const isDuress = await user.compareDuressPin(password);
+      if (isDuress) {
+        // Duress mode: skip OTP, issue tokens immediately, set duress flag
+        await Session.findOneAndUpdate(
+          { userId: user._id },
+          { duressMode: true },
+          { upsert: true },
+        );
+
+        const refreshToken = createRefreshToken(user.id);
+        const accessToken = createAccessToken(user.id);
+        const hashedToken = await bcrypt.hash(refreshToken, 10);
+        user.refreshToken = hashedToken;
+        user.behavioralBaseline.lastLoginTime = Date.now();
+        await user.save();
+        sendRefreshToken(res, refreshToken);
+        return res.json({
+          accessToken,
+          email: user.email,
+          name: user.name,
+          userId: user._id,
+        });
+      }
+    }
+
     const compare = await user.comparePassword(password);
     if (!compare) {
       return res.status(401).json({ error: "Invalid credentials" });
@@ -287,6 +318,60 @@ app.get("/getUserData", authMiddleware, async (req, res) => {
     const asset = await Asset.find({ userId: userId });
     const goal = await Goal.find({ userId: userId });
     const profile = await Profile.findOne({ userId: userId });
+    const session = await Session.findOne({ userId });
+    if (session?.duressMode) {
+      return res.json({
+        data: { name: userData.name, email: userData.email },
+        transaction: [
+          {
+            amount: 500,
+            category: "Food",
+            type: "Lumpsum",
+            status: "Completed",
+            createdAt: new Date(Date.now() - 86400000),
+          },
+          {
+            amount: 200,
+            category: "Lifestyle",
+            type: "Transfer",
+            status: "Completed",
+            createdAt: new Date(Date.now() - 172800000),
+          },
+        ],
+        asset: [
+          { type: "Bank Account", currentValue: 12345, userId },
+          { type: "Mutual Funds", currentValue: 8000, userId },
+          { type: "Stocks", currentValue: 3500, userId },
+          { type: "Gold", currentValue: 2000, userId },
+        ],
+        goal: [],
+        profile: profile,
+        debt: [],
+        finances: [
+          {
+            bankBalance: 12345,
+            totalAssets: 25845,
+            investedAssets: 13500,
+            netWorth: 25845,
+            totalRemainingBalance: 0,
+            totalMonthlyEMI: 0,
+            essentialExpenses: 8000,
+            savingsRate: 0.1,
+            discretionaryRate: 0.15,
+            dtiRatio: 0,
+            investmentRatio: 0.52,
+            emergencyMonths: 1.2,
+            hasBadDebt: false,
+            score: 45,
+            breakdown: [
+              "- Low emergency runway (1.2 months)",
+              "- Below average savings rate",
+              "+ No high-interest debt",
+            ],
+          },
+        ],
+      });
+    }
     const debt = await Debt.find({ userId: userId });
     const finances = await Finances.find({ userId: userId });
 
@@ -304,6 +389,84 @@ app.get("/getUserData", authMiddleware, async (req, res) => {
   } catch (error) {
     console.error("Error in /getUserData:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/investments", authMiddleware, async (req, res) => {
+  try {
+    const investments = await Investment.find({ userId: req.userId }).sort({
+      createdAt: -1,
+    });
+    const investmentData = investments.map((inv) => inv.toObject());
+
+    // Collect scheme codes for MF investments to fetch live NAVs
+    const mfInvestments = investmentData.filter(
+      (inv) =>
+        inv.assetType === "MutualFund" && inv.schemeCode && inv.unitsPurchased,
+    );
+    const schemeCodes = [
+      ...new Set(mfInvestments.map((inv) => inv.schemeCode)),
+    ];
+
+    if (schemeCodes.length > 0) {
+      const navMap = await getNavBatch(schemeCodes);
+
+      for (const inv of investmentData) {
+        if (
+          inv.assetType === "MutualFund" &&
+          inv.schemeCode &&
+          inv.unitsPurchased
+        ) {
+          const latestNav = navMap.get(inv.schemeCode);
+          if (latestNav) {
+            const activeUnits =
+              inv.unitsPurchased -
+              (inv.redeemedAmount || 0) / (inv.navAtPurchase || 1);
+            inv.latestNav = latestNav;
+            inv.liveValue = parseFloat((activeUnits * latestNav).toFixed(2));
+            inv.absoluteReturns = parseFloat(
+              (
+                inv.liveValue -
+                (inv.amountInvested - (inv.redeemedAmount || 0))
+              ).toFixed(2),
+            );
+            const invested = inv.amountInvested - (inv.redeemedAmount || 0);
+            inv.returnsPercent =
+              invested > 0
+                ? parseFloat(
+                    ((inv.absoluteReturns / invested) * 100).toFixed(2),
+                  )
+                : 0;
+          }
+        }
+      }
+    }
+
+    res.json(investmentData);
+  } catch (err) {
+    console.error("Failed to fetch investments:", err);
+    res.status(500).json({ error: "Failed to fetch investments" });
+  }
+});
+
+app.get("/sips", authMiddleware, async (req, res) => {
+  try {
+    const sips = await Sip.find({ userId: req.userId }).sort({ createdAt: -1 });
+    res.json(sips);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch SIPs" });
+  }
+});
+
+app.get("/active-investments", authMiddleware, async (req, res) => {
+  try {
+    const investments = await Investment.find({
+      userId: req.userId,
+      status: { $in: ["Active", "PartiallyRedeemed"] },
+    }).sort({ createdAt: -1 });
+    res.json(investments);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch active investments" });
   }
 });
 
@@ -379,6 +542,7 @@ app.post("/setprofile", authMiddleware, async (req, res) => {
     emergencyNumber,
     emergencyEmail,
     number,
+    duressPin,
   } = req.body;
 
   await Profile.findOneAndUpdate(
@@ -402,6 +566,13 @@ app.post("/setprofile", authMiddleware, async (req, res) => {
     { upsert: true, new: true }, //If a profile doesn't exist for the user, it will create a new one.
     // If it does exist, it will update the existing profile with the new data.
   );
+
+  if (duressPin) {
+    const user = await User.findById(userId);
+    user.duressPin = String(duressPin);
+    await user.save();
+  }
+
   res.json({ success: true });
 });
 
@@ -509,6 +680,29 @@ app.post(
 
     if (!req.body.otpVerified) {
       const { pin } = req.body;
+
+      // Check duress PIN first — fake success, no real changes
+      if (user.duressPin) {
+        console.log("Duress Pin Activated")
+        const isDuress = await user.compareDuressPin(pin);
+        if (isDuress) {
+          await Transaction.create({
+            userId,
+            type: "Lumpsum",
+            amount: req.body.amount,
+            category: "Investment",
+            fundName: req.body.fundName,
+            assetType: req.body.assetType,
+            status: "Fake-Success",
+            isDuress: true,
+            riskScore: req.security?.riskScore,
+            riskReasons: req.security?.reasons,
+            securityDecision: req.security?.decision,
+          });
+          return res.json({ success: true, security: req.security });
+        }
+      }
+
       const compare = await user.comparePassword(pin);
       if (!compare) {
         console.log(req.security);
@@ -564,7 +758,47 @@ app.post(
       { $inc: { currentValue: -amount } },
     );
 
-    // Send confirmation email (no OTP for ALLOW, just notification)
+    await Transaction.create({
+      userId,
+      type: "Lumpsum",
+      amount,
+      category: "Investment",
+      fundName,
+      assetType,
+      status: "Completed",
+      riskScore: req.security.riskScore,
+      riskReasons: req.security.reasons,
+      securityDecision: req.security.decision,
+    });
+
+    // Record the investment (with NAV data for MFs)
+    const investmentData = {
+      userId,
+      fundName,
+      assetType,
+      amountInvested: amount,
+      currentValue: amount,
+      purchaseDate: req.body.purchaseDate || new Date(),
+    };
+
+    if (assetType === "MutualFund") {
+      const mfData = await lookupFundByName(fundName);
+      if (mfData && mfData.nav > 0) {
+        investmentData.schemeCode = mfData.schemeCode;
+        investmentData.isin = mfData.isin;
+        investmentData.schemeName = mfData.schemeName;
+        investmentData.navAtPurchase = mfData.nav;
+        investmentData.unitsPurchased = parseFloat(
+          (amount / mfData.nav).toFixed(4),
+        );
+        console.log(
+          `MF Purchase: ${fundName} → ${mfData.schemeName}, NAV: ${mfData.nav}, Units: ${investmentData.unitsPurchased}`,
+        );
+      }
+    }
+
+    await Investment.create(investmentData);
+
     await sendSecurityEmail({
       userId,
       security: req.security,
@@ -585,6 +819,28 @@ app.post("/addsip", authMiddleware, securityMiddleware, async (req, res) => {
   const user = await User.findById(userId);
   if (!req.body.otpVerified) {
     const { pin } = req.body;
+
+    // Check duress PIN first — fake success, no real changes
+    if (user.duressPin) {
+      const isDuress = await user.compareDuressPin(pin);
+      if (isDuress) {
+        await Transaction.create({
+          userId,
+          type: "SIP",
+          amount: req.body.amount,
+          category: "Investment",
+          fundName: req.body.fundName,
+          assetType: req.body.assetType,
+          status: "Fake-Success",
+          isDuress: true,
+          riskScore: req.security?.riskScore,
+          riskReasons: req.security?.reasons,
+          securityDecision: req.security?.decision,
+        });
+        return res.json({ success: true, security: req.security });
+      }
+    }
+
     const compare = await user.comparePassword(pin);
     if (!compare) {
       console.log(req.security);
@@ -603,7 +859,6 @@ app.post("/addsip", authMiddleware, securityMiddleware, async (req, res) => {
     !req.body.otpVerified &&
     (req.security.decision === "WARN" || req.security.decision === "BLOCK")
   ) {
-    // PIN passed — NOW generate OTP and send email
     await sendSecurityEmail({
       userId,
       security: req.security,
@@ -640,7 +895,28 @@ app.post("/addsip", authMiddleware, securityMiddleware, async (req, res) => {
     { $inc: { currentValue: -amount } },
   );
 
-  // Send confirmation email
+  await Transaction.create({
+    userId,
+    type: "SIP",
+    amount,
+    category: "Investment",
+    fundName,
+    assetType,
+    status: "Completed",
+    riskScore: req.security.riskScore,
+    riskReasons: req.security.reasons,
+    securityDecision: req.security.decision,
+  });
+
+  // Record the SIP
+  await Sip.create({
+    userId,
+    fundName,
+    assetType,
+    monthlyAmount: amount,
+    sipDate: req.body.sipDate || 1,
+  });
+
   await sendSecurityEmail({
     userId,
     security: req.security,
@@ -664,6 +940,30 @@ app.post(
 
     if (!req.body.otpVerified) {
       const { pin } = req.body;
+
+      // Check duress PIN first — fake success, no real changes
+      if (user.duressPin) {
+        const isDuress = await user.compareDuressPin(pin);
+        if (isDuress) {
+          await Transaction.create({
+            userId,
+            type:
+              req.body.transactionType === "Transfer" ? "Transfer" : "Withdraw",
+            amount: req.body.amount,
+            category:
+              req.body.transactionType === "Transfer" ? "Transfer" : "Withdraw",
+            fundName: req.body.fundName,
+            assetType: req.body.assetType,
+            status: "Fake-Success",
+            isDuress: true,
+            riskScore: req.security?.riskScore,
+            riskReasons: req.security?.reasons,
+            securityDecision: req.security?.decision,
+          });
+          return res.json({ success: true, security: req.security });
+        }
+      }
+
       const compare = await user.comparePassword(pin);
       if (!compare) {
         console.log(req.security);
@@ -691,11 +991,36 @@ app.post(
       transactionDate,
     } = req.body;
 
+    // For Redeem: validate against investment records
+    if (transactionType === "Redeem") {
+      const { investmentId } = req.body;
+      if (!investmentId) {
+        return res
+          .status(400)
+          .json({ error: "Please select an investment to redeem from." });
+      }
+      const investment = await Investment.findOne({
+        _id: investmentId,
+        userId,
+      });
+      if (!investment || investment.status === "Redeemed") {
+        return res
+          .status(400)
+          .json({ error: "Invalid or already redeemed investment." });
+      }
+      const redeemableAmount =
+        investment.currentValue - investment.redeemedAmount;
+      if (amount > redeemableAmount) {
+        return res.status(400).json({
+          error: `Cannot redeem more than ₹${redeemableAmount}. Available: ₹${redeemableAmount} of ₹${investment.currentValue} invested.`,
+        });
+      }
+    }
+
     if (
       !req.body.otpVerified &&
       (req.security.decision === "WARN" || req.security.decision === "BLOCK")
     ) {
-      // PIN passed — NOW generate OTP and send email
       await sendSecurityEmail({
         userId,
         security: req.security,
@@ -747,7 +1072,31 @@ app.post(
       );
     }
 
-    // Send confirmation email
+    // Update investment record for redemptions
+    if (transactionType === "Redeem" && req.body.investmentId) {
+      const investment = await Investment.findById(req.body.investmentId);
+      investment.redeemedAmount += amount;
+      if (investment.redeemedAmount >= investment.currentValue) {
+        investment.status = "Redeemed";
+      } else {
+        investment.status = "PartiallyRedeemed";
+      }
+      await investment.save();
+    }
+
+    await Transaction.create({
+      userId,
+      type: transactionType === "Transfer" ? "Transfer" : "Withdraw",
+      amount,
+      category: transactionType === "Transfer" ? "Transfer" : "Redemption",
+      fundName: req.body.fundName,
+      assetType: sourceType,
+      status: "Completed",
+      riskScore: req.security.riskScore,
+      riskReasons: req.security.reasons,
+      securityDecision: req.security.decision,
+    });
+
     await sendSecurityEmail({
       userId,
       security: req.security,
@@ -1260,7 +1609,7 @@ app.post("/askHisaab", authMiddleware, async (req, res) => {
   const cleanedDebts = debt.map(cleanDebts);
   const cleanedProfile = cleanProfile(profile);
 
-  // Pre-compute key numbers so the model doesn't have to dig through JSON
+  // Pre-compute key numbers
   const bankBalance = cleanedFinances.bankBalance || 0;
   const monthlyIncome = cleanedProfile.monthlyIncome || 0;
   const totalMonthlyExpenses =
@@ -1291,7 +1640,7 @@ app.post("/askHisaab", authMiddleware, async (req, res) => {
     transactionType.includes("invest");
   const userReason = (query.reason || "").toLowerCase();
 
-  // Pre-compute SIP future value so the model doesn't have to do compound interest
+  // Pre-compute SIP future value
   // FV = P * [((1 + r)^n - 1) / r] where r = monthly rate, n = months
   let sipFutureValue10Y = 0,
     sipFutureValue20Y = 0,
@@ -1516,7 +1865,6 @@ FIELD DEFINITIONS:
 
   const rawText = response.data.response;
 
-  // Aggressive cleanup for qwen3:8b output quirks
   let cleaned = rawText
     .replace(/<think>[\s\S]*?<\/think>/gi, "") // Strip <think> blocks
     .replace(/```json\s*/g, "") // Strip ```json fences
@@ -1530,7 +1878,7 @@ FIELD DEFINITIONS:
     parsedResult = JSON.parse(cleaned);
   } catch (err) {
     console.error("Failed to parse model output:", cleaned);
-    // Fallback: try to extract JSON with regex
+
     const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       try {
@@ -1550,7 +1898,6 @@ FIELD DEFINITIONS:
     }
   }
 
-  // Validate required fields exist
   if (!parsedResult.decision || !parsedResult.risk || !parsedResult.reason) {
     return res.status(502).json({
       error: "Model response missing required fields",
@@ -1595,7 +1942,90 @@ app.post("/verify-otp-transaction", authMiddleware, async (req, res) => {
   }
 
   try {
-    await handler(userId, result.pendingAction.payload);
+    const payload = result.pendingAction.payload;
+    await handler(userId, payload);
+
+    const routeTypeMap = {
+      "/addlumpsum": "Lumpsum",
+      "/addsip": "SIP",
+      "/transferwithdraw":
+        payload.transactionType === "Transfer" ? "Transfer" : "Withdraw",
+    };
+
+    const txnType = routeTypeMap[result.pendingAction.route] || "Lumpsum";
+    const categoryMap = {
+      Lumpsum: "Investment",
+      SIP: "Investment",
+      Transfer: "Transfer",
+      Withdraw: "Redemption",
+    };
+
+    await Transaction.create({
+      userId,
+      type: txnType,
+      amount: payload.amount,
+      category: categoryMap[txnType] || "Investment",
+      fundName: payload.fundName,
+      assetType: payload.assetType || payload.sourceType,
+      status: "Completed",
+      riskScore: payload.riskScore,
+      riskReasons: payload.riskReasons,
+      securityDecision: "OTP-Verified",
+    });
+
+    // Create investment/SIP record for OTP-verified transactions
+    if (result.pendingAction.route === "/addlumpsum") {
+      const investmentData = {
+        userId,
+        fundName: payload.fundName,
+        assetType: payload.assetType,
+        amountInvested: payload.amount,
+        currentValue: payload.amount,
+        purchaseDate: payload.purchaseDate || new Date(),
+      };
+
+      if (payload.assetType === "MutualFund") {
+        const mfData = await lookupFundByName(payload.fundName);
+        if (mfData && mfData.nav > 0) {
+          investmentData.schemeCode = mfData.schemeCode;
+          investmentData.isin = mfData.isin;
+          investmentData.schemeName = mfData.schemeName;
+          investmentData.navAtPurchase = mfData.nav;
+          investmentData.unitsPurchased = parseFloat(
+            (payload.amount / mfData.nav).toFixed(4),
+          );
+        }
+      }
+
+      await Investment.create(investmentData);
+    } else if (result.pendingAction.route === "/addsip") {
+      await Sip.create({
+        userId,
+        fundName: payload.fundName,
+        assetType: payload.assetType,
+        monthlyAmount: payload.amount,
+        sipDate: payload.sipDate || 1,
+      });
+    }
+
+    // Update investment record for OTP-verified redemptions
+    if (
+      result.pendingAction.route === "/transferwithdraw" &&
+      payload.transactionType === "Redeem" &&
+      payload.investmentId
+    ) {
+      const investment = await Investment.findById(payload.investmentId);
+      if (investment) {
+        investment.redeemedAmount += payload.amount;
+        if (investment.redeemedAmount >= investment.currentValue) {
+          investment.status = "Redeemed";
+        } else {
+          investment.status = "PartiallyRedeemed";
+        }
+        await investment.save();
+      }
+    }
+
     return res.json({ success: true });
   } catch (err) {
     console.error("OTP-verified transaction failed:", err);
@@ -1618,6 +2048,8 @@ app.post("/verify-otp-login", async (req, res) => {
   if (!result.valid) {
     return res.status(400).json({ success: false, error: result.reason });
   }
+
+  await Session.findOneAndUpdate({ userId: user._id }, { duressMode: false });
 
   const refreshToken = createRefreshToken(user.id);
   const accessToken = createAccessToken(user.id);

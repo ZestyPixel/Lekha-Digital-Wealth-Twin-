@@ -211,7 +211,14 @@ async function sendSecurityEmail({ userId, security, route, payload }) {
       userId,
       plainCode: otpCode,
       purpose: "transaction",
-      pendingAction: { route, payload },
+      pendingAction: {
+        route,
+        payload: {
+          ...payload,
+          riskScore: security.riskScore,
+          riskReasons: security.reasons,
+        },
+      },
     });
   }
 }

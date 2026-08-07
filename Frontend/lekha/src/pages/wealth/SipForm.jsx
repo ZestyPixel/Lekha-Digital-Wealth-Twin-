@@ -30,6 +30,7 @@ export default function SIPInvestment() {
   const [asked, setAsked] = useState(false);
   const [answer, setAnswer] = useState("");
   const [otpContext, setOtpContext] = useState(null);
+  const [sips, setSips] = useState([]);
 
   const validate = (values) => {
     const errors = {};
@@ -64,6 +65,19 @@ export default function SIPInvestment() {
       top: 100,
       behavior: "smooth",
     });
+  }, []);
+
+  useEffect(() => {
+    async function fetchSips() {
+      try {
+        const res = await requestWithAuth("/sips");
+        const data = await res.json();
+        setSips(data);
+      } catch (err) {
+        console.error("Failed to fetch SIPs", err);
+      }
+    }
+    fetchSips();
   }, []);
 
   async function askHisaab() {
@@ -338,6 +352,55 @@ export default function SIPInvestment() {
           <p>
             <strong>Alternative:</strong> {answer.alternative}
           </p>
+        </div>
+      )}
+
+      {sips.length > 0 && (
+        <div className="investments-list">
+          <h3>Your Active SIPs</h3>
+          <table className="investments-table">
+            <thead>
+              <tr>
+                <th>Fund Name</th>
+                <th>Type</th>
+                <th>Monthly</th>
+                <th>SIP Date</th>
+                <th>Status</th>
+                <th>Started</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sips.map((sip) => (
+                <tr key={sip._id}>
+                  <td>{sip.fundName}</td>
+                  <td>{sip.assetType}</td>
+                  <td>₹{Number(sip.monthlyAmount).toLocaleString("en-IN")}</td>
+                  <td>
+                    {sip.sipDate}
+                    {sip.sipDate === 1
+                      ? "st"
+                      : sip.sipDate === 2
+                        ? "nd"
+                        : sip.sipDate === 3
+                          ? "rd"
+                          : "th"}
+                  </td>
+                  <td>
+                    <span
+                      className={`status-badge ${sip.status.toLowerCase()}`}
+                    >
+                      {sip.status}
+                    </span>
+                  </td>
+                  <td>
+                    {new Date(
+                      sip.startDate || sip.createdAt,
+                    ).toLocaleDateString("en-IN")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

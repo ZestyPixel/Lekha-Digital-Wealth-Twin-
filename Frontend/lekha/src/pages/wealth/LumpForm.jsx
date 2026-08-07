@@ -56,12 +56,26 @@ export default function LumpsumInvestment() {
   const [asked, setAsked] = useState(false);
   const [answer, setAnswer] = useState("");
   const [otpContext, setOtpContext] = useState(null);
+  const [investments, setInvestments] = useState([]);
 
   useEffect(() => {
     window.scrollTo({
       top: 120,
       behavior: "smooth",
     });
+  }, []);
+
+  useEffect(() => {
+    async function fetchInvestments() {
+      try {
+        const res = await requestWithAuth("/investments");
+        const data = await res.json();
+        setInvestments(data);
+      } catch (err) {
+        console.error("Failed to fetch investments", err);
+      }
+    }
+    fetchInvestments();
   }, []);
 
   async function askHisaab() {
@@ -335,6 +349,76 @@ export default function LumpsumInvestment() {
           <p>
             <strong>Alternative:</strong> {answer.alternative}
           </p>
+        </div>
+      )}
+
+      {investments.length > 0 && (
+        <div className="investments-list">
+          <h3>Your Lumpsum Investments</h3>
+          <table className="investments-table">
+            <thead>
+              <tr>
+                <th>Fund Name</th>
+                <th>Type</th>
+                <th>Invested</th>
+                <th>Units</th>
+                <th>Current Value</th>
+                <th>Returns</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {investments.map((inv) => {
+                const hasReturns = inv.liveValue !== undefined;
+                const isPositive = (inv.absoluteReturns || 0) >= 0;
+                return (
+                  <tr key={inv._id}>
+                    <td>{inv.schemeName || inv.fundName}</td>
+                    <td>{inv.assetType}</td>
+                    <td>
+                      ₹{Number(inv.amountInvested).toLocaleString("en-IN")}
+                    </td>
+                    <td>
+                      {inv.unitsPurchased ? inv.unitsPurchased.toFixed(2) : "—"}
+                    </td>
+                    <td>
+                      {hasReturns
+                        ? `₹${inv.liveValue.toLocaleString("en-IN")}`
+                        : `₹${Number(inv.currentValue).toLocaleString("en-IN")}`}
+                    </td>
+                    <td>
+                      {hasReturns ? (
+                        <span
+                          style={{
+                            color: isPositive ? "#1a7a1a" : "#c62828",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {isPositive ? "+" : ""}₹
+                          {inv.absoluteReturns.toLocaleString("en-IN")} (
+                          {isPositive ? "+" : ""}
+                          {inv.returnsPercent}%)
+                        </span>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td>
+                      <span
+                        className={`status-badge ${inv.status.toLowerCase()}`}
+                      >
+                        {inv.status}
+                      </span>
+                    </td>
+                    <td>
+                      {new Date(inv.purchaseDate).toLocaleDateString("en-IN")}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

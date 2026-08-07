@@ -48,6 +48,7 @@ export default function Profile() {
       number: "",
       emergencyEmail: "",
       emergencyNumber: "",
+      duressPin: "",
     },
     validate,
     onSubmit: async (values) => {
@@ -291,25 +292,6 @@ export default function Profile() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="savings" className="email-and-password">
-              Savings/Investments Budget:
-            </label>
-            <input
-              id="savings"
-              name="savings"
-              className="email-bar"
-              type="number"
-              placeholder="Enter budget for Savings/Investments"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.savings}
-            />
-            {formik.errors.savings && (
-              <div className="error">{formik.errors.savings}</div>
-            )}
-          </div>
-
-          <div className="form-group">
             <label htmlFor="transport" className="email-and-password">
               Transport Budget:
             </label>
@@ -344,6 +326,44 @@ export default function Profile() {
             />
             {formik.errors.misc && (
               <div className="error">{formik.errors.misc}</div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="savings" className="email-and-password">
+              Savings/Investments Budget:
+            </label>
+            <input
+              id="savings"
+              name="savings"
+              className="email-bar"
+              type="number"
+              placeholder="Enter budget for Savings/Investments"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.savings}
+            />
+            {formik.errors.savings && (
+              <div className="error">{formik.errors.savings}</div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="duressPin" className="email-and-password">
+              Duress Pin:
+            </label>
+            <input
+              id="duressPin"
+              name="duressPin"
+              className="email-bar"
+              type="number"
+              placeholder="Enter Duress Pin"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.duressPin}
+            />
+            {formik.errors.misc && (
+              <div className="error">{formik.errors.duressPin}</div>
             )}
           </div>
 

@@ -90,3 +90,98 @@
         margin-left: 0px;
     }
 }
+
+.investments-list {
+  width: 100%;
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+.investments-list h3 {
+  color: #0033cc;
+  font-size: 22px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.investments-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 51, 204, 0.1);
+}
+
+.investments-table thead {
+  background: linear-gradient(to right, #0033cc, #4a7dff);
+  color: white;
+}
+
+.investments-table th {
+  padding: 12px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.investments-table td {
+  padding: 10px;
+  font-size: 13px;
+  border-bottom: 1px solid #eee;
+}
+
+.investments-table tbody tr:hover {
+  background: #f0f4ff;
+}
+
+.status-badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.active {
+  background: #e6f9e6;
+  color: #1a7a1a;
+}
+
+.status-badge.partiallyredeemed {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.status-badge.redeemed {
+  background: #fce4ec;
+  color: #c62828;
+}
+
+.status-badge.paused {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.status-badge.stopped {
+  background: #fce4ec;
+  color: #c62828;
+}
+
+.dark-theme .investments-list h3 {
+  color: #6fa3ff;
+}
+
+.dark-theme .investments-table {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .investments-table td {
+  border-bottom-color: #333;
+  color: #ddd;
+}
+
+.dark-theme .investments-table tbody tr:hover {
+  background: #1a2a4a;
+}

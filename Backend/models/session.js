@@ -39,6 +39,10 @@ const sessionSchema = new mongoose.Schema({
     route: { type: String },
     payload: { type: mongoose.Schema.Types.Mixed },
   },
+  duressMode: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("Session", sessionSchema);

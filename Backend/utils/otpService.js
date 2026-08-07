@@ -33,6 +33,13 @@ async function storeOtp({ userId, plainCode, purpose, pendingAction = null }) {
 async function verifyOtp({ userId, purpose, submittedCode }) {
   const session = await Session.findOne({ userId });
 
+  if (!session || !session.otpCode) {
+    return {
+      valid: false,
+      reason: "No active verification code. Request a new one.",
+    };
+  }
+
   if (session.otpExpiresAt < new Date()) {
     await clearOtp(userId);
     return { valid: false, reason: "Code expired. Request a new one." };
@@ -46,7 +53,7 @@ async function verifyOtp({ userId, purpose, submittedCode }) {
     };
   }
 
-  const match = await bcrypt.compare(submittedCode, session.otpCode);
+  const match = await bcrypt.compare(String(submittedCode), session.otpCode);
 
   if (!match) {
     session.otpVerifyAttempts += 1;

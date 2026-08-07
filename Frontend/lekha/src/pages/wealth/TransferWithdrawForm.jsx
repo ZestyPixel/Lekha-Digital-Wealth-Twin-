@@ -175,6 +175,7 @@ export default function TransferWithdraw() {
   const [asked, setAsked] = useState(false);
   const [answer, setAnswer] = useState("");
   const [otpContext, setOtpContext] = useState(null);
+  const [activeInvestments, setActiveInvestments] = useState([]);
 
   const validate = (values) => {
     const errors = {};
@@ -187,8 +188,8 @@ export default function TransferWithdraw() {
       errors.amount = "Enter a valid amount";
     }
 
-    if (values.transactionType === "Redeem" && !values.assetType) {
-      errors.assetType = "Required";
+    if (values.transactionType === "Redeem" && !values.investmentId) {
+      errors.investmentId = "Please select an investment to redeem";
     }
 
     if (values.transactionType === "Transfer") {
@@ -230,12 +231,13 @@ export default function TransferWithdraw() {
   async function askHisaab() {
     setAsked(true);
     setAnswer("");
-    const { amount, assetType, reason, fundName, transactionType } = formik.values;
+    const { amount, assetType, reason, fundName, transactionType } =
+      formik.values;
     let action;
-    if (transactionType == "Redeem"){
-      action = "redeem"
-    } else{
-      action = "transfer"
+    if (transactionType == "Redeem") {
+      action = "redeem";
+    } else {
+      action = "transfer";
     }
     const query = {
       action,
@@ -257,6 +259,7 @@ export default function TransferWithdraw() {
   const formik = useFormik({
     initialValues: {
       transactionType: "",
+      investmentId: "",
       amount: "",
       assetType: "",
       destinationType: "",
@@ -308,6 +311,21 @@ export default function TransferWithdraw() {
       setSubmitting(false);
     },
   });
+
+  useEffect(() => {
+    if (formik.values.transactionType === "Redeem") {
+      async function fetchActiveInvestments() {
+        try {
+          const res = await requestWithAuth("/active-investments");
+          const data = await res.json();
+          setActiveInvestments(data);
+        } catch (err) {
+          console.error("Failed to fetch investments", err);
+        }
+      }
+      fetchActiveInvestments();
+    }
+  }, [formik.values.transactionType]);
 
   const isTransfer = formik.values.transactionType === "Transfer";
   const isRedeem = formik.values.transactionType === "Redeem";
@@ -397,26 +415,50 @@ export default function TransferWithdraw() {
 
           {isRedeem && (
             <div className="form-group">
-              <label htmlFor="assetType" className="email-and-password">
+              <label htmlFor="investmentId" className="email-and-password">
                 Redeem From:
               </label>
-              <select
-                id="assetType"
-                name="assetType"
-                className="email-bar"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.assetType}
-              >
-                <option value="" disabled>
-                  What are you redeeming?
-                </option>
-                <option value="MutualFund">Mutual Fund</option>
-                <option value="Gold">Gold</option>
-                <option value="Stocks">Stocks</option>
-              </select>
-              {formik.touched.assetType && formik.errors.assetType && (
-                <div className="error">{formik.errors.assetType}</div>
+              {activeInvestments.length === 0 ? (
+                <p className="error">
+                  No active investments to redeem from. Make a lumpsum
+                  investment first.
+                </p>
+              ) : (
+                <select
+                  id="investmentId"
+                  name="investmentId"
+                  className="email-bar"
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    const selected = activeInvestments.find(
+                      (inv) => inv._id === e.target.value,
+                    );
+                    if (selected) {
+                      formik.setFieldValue("fundName", selected.fundName);
+                      formik.setFieldValue("assetType", selected.assetType);
+                      formik.setFieldValue("sourceType", selected.assetType);
+                    }
+                  }}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.investmentId || ""}
+                >
+                  <option value="" disabled>
+                    Select an investment to redeem
+                  </option>
+                  {activeInvestments.map((inv) => {
+                    const available =
+                      inv.currentValue - (inv.redeemedAmount || 0);
+                    return (
+                      <option key={inv._id} value={inv._id}>
+                        {inv.fundName} ({inv.assetType}) — ₹
+                        {available.toLocaleString("en-IN")} available
+                      </option>
+                    );
+                  })}
+                </select>
+              )}
+              {formik.touched.investmentId && formik.errors.investmentId && (
+                <div className="error">{formik.errors.investmentId}</div>
               )}
             </div>
           )}
