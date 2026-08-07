@@ -4,7 +4,7 @@
     align-items: flex-start;
     flex-wrap: wrap;
     flex-direction:row;
-    column-gap: 0.5cm;
+    column-gap: 0.4cm;
     row-gap: 0.5cm;
     transition: transform 0.5s ease-in-out;
     padding-bottom: 3.125rem;

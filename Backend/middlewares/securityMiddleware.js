@@ -15,7 +15,8 @@ const oAuth2Client = new google.auth.OAuth2(
 oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
 const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
 
-// Add location check, transaction frequency, device fingerprint, failed login attempts
+// Middleware: calculates risk score and composes email — does NOT send it.
+// OTP + email are deferred until after PIN verification (via sendSecurityEmail).
 async function securityMiddleware(req, res, next) {
   try {
     const id = req.userId;
@@ -57,14 +58,9 @@ async function securityMiddleware(req, res, next) {
     }
 
     if (amount > 2 * user.behavioralBaseline.averageTransactionAmount) {
-      riskScore += 20;  
+      riskScore += 20;
       reasons.push("Unusual transaction amount");
     }
-
-    // if (user.otpAttempts > 2) {
-    //     riskScore += 20;
-    //     reasons.push("Multiple OTP attempts");
-    // }
 
     if (amount % 10000 === 0) {
       riskScore += 20;
@@ -123,7 +119,7 @@ async function securityMiddleware(req, res, next) {
       if (decision === "ALLOW") {
         subjectLine = "✅ Transaction Successful !";
         body = ` Your bank transfer dated <b>${purchaseDate}</b> amounting <b>${formatCurrency(amount)}</b> to Account Number: 
-                <b>${destAccountNumber}</b>, IFSC: <b>${destIfsc}, Bank: <b>${destBankName} has been successfully processed. `;
+                <b>${destAccountNumber}</b>, IFSC: <b>${destIfsc}</b>, Bank: <b>${destBankName}</b> has been successfully processed. `;
       } else if (decision === "WARN") {
         subjectLine = "⚠️ Transaction Blocked Temporarily !";
         body = ` Your bank transfer dated <b>${purchaseDate}</b> amounting <b>${formatCurrency(amount)}</b> to 
@@ -132,7 +128,7 @@ async function securityMiddleware(req, res, next) {
                 `;
       } else {
         subjectLine = "🚨 Transaction Blocked !";
-        body = ` Your bank transfer dated${purchaseDate} amounting <b>${formatCurrency(amount)} to 
+        body = ` Your bank transfer dated <b>${purchaseDate}</b> amounting <b>${formatCurrency(amount)}</b> to 
                 Account Number: <b>${destAccountNumber}</b>, IFSC: <b>${destIfsc}</b>, Bank: <b>${destBankName}</b> has been blocked due to ${reasonList}
                 Please review the transaction or contact support if you believe this is an error.
                 `;
@@ -157,52 +153,13 @@ async function securityMiddleware(req, res, next) {
       }
     }
 
-    let otpCode = null;
-    if (decision === "WARN" || decision === "BLOCK") {
-      otpCode = generateOtpCode();
-      body += `
-                <p>Your verification code to confirm this transaction is:
-                <b style="font-size: 18px; letter-spacing: 2px;">${otpCode}</b></p>
-                <p>This code expires in 5 minutes.</p>
-            `;
-    }
-
-    try {
-      const mail = new MailComposer({
-        from: `"Hisaab: Your Finance Assistant" <${process.env.GMAIL_USER}>`,
-        to: email,
-        subject: subjectLine,
-        html: body,
-      });
-      const msg = await mail.compile().build();
-      const encodedMessage = Buffer.from(msg)
-        .toString("base64")
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "");
-
-      await gmail.users.messages.send({
-        userId: "me",
-        requestBody: { raw: encodedMessage },
-      });
-      console.log("Email sent");
-    } catch (error) {
-      console.error("Error sending email", error);
-    }
-
-    if (otpCode) {
-      await storeOtp({
-        userId: id,
-        plainCode: otpCode,
-        purpose: "transaction",
-        pendingAction: { route: req.originalUrl, payload: req.body },
-      });
-    }
-
     req.security = {
       riskScore,
       decision,
       reasons,
+      email,
+      subjectLine,
+      emailBody: body,
     };
 
     next();
@@ -212,4 +169,51 @@ async function securityMiddleware(req, res, next) {
   }
 }
 
-module.exports = securityMiddleware;
+async function sendSecurityEmail({ userId, security, route, payload }) {
+  const { email, subjectLine, decision } = security;
+  let body = security.emailBody;
+
+  let otpCode = null;
+  if (decision === "WARN" || decision === "BLOCK") {
+    otpCode = generateOtpCode();
+    body += `
+                <p>Your verification code to confirm this transaction is:
+                <b style="font-size: 18px; letter-spacing: 2px;">${otpCode}</b></p>
+                <p>This code expires in 5 minutes.</p>
+            `;
+  }
+
+  try {
+    const mail = new MailComposer({
+      from: `"Hisaab: Your Finance Assistant" <${process.env.GMAIL_USER}>`,
+      to: email,
+      subject: subjectLine,
+      html: body,
+    });
+    const msg = await mail.compile().build();
+    const encodedMessage = Buffer.from(msg)
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+
+    await gmail.users.messages.send({
+      userId: "me",
+      requestBody: { raw: encodedMessage },
+    });
+    console.log("Email sent");
+  } catch (error) {
+    console.error("Error sending email", error);
+  }
+
+  if (otpCode) {
+    await storeOtp({
+      userId,
+      plainCode: otpCode,
+      purpose: "transaction",
+      pendingAction: { route, payload },
+    });
+  }
+}
+
+module.exports = { securityMiddleware, sendSecurityEmail };

@@ -121,13 +121,19 @@
 }
 
 .dark-theme .header {
-  background-color: black;
+  background-color: #1a1a1a;
   color: white;
+  border-bottom-color: #333;
 }
 
 .dark-theme .hamburger-icon,
-.dark-theme .profile-button {
-  filter: grayscale(100%) invert(100%) brightness(300%);
+.dark-theme .profile-icon {
+  filter: brightness(0) invert(1);
+}
+
+.dark-theme .hamburger-button:hover,
+.dark-theme .profile-button:hover {
+  background-color: #333;
 }
 
 .lang-switcher {
@@ -153,4 +159,21 @@
 
 .lang-switcher:focus {
   box-shadow: 0 0 0 2px rgba(0, 51, 204, 0.3);
+}
+
+.dark-theme .lang-switcher {
+  background-color: #1a1a1a;
+  color: #6b9fff;
+  border-color: #6b9fff;
+}
+
+.dark-theme .lang-switcher:hover {
+  background-color: #0033cc;
+  color: white;
+}
+
+.dark-theme .log {
+  background-color: #1a1a1a;
+  color: #ff6b6b;
+  border-color: #6b9fff;
 }

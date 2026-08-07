@@ -44,7 +44,10 @@ const ai = new GoogleGenAI({});
 const { isAuth } = require("./utils/isAuth.js");
 const bcrypt = require("bcrypt");
 const authMiddleware = require("./middlewares/authMiddleware.js");
-const securityMiddleware = require("./middlewares/securityMiddleware.js");
+const {
+  securityMiddleware,
+  sendSecurityEmail,
+} = require("./middlewares/securityMiddleware.js");
 
 const {
   cleanAsset,
@@ -430,10 +433,13 @@ app.get("/advice", authMiddleware, cacheFix, async (req, res) => {
     (cleanedProfile.misc || 0) +
     (cleanedProfile.obligations || 0);
   // Ratios are stored as decimals (0.3 = 30%), convert to percentage for display
-  const savingsRate = Math.round((cleanedFinances.savingsRate || 0) * 1000) / 10;
-  const emergencyMonths = Math.round((cleanedFinances.emergencyMonths || 0) * 10) / 10;
+  const savingsRate =
+    Math.round((cleanedFinances.savingsRate || 0) * 1000) / 10;
+  const emergencyMonths =
+    Math.round((cleanedFinances.emergencyMonths || 0) * 10) / 10;
   const dtiRatio = Math.round((cleanedFinances.dtiRatio || 0) * 1000) / 10;
-  const investmentRatio = Math.round((cleanedFinances.investmentRatio || 0) * 1000) / 10;
+  const investmentRatio =
+    Math.round((cleanedFinances.investmentRatio || 0) * 1000) / 10;
   const hasBadDebt = cleanedFinances.hasBadDebt || false;
   const totalEMI = cleanedFinances.totalMonthlyEMI || 0;
   const score = cleanedFinances.score || 0;
@@ -475,7 +481,7 @@ Monthly Profile: ${JSON.stringify(cleanedProfile, null, 2)}
 - Do NOT use generic phrases like "consider reviewing" or "you might want to". Be direct.
 - Return only the advice text. No quotes, no JSON, no explanation.
 `;
-console.log(content);
+  console.log(content);
   const response = await axios.post("http://localhost:11434/api/generate", {
     model: "gemma3:4b",
     prompt: content,
@@ -520,6 +526,12 @@ app.post(
       !req.body.otpVerified &&
       (req.security.decision === "WARN" || req.security.decision === "BLOCK")
     ) {
+      await sendSecurityEmail({
+        userId,
+        security: req.security,
+        route: req.originalUrl,
+        payload: req.body,
+      });
       return res.json({
         success: false,
         otpRequired: true,
@@ -552,6 +564,14 @@ app.post(
       { $inc: { currentValue: -amount } },
     );
 
+    // Send confirmation email (no OTP for ALLOW, just notification)
+    await sendSecurityEmail({
+      userId,
+      security: req.security,
+      route: req.originalUrl,
+      payload: req.body,
+    });
+
     res.json({
       success: true,
       security: req.security,
@@ -583,6 +603,13 @@ app.post("/addsip", authMiddleware, securityMiddleware, async (req, res) => {
     !req.body.otpVerified &&
     (req.security.decision === "WARN" || req.security.decision === "BLOCK")
   ) {
+    // PIN passed — NOW generate OTP and send email
+    await sendSecurityEmail({
+      userId,
+      security: req.security,
+      route: req.originalUrl,
+      payload: req.body,
+    });
     return res.json({
       success: false,
       otpRequired: true,
@@ -612,6 +639,14 @@ app.post("/addsip", authMiddleware, securityMiddleware, async (req, res) => {
     { userId, type: "Bank Account" },
     { $inc: { currentValue: -amount } },
   );
+
+  // Send confirmation email
+  await sendSecurityEmail({
+    userId,
+    security: req.security,
+    route: req.originalUrl,
+    payload: req.body,
+  });
 
   res.json({
     success: true,
@@ -660,6 +695,13 @@ app.post(
       !req.body.otpVerified &&
       (req.security.decision === "WARN" || req.security.decision === "BLOCK")
     ) {
+      // PIN passed — NOW generate OTP and send email
+      await sendSecurityEmail({
+        userId,
+        security: req.security,
+        route: req.originalUrl,
+        payload: req.body,
+      });
       return res.json({
         success: false,
         otpRequired: true,
@@ -704,6 +746,14 @@ app.post(
         { $inc: { currentValue: amount } },
       );
     }
+
+    // Send confirmation email
+    await sendSecurityEmail({
+      userId,
+      security: req.security,
+      route: req.originalUrl,
+      payload: req.body,
+    });
 
     res.json({
       success: true,
@@ -940,11 +990,14 @@ app.post("/chatbot", authMiddleware, async (req, res) => {
   const totalEMI = cleanedFinances.totalMonthlyEMI || 0;
   const monthlyFreeSurplus = monthlyIncome - totalExpenses - totalEMI;
   // Ratios are stored as decimals (0.3 = 30%), convert to percentage for display
-  const emergencyMonths = Math.round((cleanedFinances.emergencyMonths || 0) * 10) / 10;
+  const emergencyMonths =
+    Math.round((cleanedFinances.emergencyMonths || 0) * 10) / 10;
   const netWorth = cleanedFinances.netWorth || 0;
-  const savingsRate = Math.round((cleanedFinances.savingsRate || 0) * 1000) / 10;
+  const savingsRate =
+    Math.round((cleanedFinances.savingsRate || 0) * 1000) / 10;
   const dtiRatio = Math.round((cleanedFinances.dtiRatio || 0) * 1000) / 10;
-  const investmentRatio = Math.round((cleanedFinances.investmentRatio || 0) * 1000) / 10;
+  const investmentRatio =
+    Math.round((cleanedFinances.investmentRatio || 0) * 1000) / 10;
   const hasBadDebt = cleanedFinances.hasBadDebt || false;
   const score = cleanedFinances.score || 0;
 
@@ -1221,7 +1274,8 @@ app.post("/askHisaab", authMiddleware, async (req, res) => {
   const totalMonthlyEMI = cleanedFinances.totalMonthlyEMI || 0;
   const monthlyFreeSurplus =
     monthlyIncome - totalMonthlyExpenses - totalMonthlyEMI;
-  const emergencyMonths = Math.round((cleanedFinances.emergencyMonths || 0) * 10) / 10;
+  const emergencyMonths =
+    Math.round((cleanedFinances.emergencyMonths || 0) * 10) / 10;
   const netWorth = cleanedFinances.netWorth || 0;
   const hasBadDebt = cleanedFinances.hasBadDebt || false;
   const transactionAmount = Number(query.amount) || 0;

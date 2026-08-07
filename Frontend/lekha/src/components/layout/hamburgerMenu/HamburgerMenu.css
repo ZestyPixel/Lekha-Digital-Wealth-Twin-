@@ -129,13 +129,36 @@
 }
 
 .dark-theme .sidebar {
-  background-color: black;
+  background-color: #1a1a1a;
   color: white;
+  border-right: 1px solid #333;
 }
 
 .dark-theme .dark-icon,
 .dark-theme .home-icon {
-  filter: grayscale(100%) invert(100%) brightness(300%);
+  filter: brightness(0) invert(1);
+}
+
+.dark-theme .goals-icon {
+  filter: none;
+  background: white;
+  padding: 2px;
+}
+
+.dark-theme .debt-mode-button i {
+  color: white;
+}
+
+.dark-theme .home-icon:hover,
+.dark-theme .dark-mode-button:hover,
+.dark-theme .goals-button:hover,
+.dark-theme .debt-mode-button:hover {
+  background-color: #333;
+}
+
+.dark-theme .tooltip {
+  background-color: white;
+  color: black;
 }
 
 .debt-mode-button {

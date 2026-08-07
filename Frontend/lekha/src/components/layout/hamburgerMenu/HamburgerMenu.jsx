@@ -1,9 +1,23 @@
+import { useState, useEffect } from "react";
 import "./HamburgerMenu.css";
 import { Link } from "react-router-dom";
 
 function Hamburger({ isOpen }) {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("darkMode") === "true";
+    if (saved) {
+      document.body.classList.add("dark-theme");
+      setIsDark(true);
+    }
+  }, []);
+
   const toggleDark = () => {
-    document.body.classList.toggle("dark-theme");
+    const next = !isDark;
+    document.body.classList.toggle("dark-theme", next);
+    localStorage.setItem("darkMode", String(next));
+    setIsDark(next);
   };
 
   return (
@@ -34,7 +48,7 @@ function Hamburger({ isOpen }) {
               src="/images/dark-mode-6682.svg"
               alt="dark mode"
             />
-            <div className="tooltip">Dark Mode</div>
+            <div className="tooltip">{isDark ? "Light Mode" : "Dark Mode"}</div>
           </button>
         </div>
         <div className="debt-mode">
