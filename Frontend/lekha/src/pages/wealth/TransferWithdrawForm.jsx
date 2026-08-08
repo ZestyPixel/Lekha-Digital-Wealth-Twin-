@@ -214,6 +214,18 @@ export default function TransferWithdraw() {
       }
     }
 
+    if (values.transactionType === "MakeTransaction") {
+      if (!values.description) {
+        errors.description = "Required";
+      } else if (values.description.length > 50) {
+        errors.description = "Must be 50 characters or less";
+      }
+
+      if (!values.category) {
+        errors.category = "Required";
+      }
+    }
+
     if (!values.transactionDate) {
       errors.transactionDate = "Required";
     }
@@ -269,6 +281,8 @@ export default function TransferWithdraw() {
       transactionDate: "",
       reason: "",
       fundName: "",
+      description: "",
+      category: "",
       pin: "",
     },
     validate,
@@ -329,6 +343,7 @@ export default function TransferWithdraw() {
 
   const isTransfer = formik.values.transactionType === "Transfer";
   const isRedeem = formik.values.transactionType === "Redeem";
+  const isMakeTransaction = formik.values.transactionType === "MakeTransaction";
 
   if (formik.isSubmitting) {
     // Show loading while waiting for response
@@ -387,6 +402,7 @@ export default function TransferWithdraw() {
               <option value="Redeem">
                 Redeem (Mutual Fund / Gold / Stocks)
               </option>
+              <option value="MakeTransaction">Make Transaction</option>
             </select>
             {formik.touched.transactionType &&
               formik.errors.transactionType && (
@@ -495,42 +511,98 @@ export default function TransferWithdraw() {
             </>
           )}
 
-          <div className="form-group">
-            <label htmlFor="fundName" className="email-and-password">
-              Asset Name:
-            </label>
-            <input
-              id="fundName"
-              name="fundName"
-              className="email-bar"
-              type="text"
-              placeholder="Enter fund name"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.fundName}
-            />
-            {formik.touched.fundName && formik.errors.fundName && (
-              <div className="error">{formik.errors.fundName}</div>
-            )}
-          </div>
+          {!isMakeTransaction && (
+            <div className="form-group">
+              <label htmlFor="fundName" className="email-and-password">
+                Asset Name:
+              </label>
+              <input
+                id="fundName"
+                name="fundName"
+                className="email-bar"
+                type="text"
+                placeholder="Enter fund name"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.fundName}
+              />
+              {formik.touched.fundName && formik.errors.fundName && (
+                <div className="error">{formik.errors.fundName}</div>
+              )}
+            </div>
+          )}
 
-          <div className="form-group">
-            <label htmlFor="reason" className="email-and-password">
-              Reason:
-            </label>
-            <input
-              id="reason"
-              name="reason"
-              className="email-bar"
-              placeholder="Enter reason"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.reason}
-            />
-            {formik.touched.reason && formik.errors.reason && (
-              <div className="error">{formik.errors.reason}</div>
-            )}
-          </div>
+          {isMakeTransaction && (
+            <>
+              <div className="form-group">
+                <label htmlFor="description" className="email-and-password">
+                  Description:
+                </label>
+                <input
+                  id="description"
+                  name="description"
+                  className="email-bar"
+                  type="text"
+                  placeholder="Ex: Chai Garam, Mall"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.description}
+                />
+                {formik.touched.description && formik.errors.description && (
+                  <div className="error">{formik.errors.description}</div>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="category" className="email-and-password">
+                  Expense Category:
+                </label>
+                <select
+                  id="category"
+                  name="category"
+                  className="email-bar"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.category}
+                >
+                  <option value="" disabled>
+                    Select a category
+                  </option>
+                  <option value="Housing">Housing & Utilities</option>
+                  <option value="Food">Food & Dining</option>
+                  <option value="Transportation">Transportation</option>
+                  <option value="Lifestyle">Lifestyle & Leisure</option>
+                  <option value="Health">Health & Wellness</option>
+                  <option value="Financial">Financial Obligations</option>
+                  <option value="Savings">Savings & Investments</option>
+                  <option value="Miscellaneous">Miscellaneous</option>
+                </select>
+                {formik.touched.category && formik.errors.category && (
+                  <div className="error">{formik.errors.category}</div>
+                )}
+              </div>
+            </>
+          )}
+
+          {!isMakeTransaction && (
+            <div className="form-group">
+              <label htmlFor="reason" className="email-and-password">
+                Reason:
+              </label>
+              <input
+                id="reason"
+                name="reason"
+                className="email-bar"
+                placeholder="Enter reason"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.reason}
+              />
+              {formik.touched.reason && formik.errors.reason && (
+                <div className="error">{formik.errors.reason}</div>
+              )}
+            </div>
+          )}
 
           <div className="form-group">
             <label htmlFor="transactionDate" className="email-and-password">
@@ -575,7 +647,9 @@ export default function TransferWithdraw() {
                 ? "Transfer Funds"
                 : isRedeem
                   ? "Redeem Asset"
-                  : "Submit"}
+                  : isMakeTransaction
+                    ? "Make Transaction"
+                    : "Submit"}
             </button>
             {isRedeem && (
               <button className="ask-hisaab" type="button" onClick={askHisaab}>

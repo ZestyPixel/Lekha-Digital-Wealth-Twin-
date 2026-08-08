@@ -339,7 +339,7 @@ export default function LumpsumInvestment() {
             <strong>Risk:</strong> {answer.risk}
           </p>
           <p>
-            <strong>Reason:</strong> {answer.reason}
+            <strong>To Note:</strong> {answer.reason}
           </p>
           {answer.impact && (
             <p>

@@ -59,12 +59,13 @@ userSchema.pre("save", async function () {
 });
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+  if (!candidatePassword || !this.password) return false;
+  return bcrypt.compare(String(candidatePassword), this.password);
 };
 
 userSchema.methods.compareDuressPin = async function (candidatePin) {
-  if (!this.duressPin) return false;
-  return bcrypt.compare(candidatePin, this.duressPin);
+  if (!candidatePin || !this.duressPin) return false;
+  return bcrypt.compare(String(candidatePin), this.duressPin);
 };
 
 module.exports = mongoose.model("User", userSchema);

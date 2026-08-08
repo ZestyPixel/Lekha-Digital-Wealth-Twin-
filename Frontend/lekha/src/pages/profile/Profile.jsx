@@ -362,7 +362,7 @@ export default function Profile() {
               onBlur={formik.handleBlur}
               value={formik.values.duressPin}
             />
-            {formik.errors.misc && (
+            {formik.errors.duressPin && (
               <div className="error">{formik.errors.duressPin}</div>
             )}
           </div>

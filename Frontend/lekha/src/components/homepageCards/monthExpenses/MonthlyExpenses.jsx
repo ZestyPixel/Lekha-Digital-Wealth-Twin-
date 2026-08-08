@@ -82,6 +82,7 @@ export default function MonthlyExpenses({ Data = [] }) {
           result.finObl += point.amount;
           break;
         case "Savings":
+        case "Investment":
           result.savInv += point.amount;
           break;
         case "Miscellaneous":

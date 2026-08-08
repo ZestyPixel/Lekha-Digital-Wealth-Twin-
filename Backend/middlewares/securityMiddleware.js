@@ -32,6 +32,8 @@ async function securityMiddleware(req, res, next) {
       transactionDate,
       reason,
       purchaseDate,
+      description,
+      category,
     } = req.body;
     let device = false;
     let riskScore = 0;
@@ -130,6 +132,24 @@ async function securityMiddleware(req, res, next) {
         subjectLine = "🚨 Transaction Blocked !";
         body = ` Your bank transfer dated <b>${purchaseDate}</b> amounting <b>${formatCurrency(amount)}</b> to 
                 Account Number: <b>${destAccountNumber}</b>, IFSC: <b>${destIfsc}</b>, Bank: <b>${destBankName}</b> has been blocked due to ${reasonList}
+                Please review the transaction or contact support if you believe this is an error.
+                `;
+      }
+    } else if (transactionType === "MakeTransaction") {
+      if (decision === "ALLOW") {
+        subjectLine = "✅ Transaction Successful !";
+        body = ` Your transaction dated <b>${transactionDate}</b> amounting <b>${formatCurrency(amount)}</b> for <b>${description}</b> 
+                (${category}) has been successfully processed. `;
+      } else if (decision === "WARN") {
+        subjectLine = "⚠️ Transaction Blocked Temporarily !";
+        body = ` Your transaction dated <b>${transactionDate}</b> amounting <b>${formatCurrency(amount)}</b> for <b>${description}</b> 
+                (${category}) has been temporarily blocked due to ${reasonList}
+                Please review this immediately and block if this transaction was not made by you.
+                `;
+      } else {
+        subjectLine = "🚨 Transaction Blocked !";
+        body = ` Your transaction dated <b>${transactionDate}</b> amounting <b>${formatCurrency(amount)}</b> for <b>${description}</b> 
+                (${category}) has been blocked due to ${reasonList}
                 Please review the transaction or contact support if you believe this is an error.
                 `;
       }

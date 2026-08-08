@@ -1,0 +1,33 @@
+.report-button {
+  position: relative;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.report-button:hover {
+  background-color: rgb(200, 0, 0);
+}
+
+.report-tooltip {
+  position: absolute;
+  left: 100%;
+  background-color: black;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 1.15rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s;
+}
+
+.report-button:hover .report-tooltip {
+  opacity: 1;
+  visibility: visible;
+}

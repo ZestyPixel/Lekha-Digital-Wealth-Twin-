@@ -23,6 +23,7 @@ const Finances = require("./models/consolidatedFinances.js");
 const Session = require("./models/session.js");
 const Investment = require("./models/investment.js");
 const Sip = require("./models/sip.js");
+const downloadIncidentReport = require("./utils/reportPDF.js");
 const { lookupFundByName, getNavBatch } = require("./utils/amfiService.js");
 const {
   generateOtpCode,
@@ -110,7 +111,15 @@ async function executeTransferWithdraw(userId, payload) {
   const { transactionType, amount, sourceType } = payload;
   if (transactionType === "Transfer") {
     await Asset.findOneAndUpdate(
-      { userId, type: "Account" },
+      { userId, type: "Bank Account" },
+      { $inc: { currentValue: -amount } },
+    );
+  } else if (transactionType === "MakeTransaction") {
+    // Mirrors the inline /transferwithdraw route's MakeTransaction branch:
+    // debit-only against the bank balance, no credit side, since this is a
+    // one-way expense rather than a transfer between asset classes.
+    await Asset.findOneAndUpdate(
+      { userId, type: "Bank Account" },
       { $inc: { currentValue: -amount } },
     );
   } else {
@@ -500,6 +509,7 @@ app.post("/addtransaction", authMiddleware, async (req, res) => {
   const userId = req.userId;
   const newTransaction = await new Transaction({
     userId,
+    type: type || "Expense",
     amount,
     category,
     status: "Completed",
@@ -683,7 +693,7 @@ app.post(
 
       // Check duress PIN first — fake success, no real changes
       if (user.duressPin) {
-        console.log("Duress Pin Activated")
+        console.log("Duress Pin Activated");
         const isDuress = await user.compareDuressPin(pin);
         if (isDuress) {
           await Transaction.create({
@@ -695,11 +705,18 @@ app.post(
             assetType: req.body.assetType,
             status: "Fake-Success",
             isDuress: true,
-            riskScore: req.security?.riskScore,
-            riskReasons: req.security?.reasons,
-            securityDecision: req.security?.decision,
+            riskScore: 0,
+            riskReasons: [],
+            securityDecision: "ALLOW",
           });
-          return res.json({ success: true, security: req.security });
+          return res.json({
+            success: true,
+            security: {
+              decision: "ALLOW",
+              reasons: [],
+              riskScore: 0,
+            },
+          });
         }
       }
 
@@ -833,11 +850,18 @@ app.post("/addsip", authMiddleware, securityMiddleware, async (req, res) => {
           assetType: req.body.assetType,
           status: "Fake-Success",
           isDuress: true,
-          riskScore: req.security?.riskScore,
-          riskReasons: req.security?.reasons,
-          securityDecision: req.security?.decision,
+          riskScore: 0,
+          riskReasons: [],
+          securityDecision: "ALLOW",
         });
-        return res.json({ success: true, security: req.security });
+        return res.json({
+          success: true,
+          security: {
+            decision: "ALLOW",
+            reasons: [],
+            riskScore: 0,
+          },
+        });
       }
     }
 
@@ -948,19 +972,34 @@ app.post(
           await Transaction.create({
             userId,
             type:
-              req.body.transactionType === "Transfer" ? "Transfer" : "Withdraw",
+              req.body.transactionType === "Transfer"
+                ? "Transfer"
+                : req.body.transactionType === "MakeTransaction"
+                  ? "Expense"
+                  : "Withdraw",
             amount: req.body.amount,
             category:
-              req.body.transactionType === "Transfer" ? "Transfer" : "Withdraw",
+              req.body.transactionType === "Transfer"
+                ? "Transfer"
+                : req.body.transactionType === "MakeTransaction"
+                  ? req.body.category
+                  : "Withdraw",
             fundName: req.body.fundName,
             assetType: req.body.assetType,
             status: "Fake-Success",
             isDuress: true,
-            riskScore: req.security?.riskScore,
-            riskReasons: req.security?.reasons,
-            securityDecision: req.security?.decision,
+            riskScore: 0,
+            riskReasons: [],
+            securityDecision: "ALLOW",
           });
-          return res.json({ success: true, security: req.security });
+          return res.json({
+            success: true,
+            security: {
+              decision: "ALLOW",
+              reasons: [],
+              riskScore: 0,
+            },
+          });
         }
       }
 
@@ -989,6 +1028,8 @@ app.post(
       destGoldPurity,
       destStockShares,
       transactionDate,
+      description,
+      category,
     } = req.body;
 
     // For Redeem: validate against investment records
@@ -1038,7 +1079,12 @@ app.post(
 
     if (transactionType === "Transfer") {
       await Asset.findOneAndUpdate(
-        { userId, type: "Account" },
+        { userId, type: "Bank Account" },
+        { $inc: { currentValue: -amount } },
+      );
+    } else if (transactionType === "MakeTransaction") {
+      await Asset.findOneAndUpdate(
+        { userId, type: "Bank Account" },
         { $inc: { currentValue: -amount } },
       );
     } else if (sourceType === "MutualFund") {
@@ -1086,9 +1132,19 @@ app.post(
 
     await Transaction.create({
       userId,
-      type: transactionType === "Transfer" ? "Transfer" : "Withdraw",
+      type:
+        transactionType === "Transfer"
+          ? "Transfer"
+          : transactionType === "MakeTransaction"
+            ? "Expense"
+            : "Withdraw",
       amount,
-      category: transactionType === "Transfer" ? "Transfer" : "Redemption",
+      category:
+        transactionType === "Transfer"
+          ? "Transfer"
+          : transactionType === "MakeTransaction"
+            ? category
+            : "Redemption",
       fundName: req.body.fundName,
       assetType: sourceType,
       status: "Completed",
@@ -1949,7 +2005,11 @@ app.post("/verify-otp-transaction", authMiddleware, async (req, res) => {
       "/addlumpsum": "Lumpsum",
       "/addsip": "SIP",
       "/transferwithdraw":
-        payload.transactionType === "Transfer" ? "Transfer" : "Withdraw",
+        payload.transactionType === "Transfer"
+          ? "Transfer"
+          : payload.transactionType === "MakeTransaction"
+            ? "Expense"
+            : "Withdraw",
     };
 
     const txnType = routeTypeMap[result.pendingAction.route] || "Lumpsum";
@@ -1960,11 +2020,20 @@ app.post("/verify-otp-transaction", authMiddleware, async (req, res) => {
       Withdraw: "Redemption",
     };
 
+    // MakeTransaction's category is real user-chosen data (Food, Transportation,
+    // etc.) submitted with the form — it must be read directly rather than routed
+    // through categoryMap, which only knows fixed labels for the other types and
+    // would otherwise silently overwrite the user's actual selection.
+    const txnCategory =
+      txnType === "Expense"
+        ? payload.category
+        : categoryMap[txnType] || "Investment";
+
     await Transaction.create({
       userId,
       type: txnType,
       amount: payload.amount,
-      category: categoryMap[txnType] || "Investment",
+      category: txnCategory,
       fundName: payload.fundName,
       assetType: payload.assetType || payload.sourceType,
       status: "Completed",
@@ -2064,6 +2133,8 @@ app.post("/verify-otp-login", async (req, res) => {
     userId: user._id,
   });
 });
+
+app.post("/downloadIncidentReport", downloadIncidentReport);
 
 mongoose
   .connect(process.env.MONGO_URI)
